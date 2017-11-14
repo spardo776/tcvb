@@ -1,0 +1,15 @@
+{
+ "jour" : "lundi",
+ "heure" : 18,
+ "court" : "1",	
+ "niveau":"vert",
+ "libre": 2,
+ "taille": 6,
+ "annee" : 2008,
+ "membres" : [
+        { "nom" : "guit", "prenom" : "jules", "année" : "2007" } ,
+        { "nom" : "fuiton", "prenom" : "paul", "année" : "2008" } ,
+        { "nom" : "dabon", "prenom" : "guy", "année" : "2008" } ,
+        { "nom" : "diun", "prenom" : "nico", "année" : "2008" } 
+	]
+}

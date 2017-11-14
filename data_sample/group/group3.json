@@ -1,0 +1,17 @@
+{
+ "niveau":"vert",
+ "libre": 0,
+ "taille": 6,
+ "annee" : 2008,
+ "jour" : "mardi",
+ "heure" : 17,
+ "court" :2,
+ "membres" : [ 
+	{ "nom" : "afutoner", "prenom" : "jules", "année" : "2007" } ,
+	{ "nom" : "carouton", "prenom" : "paul", "année" : "2008" } ,
+	{ "nom" : "ouingo", "prenom" : "guy", "année" : "2008" } ,
+	{ "nom" : "fuiter", "prenom" : "nico", "année" : "2008" } ,
+	{ "nom" : "eriopi", "prenom" : "berl", "année" : "2008" } ,
+	{ "nom" : "vyuton", "prenom" : "ines", "année" : "2008" } 
+	]
+}
