@@ -1,15 +1,15 @@
 {
- "jour" : "lundi",
- "heure" : 18,
+ "year" : "lundi",
+ "hour" : 18,
  "court" : "1",	
- "niveau":"vert",
- "libre": 2,
- "taille": 6,
- "annee" : 2008,
- "membres" : [
-        { "nom" : "guit", "prenom" : "jules", "année" : "2007" } ,
-        { "nom" : "fuiton", "prenom" : "paul", "année" : "2008" } ,
-        { "nom" : "dabon", "prenom" : "guy", "année" : "2008" } ,
-        { "nom" : "diun", "prenom" : "nico", "année" : "2008" } 
+ "level":"vert",
+ "free": 2,
+ "size": 6,
+ "year" : 2008,
+ "members" : [
+        { "name" : "guit", "firstname" : "jules", "year" : "2007" } ,
+        { "name" : "fuiton", "firstname" : "paul", "year" : "2008" } ,
+        { "name" : "dabon", "firstname" : "guy", "year" : "2008" } ,
+        { "name" : "diun", "firstname" : "nico", "year" : "2008" } 
 	]
 }

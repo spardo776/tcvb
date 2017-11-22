@@ -1,12 +1,12 @@
 {
- "jour" : "lundi",
- "heure" : 19,
+ "day" : "lundi",
+ "hour" : 19,
  "court" : 2,
- "niveau":"violet",
- "libre":5,
- "taille":6,
- "annee" : 2010 ,
- "membres" : [
-        { "nom" : "boin", "prenom" : "rene", "année" : "2010" } 
+ "level":"violet",
+ "free":5,
+ "size":6,
+ "year" : 2010 ,
+ "members" : [
+        { "name" : "boin", "firstname" : "rene", "year" : "2010" } 
  	]
 }
