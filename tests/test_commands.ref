@@ -1,0 +1,58 @@
+
+=== list all groups ===
+
+[{"level":"vert","free":0,"size":6,"year":2008,"day":"mardi","hour":17,"court":2,"members":[{"name":"afutoner","firstname":"jules","year":"2007"},{"name":"carouton","firstname":"paul","year":"2008"},{"name":"ouingo","firstname":"guy","year":"2008"},{"name":"fuiter","firstname":"nico","year":"2008"},{"name":"eriopi","firstname":"berl","year":"2008"},{"name":"vyuton","firstname":"ines","year":"2008"}]},{"year":2008,"hour":18,"court":"1","level":"vert","free":2,"size":6,"members":[{"name":"guit","firstname":"jules","year":"2007"},{"name":"fuiton","firstname":"paul","year":"2008"},{"name":"dabon","firstname":"guy","year":"2008"},{"name":"diun","firstname":"nico","year":"2008"}]},{"day":"lundi","hour":19,"court":2,"level":"violet","free":5,"size":6,"year":2010,"members":[{"name":"boin","firstname":"rene","year":"2010"}]}]
+=== list groups 2008 ===
+
+[{"level":"vert","free":0,"size":6,"year":2008,"day":"mardi","hour":17,"court":2,"members":[{"name":"afutoner","firstname":"jules","year":"2007"},{"name":"carouton","firstname":"paul","year":"2008"},{"name":"ouingo","firstname":"guy","year":"2008"},{"name":"fuiter","firstname":"nico","year":"2008"},{"name":"eriopi","firstname":"berl","year":"2008"},{"name":"vyuton","firstname":"ines","year":"2008"}]},{"year":2008,"hour":18,"court":"1","level":"vert","free":2,"size":6,"members":[{"name":"guit","firstname":"jules","year":"2007"},{"name":"fuiton","firstname":"paul","year":"2008"},{"name":"dabon","firstname":"guy","year":"2008"},{"name":"diun","firstname":"nico","year":"2008"}]}]
+=== list groups vert ===
+
+[{"level":"vert","free":0,"size":6,"year":2008,"day":"mardi","hour":17,"court":2,"members":[{"name":"afutoner","firstname":"jules","year":"2007"},{"name":"carouton","firstname":"paul","year":"2008"},{"name":"ouingo","firstname":"guy","year":"2008"},{"name":"fuiter","firstname":"nico","year":"2008"},{"name":"eriopi","firstname":"berl","year":"2008"},{"name":"vyuton","firstname":"ines","year":"2008"}]},{"year":2008,"hour":18,"court":"1","level":"vert","free":2,"size":6,"members":[{"name":"guit","firstname":"jules","year":"2007"},{"name":"fuiton","firstname":"paul","year":"2008"},{"name":"dabon","firstname":"guy","year":"2008"},{"name":"diun","firstname":"nico","year":"2008"}]}]
+=== list groups vert free ===
+
+[{"year":2008,"hour":18,"court":"1","level":"vert","free":2,"size":6,"members":[{"name":"guit","firstname":"jules","year":"2007"},{"name":"fuiton","firstname":"paul","year":"2008"},{"name":"dabon","firstname":"guy","year":"2008"},{"name":"diun","firstname":"nico","year":"2008"}]}]
+HTTP200
+
+
+=== add group me_10_1 ===
+
+Created
+HTTP201
+
+
+=== show group rouge ===
+
+[{"day":"mercredi","hour":10,"court":1,"level":"rouge","size":6,"year":2005,"id":"me_10_1","members":[]}]
+=== add member in group me_10_1 ===
+
+Created
+HTTP201
+
+
+=== show group rouge with a member ===
+
+[{"day":"mercredi","hour":10,"court":1,"level":"rouge","size":6,"year":2005,"id":"me_10_1","members":[{"name":"hugo","firstname":"tonelli","year":2008,"id":"hugo_tonelli"}]}]
+=== duplicate member ===
+
+{"msgs":[{"msg":"ce membre existe déjà"}]}
+HTTP400
+
+
+=== delete membre ===
+
+
+HTTP204
+
+
+=== show group rouge with no member ===
+
+[{"day":"mercredi","hour":10,"court":1,"level":"rouge","size":6,"year":2005,"id":"me_10_1","members":[]}]
+=== delete group me_10_1 ===
+
+
+HTTP204
+
+
+=== show group rouge ===
+
+[]
