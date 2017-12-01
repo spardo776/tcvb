@@ -23,17 +23,17 @@ curl $curlopt -w '\nHTTP%{http_code}\n\n' -H "Content-Type: application/json" --
 title "show group rouge"
 curl $curlopt 'http://localhost:8080/api/group?level=rouge'
 
-title "add member in group me_10_1"
-curl $curlopt -w '\nHTTP%{http_code}\n\n' -H "Content-Type: application/json" --request POST --data @add_member.json 'http://localhost:8080/api/group/me_10_1/member' 
+title "add member"
+curl $curlopt -w '\nHTTP%{http_code}\n\n' -H "Content-Type: application/json" --request POST --data @add_member.json 'http://localhost:8080/api/member' 
 
 title "show group rouge with a member"
 curl $curlopt 'http://localhost:8080/api/group?level=rouge'
 
 title "duplicate member"
-curl $curlopt -w '\nHTTP%{http_code}\n\n' -H "Content-Type: application/json" --request POST --data @add_member.json 'http://localhost:8080/api/group/me_10_1/member' 
+curl $curlopt -w '\nHTTP%{http_code}\n\n' -H "Content-Type: application/json" --request POST --data @add_member.json 'http://localhost:8080/api/member' 
 
 title "delete membre"
-curl $curlopt -w '\nHTTP%{http_code}\n\n' -H "Content-Type: application/json" --request DELETE 'http://localhost:8080/api/group/me_10_1/member/hugo_tonelli' 
+curl $curlopt -w '\nHTTP%{http_code}\n\n' -H "Content-Type: application/json" --request DELETE 'http://localhost:8080/api/member/hugo_tonelli' 
 
 title "show group rouge with no member"
 curl $curlopt 'http://localhost:8080/api/group?level=rouge'

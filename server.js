@@ -137,9 +137,13 @@ function f_add_group(req, res) {
                 var ls_data = JSON.stringify(lo_group);
                 fs.writeFile(ls_filename, ls_data, function(err) {
                     if (err) {
-                        console.log(err);
-                    }
+                lo_err.msgs.push({
+                    "msg": "echec création groupe"
+                });
+                        res.status(400).json(lo_err);
+                    } else {
                     res.sendStatus(201);
+                    }
                 });
             } else {
                 lo_err.msgs.push({
@@ -152,36 +156,38 @@ function f_add_group(req, res) {
         res.status(400).json(lo_err);
     }
 }
+
 // delete group
 function f_del_group(req, res) {
-    res.setHeader("Content-type", "application/json");
-    var ls_filename = f_data_path("group") + req.params.group_id + ".json";
-    fs.unlink(ls_filename, function(err) {
-        if (err) {
-            res.status(404).json({
-                msgs: [{
-                    msg: "le groupe " + req.params.group_id + " n\"existe pas"
-                }]
-            });
-        } else {
-            res.sendStatus(204);
-        }
-    });
+    f_del_object ( { "res" : res, 
+"object_name": "group", 
+"object_id": req.params.group_id, 
+"object_caption": "groupe" } );
 }
-// add member in group
+
+// get member
+function f_get_member(req, res) {
+}
+
+// add member
 function f_add_member(req, res) {
-    var lo_err = {
-        "msgs": []
-    };
-    var lo_member = {};
 
     res.setHeader("Content-type", "application/json");
-    var ls_filename = f_data_path("group") + req.params.group_id + ".json";
+    
     var lo_dict = {
         "name": "MS",
         "firstname": "MS",
-        "year": "MI"
+        "year": "MI",
+        "group_id": "MS"
     };
+
+    var lo_err = {
+        "msgs": []
+    };
+
+
+    var lo_member = {};
+
     // check and gathered provided fields
     Object.keys(lo_dict).forEach(
         function(key) {
@@ -191,111 +197,70 @@ function f_add_member(req, res) {
 
     if (!lo_err.msgs.length) {
         lo_member.id = lo_member.name + "_" + lo_member.firstname;
-        //open group file
-        fs.readFile(
-            ls_filename, "utf8",
-            function(err, data) {
-                if (err) {
-                    return console.error(err);
-                }
-                // parse group
-                var lo_group = JSON.parse(data);
-                // check unicity
-                var lb_exists = false;
-                lo_group.members.some(
-                    function(po_member) {
-                        lb_exists = (lo_member.id === po_member.id);
-                        return (lb_exists);
-                    });
 
-                if (lb_exists) {
-                    lo_err.msgs.push({
-                        "msg": "ce membre existe déjà"
-                    });
-                    res.status(400).json(lo_err);
-                } else {
-                    lo_group.members.push(lo_member);
-                    var ls_data = JSON.stringify(lo_group);
-                    //save data
-                    fs.writeFile(ls_filename, ls_data, function(err) {
-                        if (err) {
-                            console.log(err);
-                        }
-                        res.sendStatus(201);
-                    });
-                }
-            }
-        );
-    } else {
-        res.status(400).json(lo_err);
-    }
-}
-
-// delete member in group
-function f_del_member(req, res) {
-    var ls_filename = f_data_path("group") + req.params.group_id + ".json";
-    var ls_member_id = req.params.member_id;
-    var lo_err = {
-        "msgs": []
-    };
-
-    res.setHeader("Content-type", "application/json");
-    fs.readFile(
-        ls_filename, "utf8",
-        function(err, data) {
-            if (err) {
+        var ls_filename = f_data_path("member") + lo_member.id + ".json";
+ // check unicity
+        fs.stat(ls_filename, function(err) {
+            if ((err) && (err.code === "ENOENT")) {
+                // complete and store record
+                var ls_data = JSON.stringify(lo_member);
+                fs.writeFile(ls_filename, ls_data, function(err) {
+                    if (err) {
+                lo_err.msgs.push({
+                    "msg": "echec création membre"
+                });
+                        res.status(400).json(lo_err);
+                    } else {
+                    res.sendStatus(201);
+                    }
+                });
+            } else {
                 lo_err.msgs.push({
                     "msg": "ce membre existe déjà"
                 });
                 res.status(400).json(lo_err);
-                return 1;
             }
-            // parse group
-            var lo_group = JSON.parse(data);
-            var lb_exists = false;
-            lo_group.members.some(
-                function(po_member, pi_idx) {
-                    lb_exists = (ls_member_id === po_member.id);
-                    if (lb_exists) {
-                        console.log('got id' + pi_idx);
-                        console.log(lo_group.members.length);
-                        lo_group.members.splice(pi_idx, 1);
-                        console.log(lo_group.members.length);
-                    }
-                    return (lb_exists);
-                });
-            if (!lb_exists) {
-                lo_err.msgs.push({
-                    "msg": "ce membre n'existe pas"
-                });
-                res.status(400).json(lo_err);
-            } else {
-                var ls_data = JSON.stringify(lo_group);
-                //save data
-                fs.writeFile(ls_filename, ls_data, function(err) {
-                    if (err) {
-                        lo_err.msgs.push({
-                            "msg": "echec enregistrement"
-                        });
-                        res.status(400).json(lo_err);
-                        console.log(err);
-                        return 1;
-                    }
-                    res.sendStatus(204);
-                });
-            }
-        }
-    );
+        });
+    } else {
+        res.status(400).json(lo_err);
+    }
+
 }
 
+function f_del_object( po_ctxt )
+{
+ po_ctxt.res.setHeader("Content-type", "application/json");
+ var ls_filename = f_data_path(po_ctxt.object_name) + po_ctxt.object_id + ".json";
+ fs.unlink(ls_filename, function(err) {
+        if (err) {
+            po_ctxt.res.status(404).json({
+                msgs: [{
+                    msg: po_ctxt.object_caption + po_ctxt.object_id + " n\"existe pas"
+                }]
+            });
+        } else {
+            po_ctxt.res.sendStatus(204);
+        }
+    });
+}
+
+// delete member
+function f_del_member(req, res) {
+
+    f_del_object ( { "res" : res, 
+"object_name": "member", 
+"object_id": req.params.member_id, 
+"object_caption": "membre" } );
+}
 
 
 app
     .get("/api/group", f_get_group)
     .post("/api/group", f_add_group)
     .delete("/api/group/:group_id", f_del_group)
-    .post("/api/group/:group_id/member", f_add_member)
-    .delete("/api/group/:group_id/member/:member_id", f_del_member)
+    .get("/api/member", f_get_member)
+    .post("/api/member", f_add_member)
+    .delete("/api/member/:member_id", f_del_member)
     .use(function(req, res, next) {
         res.setHeader("Content-Type", "text/plain");
         res.status(404).send("Page not found");
