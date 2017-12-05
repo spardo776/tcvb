@@ -2,6 +2,9 @@
 "use strict";
 
 
+/*
+ ** init application
+ */
 
 var express = require("express");
 var app = express();
@@ -14,16 +17,130 @@ app.use(express.json());
 
 var port = process.env.PORT || 8080;
 
+/*
+ ** utilities
+ */
+
 // build data path
-function f_data_path(ls_class) {
+function f_get_data_path(ls_class) {
     return (__dirname + "/data/" + ls_class + "/");
 }
+
+// validate object field
+function f_validate_field(ps_field, ps_field_dict, po_err, po_object, po_req) {
+    var lo_msg = {};
+
+    if (ps_field_dict.match(/M/) && (!po_req.body[ps_field])) {
+        lo_msg.msg = ps_field + " est obligatoire";
+        po_err.msgs.push(lo_msg);
+        return 0;
+    }
+
+    if (ps_field_dict.match(/I/) && (!String(po_req.body[ps_field]).match(/\d+/))) {
+        lo_msg.msg = ps_field + " doit etre un nombre";
+        po_err.msgs.push(lo_msg);
+        return 0;
+    }
+
+    po_object[ps_field] = po_req.body[ps_field];
+
+    return 1;
+}
+
+// generic delete function
+function f_del_object(po_ctxt) {
+    po_ctxt.res.setHeader("Content-type", "application/json");
+    var ls_filename = f_get_data_path(po_ctxt.dict.name) + po_ctxt.id + ".json";
+    fs.unlink(ls_filename, function(err) {
+        if (err) {
+            po_ctxt.res.status(404).json({
+                msgs: [{
+                    msg: po_ctxt.dict.caption + " " + po_ctxt.id + " n\"existe pas"
+                }]
+            });
+        } else {
+            po_ctxt.res.sendStatus(204);
+        }
+    });
+}
+
+// generic add function
+function f_add_object(po_ctxt) {
+    po_ctxt.res.setHeader("Content-type", "application/json");
+
+    var lo_object = {};
+
+    var lo_err = {
+        "msgs": []
+    };
+
+    // check and gathered provided fields
+    Object.keys(po_ctxt.dict.fields).forEach(
+        function(ps_field) {
+            f_validate_field(ps_field, po_ctxt.dict.fields[ps_field], lo_err, lo_object, po_ctxt.req);
+        }
+    );
+
+    if (!lo_err.msgs.length) {
+
+        // build id
+        lo_object.id = '';
+        po_ctxt.dict.pkey.forEach(
+            function(ps_field) {
+                lo_object.id = lo_object.id + "_" + lo_object[ps_field];
+            });
+
+        var ls_filename = f_get_data_path(po_ctxt.dict.name) + lo_object.id + ".json";
+        // check unicity
+        fs.stat(ls_filename, function(err) {
+            if ((err) && (err.code === "ENOENT")) {
+                // complete and store record
+                var ls_data = JSON.stringify(lo_object);
+                fs.writeFile(ls_filename, ls_data, function(err) {
+                    if (err) {
+                        lo_err.msgs.push({
+                            "msg": "echec création " + po_ctxt.dict.caption + "(" +  err + ")" 
+                        });
+                        po_ctxt.res.status(400).json(lo_err);
+                    } else {
+                        po_ctxt.res.sendStatus(201);
+                    }
+                });
+            } else {
+                lo_err.msgs.push({
+                    "msg": po_ctxt.dict.caption + " existe déjà"
+                });
+                po_ctxt.res.status(400).json(lo_err);
+            }
+        });
+    } else {
+        po_ctxt.res.status(400).json(lo_err);
+    }
+}
+
+/*
+ ** group
+ */
+
+var go_dict_group = {
+    "name": "group",
+    "caption": "groupe",
+    "fields": {
+        "day": "MS",
+        "hour": "MI",
+        "court": "MI",
+        "level": "MS",
+        "size": "MI",
+        "year": "MI"
+    },
+    "pkey": ["day", "hour", "court"]
+};
 
 // get group
 function f_get_group(req, res) {
     res.setHeader("content-type", "application/json");
 
-    var ls_path = f_data_path("group");
+    var ls_path = f_get_data_path("group");
 
     //dump each file in data/group directory into an array of json files
     fs.readdir(ls_path,
@@ -79,181 +196,66 @@ function f_get_group(req, res) {
         });
 }
 
-function validate_object(ps_key, po_dict, po_err, po_object, po_req) {
-    var lo_msg = {};
-
-    if (po_dict[ps_key].match(/M/) && (!po_req.body[ps_key])) {
-        lo_msg.msg = ps_key + " est obligatoire";
-        po_err.msgs.push(lo_msg);
-        return 0;
-    }
-
-    if (po_dict[ps_key].match(/I/) && (!String(po_req.body[ps_key]).match(/\d+/))) {
-        lo_msg.msg = ps_key + " doit etre un nombre";
-        po_err.msgs.push(lo_msg);
-        return 0;
-    }
-
-    po_object[ps_key] = po_req.body[ps_key];
-
-    return 1;
-}
-
-
 // add group
 function f_add_group(req, res) {
-    res.setHeader("content-type", "application/json");
-
-    var lo_dict = {
-        "day": "MS",
-        "hour": "MI",
-        "court": "MI",
-        "level": "MS",
-        "size": "MI",
-        "year": "MI"
-    };
-
-    var lo_err = {
-        "msgs": []
-    };
-    var lo_group = {};
-
-    // check and gathered provided fields
-    Object.keys(lo_dict).forEach(
-        function(key) {
-            validate_object(key, lo_dict, lo_err, lo_group, req);
-        }
-    );
-
-    if (!lo_err.msgs.length) {
-        lo_group.id = req.body.day.substr(0, 2) + "_" + req.body.hour + "_" + req.body.court;
-        var ls_filename = f_data_path("group") + lo_group.id + ".json";
-
-        // check unicity
-        fs.stat(ls_filename, function(err) {
-            if ((err) && (err.code === "ENOENT")) {
-                // complete and store record
-                lo_group.members = [];
-                var ls_data = JSON.stringify(lo_group);
-                fs.writeFile(ls_filename, ls_data, function(err) {
-                    if (err) {
-                lo_err.msgs.push({
-                    "msg": "echec création groupe"
-                });
-                        res.status(400).json(lo_err);
-                    } else {
-                    res.sendStatus(201);
-                    }
-                });
-            } else {
-                lo_err.msgs.push({
-                    "msg": "ce groupe existe déjà"
-                });
-                res.status(400).json(lo_err);
-            }
-        });
-    } else {
-        res.status(400).json(lo_err);
-    }
+    f_add_object({
+        "dict": go_dict_group,
+        "res": res,
+        "req": req
+    });
 }
 
 // delete group
 function f_del_group(req, res) {
-    f_del_object ( { "res" : res, 
-"object_name": "group", 
-"object_id": req.params.group_id, 
-"object_caption": "groupe" } );
+    f_del_object({
+        "dict": go_dict_group,
+        "res": res,
+        "id": req.params.group_id
+    });
 }
 
-// get member
-function f_get_member(req, res) {
-}
-
-// add member
-function f_add_member(req, res) {
-
-    res.setHeader("Content-type", "application/json");
-    
-    var lo_dict = {
+/*
+ ** member
+ */
+var go_dict_member = {
+    "name": "member",
+    "caption": "membre",
+    "fields": {
         "name": "MS",
         "firstname": "MS",
         "year": "MI",
         "group_id": "MS"
-    };
+    },
+    "pkey": ["name", "firstname"]
+};
 
-    var lo_err = {
-        "msgs": []
-    };
-
-
-    var lo_member = {};
-
-    // check and gathered provided fields
-    Object.keys(lo_dict).forEach(
-        function(key) {
-            validate_object(key, lo_dict, lo_err, lo_member, req);
-        }
-    );
-
-    if (!lo_err.msgs.length) {
-        lo_member.id = lo_member.name + "_" + lo_member.firstname;
-
-        var ls_filename = f_data_path("member") + lo_member.id + ".json";
- // check unicity
-        fs.stat(ls_filename, function(err) {
-            if ((err) && (err.code === "ENOENT")) {
-                // complete and store record
-                var ls_data = JSON.stringify(lo_member);
-                fs.writeFile(ls_filename, ls_data, function(err) {
-                    if (err) {
-                lo_err.msgs.push({
-                    "msg": "echec création membre"
-                });
-                        res.status(400).json(lo_err);
-                    } else {
-                    res.sendStatus(201);
-                    }
-                });
-            } else {
-                lo_err.msgs.push({
-                    "msg": "ce membre existe déjà"
-                });
-                res.status(400).json(lo_err);
-            }
-        });
-    } else {
-        res.status(400).json(lo_err);
-    }
-
+// get member
+function f_get_member(req, res) {
+    // TODO
 }
 
-function f_del_object( po_ctxt )
-{
- po_ctxt.res.setHeader("Content-type", "application/json");
- var ls_filename = f_data_path(po_ctxt.object_name) + po_ctxt.object_id + ".json";
- fs.unlink(ls_filename, function(err) {
-        if (err) {
-            po_ctxt.res.status(404).json({
-                msgs: [{
-                    msg: po_ctxt.object_caption + po_ctxt.object_id + " n\"existe pas"
-                }]
-            });
-        } else {
-            po_ctxt.res.sendStatus(204);
-        }
+// add member
+function f_add_member(req, res) {
+    f_add_object({
+        "dict": go_dict_member,
+        "res": res,
+        "req": req
     });
 }
 
 // delete member
 function f_del_member(req, res) {
 
-    f_del_object ( { "res" : res, 
-"object_name": "member", 
-"object_id": req.params.member_id, 
-"object_caption": "membre" } );
+    f_del_object({
+        "dict": go_dict_member,
+        "res": res,
+        "id": req.params.member_id
+    });
 }
 
-
+/*
+ ** route and start
+ */
 app
     .get("/api/group", f_get_group)
     .post("/api/group", f_add_group)

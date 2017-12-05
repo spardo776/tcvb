@@ -14,7 +14,7 @@
 HTTP200
 
 
-=== add group me_10_1 ===
+=== add group _mercredi_10_1 ===
 
 Created
 HTTP201
@@ -22,8 +22,8 @@ HTTP201
 
 === show group rouge ===
 
-[{"day":"mercredi","hour":10,"court":1,"level":"rouge","size":6,"year":2005,"id":"me_10_1","members":[]}]
-=== add member in group me_10_1 ===
+[{"day":"mercredi","hour":10,"court":1,"level":"rouge","size":6,"year":2005,"id":"_mercredi_10_1"}]
+=== add member ===
 
 Created
 HTTP201
@@ -31,10 +31,10 @@ HTTP201
 
 === show group rouge with a member ===
 
-[{"day":"mercredi","hour":10,"court":1,"level":"rouge","size":6,"year":2005,"id":"me_10_1","members":[{"name":"hugo","firstname":"tonelli","year":2008,"id":"hugo_tonelli"}]}]
+[{"day":"mercredi","hour":10,"court":1,"level":"rouge","size":6,"year":2005,"id":"_mercredi_10_1"}]
 === duplicate member ===
 
-{"msgs":[{"msg":"ce membre existe déjà"}]}
+{"msgs":[{"msg":"membre existe déjà"}]}
 HTTP400
 
 
@@ -46,8 +46,8 @@ HTTP204
 
 === show group rouge with no member ===
 
-[{"day":"mercredi","hour":10,"court":1,"level":"rouge","size":6,"year":2005,"id":"me_10_1","members":[]}]
-=== delete group me_10_1 ===
+[{"day":"mercredi","hour":10,"court":1,"level":"rouge","size":6,"year":2005,"id":"_mercredi_10_1"}]
+=== delete group _mercredi_10_1 ===
 
 
 HTTP204
