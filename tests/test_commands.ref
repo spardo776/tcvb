@@ -1,58 +1,84 @@
 
 === list all groups ===
 
-[{"level":"vert","free":0,"size":6,"year":2008,"day":"mardi","hour":17,"court":2,"members":[{"name":"afutoner","firstname":"jules","year":"2007"},{"name":"carouton","firstname":"paul","year":"2008"},{"name":"ouingo","firstname":"guy","year":"2008"},{"name":"fuiter","firstname":"nico","year":"2008"},{"name":"eriopi","firstname":"berl","year":"2008"},{"name":"vyuton","firstname":"ines","year":"2008"}]},{"year":2008,"hour":18,"court":"1","level":"vert","free":2,"size":6,"members":[{"name":"guit","firstname":"jules","year":"2007"},{"name":"fuiton","firstname":"paul","year":"2008"},{"name":"dabon","firstname":"guy","year":"2008"},{"name":"diun","firstname":"nico","year":"2008"}]},{"day":"lundi","hour":19,"court":2,"level":"violet","free":5,"size":6,"year":2010,"members":[{"name":"boin","firstname":"rene","year":"2010"}]}]
+[{"day":"lundi","hour":18,"court":1,"level":"vert","free":2,"size":6,"year":2008,"id":"_lundi_18_1"},{"day":"lundi","hour":19,"court":2,"level":"violet","free":5,"size":6,"year":2010,"id":"_lundi_19_2"},{"level":"vert","free":0,"size":6,"year":2008,"day":"mardi","hour":17,"court":2,"id":"_mardi_17_2"}]
+HTTP200
+
+
 === list groups 2008 ===
 
-[{"level":"vert","free":0,"size":6,"year":2008,"day":"mardi","hour":17,"court":2,"members":[{"name":"afutoner","firstname":"jules","year":"2007"},{"name":"carouton","firstname":"paul","year":"2008"},{"name":"ouingo","firstname":"guy","year":"2008"},{"name":"fuiter","firstname":"nico","year":"2008"},{"name":"eriopi","firstname":"berl","year":"2008"},{"name":"vyuton","firstname":"ines","year":"2008"}]},{"year":2008,"hour":18,"court":"1","level":"vert","free":2,"size":6,"members":[{"name":"guit","firstname":"jules","year":"2007"},{"name":"fuiton","firstname":"paul","year":"2008"},{"name":"dabon","firstname":"guy","year":"2008"},{"name":"diun","firstname":"nico","year":"2008"}]}]
+[{"day":"lundi","hour":18,"court":1,"level":"vert","free":2,"size":6,"year":2008,"id":"_lundi_18_1"},{"level":"vert","free":0,"size":6,"year":2008,"day":"mardi","hour":17,"court":2,"id":"_mardi_17_2"}]
+HTTP200
+
+
 === list groups vert ===
 
-[{"level":"vert","free":0,"size":6,"year":2008,"day":"mardi","hour":17,"court":2,"members":[{"name":"afutoner","firstname":"jules","year":"2007"},{"name":"carouton","firstname":"paul","year":"2008"},{"name":"ouingo","firstname":"guy","year":"2008"},{"name":"fuiter","firstname":"nico","year":"2008"},{"name":"eriopi","firstname":"berl","year":"2008"},{"name":"vyuton","firstname":"ines","year":"2008"}]},{"year":2008,"hour":18,"court":"1","level":"vert","free":2,"size":6,"members":[{"name":"guit","firstname":"jules","year":"2007"},{"name":"fuiton","firstname":"paul","year":"2008"},{"name":"dabon","firstname":"guy","year":"2008"},{"name":"diun","firstname":"nico","year":"2008"}]}]
+[{"day":"lundi","hour":18,"court":1,"level":"vert","free":2,"size":6,"year":2008,"id":"_lundi_18_1"},{"level":"vert","free":0,"size":6,"year":2008,"day":"mardi","hour":17,"court":2,"id":"_mardi_17_2"}]
+HTTP200
+
+
 === list groups vert free ===
 
-[{"year":2008,"hour":18,"court":"1","level":"vert","free":2,"size":6,"members":[{"name":"guit","firstname":"jules","year":"2007"},{"name":"fuiton","firstname":"paul","year":"2008"},{"name":"dabon","firstname":"guy","year":"2008"},{"name":"diun","firstname":"nico","year":"2008"}]}]
+[{"day":"lundi","hour":18,"court":1,"level":"vert","free":2,"size":6,"year":2008,"id":"_lundi_18_1"},{"level":"vert","free":0,"size":6,"year":2008,"day":"mardi","hour":17,"court":2,"id":"_mardi_17_2"}]
 HTTP200
 
 
 === add group _mercredi_10_1 ===
 
-Created
-HTTP201
+OK
+HTTP200
 
 
 === show group rouge ===
 
 [{"day":"mercredi","hour":10,"court":1,"level":"rouge","size":6,"year":2005,"id":"_mercredi_10_1"}]
+HTTP200
+
+
 === add member ===
 
-Created
-HTTP201
+OK
+HTTP200
 
 
-=== show group rouge with a member ===
+=== show group rouge ===
 
 [{"day":"mercredi","hour":10,"court":1,"level":"rouge","size":6,"year":2005,"id":"_mercredi_10_1"}]
+HTTP200
+
+
+=== show group member ===
+
+[{"name":"hugo","firstname":"tonelli","year":2008,"group_id":"_mercredi_10_1","id":"_hugo_tonelli"}]
+HTTP200
+
+
 === duplicate member ===
 
-{"msgs":[{"msg":"membre existe déjà"}]}
+[{"msg":"membre: existe déjà","diag":null}]
 HTTP400
 
 
 === delete membre ===
 
-
-HTTP204
+OK
+HTTP200
 
 
 === show group rouge with no member ===
 
 [{"day":"mercredi","hour":10,"court":1,"level":"rouge","size":6,"year":2005,"id":"_mercredi_10_1"}]
+HTTP200
+
+
 === delete group _mercredi_10_1 ===
 
-
-HTTP204
+OK
+HTTP200
 
 
 === show group rouge ===
 
-[]
+OK
+HTTP200
+

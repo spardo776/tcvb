@@ -3,7 +3,7 @@ title()
 echo  "\n=== $1 ===\n"
 }
 
-curlopt='-s -S'
+curlopt='-s -S  -w \nHTTP%{http_code}\n\n'
 
 title "list all groups"
 curl $curlopt http://localhost:8080/api/group
@@ -26,8 +26,11 @@ curl $curlopt 'http://localhost:8080/api/group?level=rouge'
 title "add member"
 curl $curlopt -w '\nHTTP%{http_code}\n\n' -H "Content-Type: application/json" --request POST --data @add_member.json 'http://localhost:8080/api/member' 
 
-title "show group rouge with a member"
+title "show group rouge"
 curl $curlopt 'http://localhost:8080/api/group?level=rouge'
+
+title "show group member"
+curl $curlopt 'http://localhost:8080/api/member?group_id=_mercredi_10_1'
 
 title "duplicate member"
 curl $curlopt -w '\nHTTP%{http_code}\n\n' -H "Content-Type: application/json" --request POST --data @add_member.json 'http://localhost:8080/api/member' 

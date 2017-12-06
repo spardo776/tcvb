@@ -3,6 +3,40 @@
 
 
 /*
+ ** data dictionary
+ */
+
+var go_dict= {
+    "group" : {
+    "caption": "groupe",
+    "fields": {
+        "day": "MS",
+        "hour": "MI",
+        "court": "MI",
+        "level": "MS",
+        "size": "MI",
+        "year": "MI"
+    },
+    "children" : [ "member"],
+    "pkey": ["day", "hour", "court"]
+    },
+
+    "member" : {
+        "caption": "membre",
+    "fields": {
+        "name": "MS",
+        "firstname": "MS",
+        "year": "MI",
+        "group_id": "MS"
+    },
+    "pkey": ["name", "firstname"] ,
+    "parents": [ "group"]
+}
+};
+
+
+
+/*
  ** init application
  */
 
@@ -19,78 +53,88 @@ var port = process.env.PORT || 8080;
 
 /*
  ** utilities
- */
+*/
 
 // build data path
 function f_get_data_path(ls_class) {
     return (__dirname + "/data/" + ls_class + "/");
 }
 
-// validate object field
-function f_validate_field(ps_field, ps_field_dict, po_err, po_object, po_req) {
-    var lo_msg = {};
+// validate object fields
+function f_validate_fields(po_ctxt,po_object) {
 
-    if (ps_field_dict.match(/M/) && (!po_req.body[ps_field])) {
-        lo_msg.msg = ps_field + " est obligatoire";
-        po_err.msgs.push(lo_msg);
-        return 0;
-    }
+    var lo_mydict=go_dict[po_ctxt.name];
 
-    if (ps_field_dict.match(/I/) && (!String(po_req.body[ps_field]).match(/\d+/))) {
-        lo_msg.msg = ps_field + " doit etre un nombre";
-        po_err.msgs.push(lo_msg);
-        return 0;
-    }
+    Object.keys(lo_mydict.fields).forEach(
+     function(ps_field_name) {
+        var lo_msg = {};
 
-    po_object[ps_field] = po_req.body[ps_field];
-
-    return 1;
+        var lx_field_value = po_ctxt.data_in[ps_field_name];
+        var ls_field_rule=go_dict[po_ctxt.name].fields[ps_field_name];
+        if (ls_field_rule.match(/M/) && (! lx_field_value)) {
+            lo_msg.msg = ps_field_name + " est obligatoire";
+            po_ctxt.msgs.push(lo_msg);
+            return null;
+        }
+        if (ls_field_rule.match(/I/) && (!String(lx_field_value).match(/\d+/))) {
+            lo_msg.msg = ps_field_name + " doit etre un nombre";
+            po_ctxt.msgs.push(lo_msg);
+            return null;
+        }
+    
+        po_object[ps_field_name] = lx_field_value;
+    
+        return 1;
+     });
 }
 
 // generic delete function
 function f_del_object(po_ctxt) {
-    po_ctxt.res.setHeader("Content-type", "application/json");
-    var ls_filename = f_get_data_path(po_ctxt.dict.name) + po_ctxt.id + ".json";
+
+    var lo_mydict=go_dict[po_ctxt.name];
+    po_ctxt.msgs =[];
+    po_ctxt.data_out =[];
+
+    var ls_filename = f_get_data_path(po_ctxt.name) + po_ctxt.data_in + ".json";
     fs.unlink(ls_filename, function(err) {
         if (err) {
-            po_ctxt.res.status(404).json({
-                msgs: [{
-                    msg: po_ctxt.dict.caption + " " + po_ctxt.id + " n\"existe pas"
-                }]
-            });
-        } else {
-            po_ctxt.res.sendStatus(204);
-        }
-    });
+            po_ctxt.msgs.push({
+                    msg : lo_mydict.caption + ": n\"existe pas" ,
+                    diag : err 
+                    });
+           } 
+       if (po_ctxt.msgs.length)
+       {
+           po_ctxt.cb_failure(po_ctxt);
+           
+       } else {
+        po_ctxt.cb_success(po_ctxt);
+            }
+   });
 }
 
 // generic add function
 function f_add_object(po_ctxt) {
-    po_ctxt.res.setHeader("Content-type", "application/json");
 
     var lo_object = {};
+    
+    po_ctxt.msgs =[];
+    po_ctxt.data_out =[];
+    
+    var lo_mydict=go_dict[po_ctxt.name];
 
-    var lo_err = {
-        "msgs": []
-    };
-
-    // check and gathered provided fields
-    Object.keys(po_ctxt.dict.fields).forEach(
-        function(ps_field) {
-            f_validate_field(ps_field, po_ctxt.dict.fields[ps_field], lo_err, lo_object, po_ctxt.req);
-        }
-    );
-
-    if (!lo_err.msgs.length) {
+    f_validate_fields(po_ctxt,lo_object); 
+    
+    if (!po_ctxt.msgs.length) {
 
         // build id
         lo_object.id = '';
-        po_ctxt.dict.pkey.forEach(
+        lo_mydict.pkey.forEach(
             function(ps_field) {
                 lo_object.id = lo_object.id + "_" + lo_object[ps_field];
             });
 
-        var ls_filename = f_get_data_path(po_ctxt.dict.name) + lo_object.id + ".json";
+        var ls_filename = f_get_data_path(po_ctxt.name) + lo_object.id + ".json";
         // check unicity
         fs.stat(ls_filename, function(err) {
             if ((err) && (err.code === "ENOENT")) {
@@ -98,158 +142,219 @@ function f_add_object(po_ctxt) {
                 var ls_data = JSON.stringify(lo_object);
                 fs.writeFile(ls_filename, ls_data, function(err) {
                     if (err) {
-                        lo_err.msgs.push({
-                            "msg": "echec création " + po_ctxt.dict.caption + "(" +  err + ")" 
+                        po_ctxt.msgs.push({
+                            "msg": "echec création " + lo_mydict.caption,
+                            "diag" : err
                         });
-                        po_ctxt.res.status(400).json(lo_err);
+                        po_ctxt.cb_failure(po_ctxt);
+                       
                     } else {
-                        po_ctxt.res.sendStatus(201);
+                        po_ctxt.cb_success(po_ctxt);
                     }
                 });
             } else {
-                lo_err.msgs.push({
-                    "msg": po_ctxt.dict.caption + " existe déjà"
+                po_ctxt.msgs.push({
+                    "msg": lo_mydict.caption + ": existe déjà",
+                    "diag" : err
                 });
-                po_ctxt.res.status(400).json(lo_err);
+                po_ctxt.cb_failure(po_ctxt);
+                
             }
         });
     } else {
-        po_ctxt.res.status(400).json(lo_err);
+        po_ctxt.cb_failure(po_ctxt);
     }
 }
 
-/*
- ** group
- */
+// generic get function
+function f_get_object(po_ctxt)
+{
 
-var go_dict_group = {
-    "name": "group",
-    "caption": "groupe",
-    "fields": {
-        "day": "MS",
-        "hour": "MI",
-        "court": "MI",
-        "level": "MS",
-        "size": "MI",
-        "year": "MI"
-    },
-    "pkey": ["day", "hour", "court"]
-};
+var lo_mydict=go_dict[po_ctxt.name];
+var ls_path = f_get_data_path(po_ctxt.name);
 
-// get group
-function f_get_group(req, res) {
-    res.setHeader("content-type", "application/json");
+console.log('f_get_object',po_ctxt.name, po_ctxt.data_in, ls_path)
 
-    var ls_path = f_get_data_path("group");
+po_ctxt.msgs =[];
+po_ctxt.data_out =[];
 
-    //dump each file in data/group directory into an array of json files
-    fs.readdir(ls_path,
-        function(err, files) {
-            if (err) {
-                return console.error(err);
-            }
+//dump each file in data/group directory into an array of json files
+fs.readdir(ls_path,
+    function(err, files) {
+        if (err) {
+            po_ctxt.msgs.push({
+                "msg": "echec accès données",
+                "diag" : err
+            });
+            po_ctxt.cb_failure(po_ctxt);console.log(err);
+        } else {
+      
+        // loop on files
+        files.forEach(
+            function(file, idx, files) {
+                if (file.match(/\.json$/)) {
+                    console.log('readFile',ls_path + file);
+                    fs.readFile(
+                        ls_path + file, "utf8",
+                        function(err, data) {
+                            if (err) {
+                                po_ctxt.msgs.push({
+                                    "msg": "echec accès données",
+                                    "diag" : err
+                                });
+                                po_ctxt.cb_failure(po_ctxt);
+                            }
 
-            var lo_result = [];
+                            var lo_object = JSON.parse(data); console.log(data);
+                            var lb_select = 1;
 
-            // loop on files
-            files.forEach(
-                function(file, idx, files) {
-                    if (file.match(/\.json$/)) {
-                        fs.readFile(
-                            ls_path + file, "utf8",
-                            function(err, data) {
-                                if (err) {
-                                    return console.error(err);
-                                }
-
-                                var lo_group = JSON.parse(data);
-                                var lb_select = 1;
-
-                                // loop on filters		
-                                Object.keys(req.query).forEach(
-                                    function(ps_key) {
-                                        if ((req.query[ps_key]) &&
-                                            (lo_group[ps_key]) &&
-                                            (req.query[ps_key] !== String(lo_group[ps_key]))) {
-                                            lb_select = 0;
-                                        }
+                            // loop on filters		
+                            Object.keys(po_ctxt.data_in).forEach(
+                                function(ps_key) {
+                                    if ((po_ctxt.data_in[ps_key]) &&
+                                        (lo_object[ps_key]) &&
+                                        (po_ctxt.data_in[ps_key] !== String(lo_object[ps_key]))) {
+                                        lb_select = 0;
                                     }
-                                );
-
-                                if (req.query.hasOwnProperty("is_free") && (lo_group.free === 0)) {
-                                    lb_select = 0;
                                 }
+                            );
 
-                                if (lb_select) {
-                                    //output data	
-                                    lo_result.push(lo_group);
+                            // TODO if (po_ctxt.data_in.hasOwnProperty("is_free") && (lo_object.free === 0)) {
+                            //     lb_select = 0;
+                            // }
+
+                            if (lb_select) {
+                                
+                                // get children
+                                if ((lo_mydict.children)&&(lo_mydict.children.length))
+                                {
+                                    lo_mydict.children.forEach(
+                                        function (ps_child_name,pi_idx, pa_children) {
+                                            // build search criteria (on foreign key) 
+                                            var lo_child_data_in={};
+                                            
+                                            lo_child_data_in[po_ctxt.name+"_id"]=lo_object.id;
+                                            
+                                            f_get_object( {
+                                                "name" : ps_child_name,
+                                                "data_in" : lo_child_data_in,
+                                                "cb_failure" : po_ctxt.cb_failure,   
+                                                "cb_success" : function (po_child_ctxt) {
+                                                    console.log('child');
+                                                    lo_object[ps_child_name]=po_child_ctxt.data_out;
+                                                    console.log(lo_object);
+                                                    if (pi_idx === (pa_children.length - 1)) {
+                                                        //all children processed - output data
+                                                        po_ctxt.data_out.push(lo_object); 
+                                                    }
+                                                }
+                                            }
+                                            );
+                                        }
+                                    )
                                 }
-
-                                if ((files.length - 1) === idx) {
-                                    res.json(lo_result);
+                                else {
+                                    po_ctxt.data_out.push(lo_object);
                                 }
                             }
-                        );
-                    }
-                }
-            );
-        });
-}
 
-// add group
-function f_add_group(req, res) {
-    f_add_object({
-        "dict": go_dict_group,
-        "res": res,
-        "req": req
+                            if ((files.length - 1) === idx) {
+                                po_ctxt.cb_success(po_ctxt); // TODO declenchement possible avant le traitement de tous les children ??
+                            }
+                        }
+                    );
+                }
+            }
+           );
+        }
     });
 }
 
-// delete group
-function f_del_group(req, res) {
-    f_del_object({
-        "dict": go_dict_group,
+// callback wbs failure
+function f_wbs_failure(po_ctxt)
+{
+    console.log('f_wbs_failure',po_ctxt.msgs)
+    po_ctxt.res.setHeader("Content-type", "application/json");
+    po_ctxt.res.status(400).json(po_ctxt.msgs);
+}
+
+// callback wbs success
+function f_wbs_success(po_ctxt)
+{
+    console.log('f_wbs_success',po_ctxt.data_out)
+    po_ctxt.res.setHeader("Content-type", "application/json");
+    if (po_ctxt.data_out.length) { po_ctxt.res.status(200).json(po_ctxt.data_out); } else { po_ctxt.res.sendStatus(200);}
+}
+
+
+// WBS get group
+function f_wbs_get_group(req, res) {
+    f_get_object({
+        "name": "group",
         "res": res,
-        "id": req.params.group_id
+        "data_in": req.query,
+        "cb_failure" : f_wbs_failure,
+        "cb_success": f_wbs_success
+    });
+}
+
+// WBS add group
+function f_wbs_add_group(req, res) {
+    f_add_object({
+        "name": "group",
+        "res": res,
+        "data_in": req.body,
+        "cb_failure" : f_wbs_failure,
+        "cb_success": f_wbs_success
+    });
+}
+
+// WBS delete group
+function f_wbs_del_group(req, res) {
+    f_del_object({
+        "name": "group",
+        "res": res,
+        "data_in": req.params.group_id,
+        "cb_failure" : f_wbs_failure,
+        "cb_success": f_wbs_success
     });
 }
 
 /*
  ** member
  */
-var go_dict_member = {
-    "name": "member",
-    "caption": "membre",
-    "fields": {
-        "name": "MS",
-        "firstname": "MS",
-        "year": "MI",
-        "group_id": "MS"
-    },
-    "pkey": ["name", "firstname"]
-};
 
-// get member
-function f_get_member(req, res) {
-    // TODO
-}
-
-// add member
-function f_add_member(req, res) {
-    f_add_object({
-        "dict": go_dict_member,
+// WBS get member
+function f_wbs_get_member(req, res) {
+    f_get_object({
+        "name": "member",
         "res": res,
-        "req": req
+        "data_in": req.query,
+        "cb_failure" : f_wbs_failure,
+        "cb_success": f_wbs_success
     });
 }
 
-// delete member
-function f_del_member(req, res) {
+// WBS add member
+function f_wbs_add_member(req, res) {
+    f_add_object({
+        "name": "member",
+        "res": res,
+        "data_in": req.body,
+        "cb_failure" : f_wbs_failure,
+        "cb_success": f_wbs_success
+    });
+}
+
+// WBS delete member
+function f_wbs_del_member(req, res) {
 
     f_del_object({
-        "dict": go_dict_member,
+        "name": "member",
         "res": res,
-        "id": req.params.member_id
+        "data_in": req.params.member_id,
+        "cb_failure" : f_wbs_failure,
+        "cb_success": f_wbs_success
     });
 }
 
@@ -257,13 +362,13 @@ function f_del_member(req, res) {
  ** route and start
  */
 app
-    .get("/api/group", f_get_group)
-    .post("/api/group", f_add_group)
-    .delete("/api/group/:group_id", f_del_group)
-    .get("/api/member", f_get_member)
-    .post("/api/member", f_add_member)
-    .delete("/api/member/:member_id", f_del_member)
-    .use(function(req, res, next) {
+    .get("/api/group", f_wbs_get_group)
+    .post("/api/group", f_wbs_add_group)
+    .delete("/api/group/:group_id", f_wbs_del_group)
+    .get("/api/member", f_wbs_get_member)
+    .post("/api/member", f_wbs_add_member)
+    .delete("/api/member/:member_id", f_wbs_del_member)
+    .use(function(req, res) {
         res.setHeader("Content-Type", "text/plain");
         res.status(404).send("Page not found");
     })
