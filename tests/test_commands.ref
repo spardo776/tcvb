@@ -1,49 +1,49 @@
 
 === list all groups ===
 
-[{"day":"lundi","hour":18,"court":1,"level":"vert","free":2,"size":6,"year":2008,"id":"_lundi_18_1"},{"day":"lundi","hour":19,"court":2,"level":"violet","free":5,"size":6,"year":2010,"id":"_lundi_19_2"},{"level":"vert","free":0,"size":6,"year":2008,"day":"mardi","hour":17,"court":2,"id":"_mardi_17_2"}]
+[{"day":"lundi","hour":18,"court":1,"level":"vert","size":6,"year":2008,"id":"_lundi_18_1","member":[{"name":"too","firstname":"alfred","year":2008,"group_id":"_lundi_18_1","id":"_too_alfred"}]},{"day":"lundi","hour":19,"court":2,"level":"violet","size":6,"year":2010,"id":"_lundi_19_2","member":[]},{"level":"vert","size":4,"year":2008,"day":"mardi","hour":17,"court":2,"id":"_mardi_17_2","member":[{"name":"a","firstname":"a","year":2008,"group_id":"_mardi_17_2","id":"_a_a"},{"name":"b","firstname":"b","year":2008,"group_id":"_mardi_17_2","id":"_b_b"},{"name":"c","firstname":"c","year":2008,"group_id":"_mardi_17_2","id":"_c_c"},{"name":"d","firstname":"d","year":2008,"group_id":"_mardi_17_2","id":"_d_d"}]}]
 HTTP200
 
 
 === list groups 2008 ===
 
-[{"day":"lundi","hour":18,"court":1,"level":"vert","free":2,"size":6,"year":2008,"id":"_lundi_18_1"},{"level":"vert","free":0,"size":6,"year":2008,"day":"mardi","hour":17,"court":2,"id":"_mardi_17_2"}]
+[{"day":"lundi","hour":18,"court":1,"level":"vert","size":6,"year":2008,"id":"_lundi_18_1","member":[{"name":"too","firstname":"alfred","year":2008,"group_id":"_lundi_18_1","id":"_too_alfred"}]},{"level":"vert","size":4,"year":2008,"day":"mardi","hour":17,"court":2,"id":"_mardi_17_2","member":[{"name":"a","firstname":"a","year":2008,"group_id":"_mardi_17_2","id":"_a_a"},{"name":"b","firstname":"b","year":2008,"group_id":"_mardi_17_2","id":"_b_b"},{"name":"c","firstname":"c","year":2008,"group_id":"_mardi_17_2","id":"_c_c"},{"name":"d","firstname":"d","year":2008,"group_id":"_mardi_17_2","id":"_d_d"}]}]
 HTTP200
 
 
 === list groups vert ===
 
-[{"day":"lundi","hour":18,"court":1,"level":"vert","free":2,"size":6,"year":2008,"id":"_lundi_18_1"},{"level":"vert","free":0,"size":6,"year":2008,"day":"mardi","hour":17,"court":2,"id":"_mardi_17_2"}]
+[{"day":"lundi","hour":18,"court":1,"level":"vert","size":6,"year":2008,"id":"_lundi_18_1","member":[{"name":"too","firstname":"alfred","year":2008,"group_id":"_lundi_18_1","id":"_too_alfred"}]},{"level":"vert","size":4,"year":2008,"day":"mardi","hour":17,"court":2,"id":"_mardi_17_2","member":[{"name":"a","firstname":"a","year":2008,"group_id":"_mardi_17_2","id":"_a_a"},{"name":"b","firstname":"b","year":2008,"group_id":"_mardi_17_2","id":"_b_b"},{"name":"c","firstname":"c","year":2008,"group_id":"_mardi_17_2","id":"_c_c"},{"name":"d","firstname":"d","year":2008,"group_id":"_mardi_17_2","id":"_d_d"}]}]
 HTTP200
 
 
 === list groups vert free ===
 
-[{"day":"lundi","hour":18,"court":1,"level":"vert","free":2,"size":6,"year":2008,"id":"_lundi_18_1"},{"level":"vert","free":0,"size":6,"year":2008,"day":"mardi","hour":17,"court":2,"id":"_mardi_17_2"}]
+[{"day":"lundi","hour":18,"court":1,"level":"vert","size":6,"year":2008,"id":"_lundi_18_1","member":[{"name":"too","firstname":"alfred","year":2008,"group_id":"_lundi_18_1","id":"_too_alfred"}]}]
 HTTP200
 
 
 === add group _mercredi_10_1 ===
 
-OK
-HTTP200
+Created
+HTTP201
 
 
 === show group rouge ===
 
-[{"day":"mercredi","hour":10,"court":1,"level":"rouge","size":6,"year":2005,"id":"_mercredi_10_1"}]
+[{"day":"mercredi","hour":10,"court":1,"level":"rouge","size":6,"year":2005,"id":"_mercredi_10_1","member":[]}]
 HTTP200
 
 
 === add member ===
 
-OK
-HTTP200
+Created
+HTTP201
 
 
 === show group rouge ===
 
-[{"day":"mercredi","hour":10,"court":1,"level":"rouge","size":6,"year":2005,"id":"_mercredi_10_1"}]
+[{"day":"mercredi","hour":10,"court":1,"level":"rouge","size":6,"year":2005,"id":"_mercredi_10_1","member":[{"name":"hugo","firstname":"tonelli","year":2008,"group_id":"_mercredi_10_1","id":"_hugo_tonelli"}]}]
 HTTP200
 
 
@@ -61,24 +61,24 @@ HTTP400
 
 === delete membre ===
 
-OK
-HTTP200
+
+HTTP204
 
 
 === show group rouge with no member ===
 
-[{"day":"mercredi","hour":10,"court":1,"level":"rouge","size":6,"year":2005,"id":"_mercredi_10_1"}]
+[{"day":"mercredi","hour":10,"court":1,"level":"rouge","size":6,"year":2005,"id":"_mercredi_10_1","member":[]}]
 HTTP200
 
 
 === delete group _mercredi_10_1 ===
 
-OK
-HTTP200
+
+HTTP204
 
 
 === show group rouge ===
 
-OK
+[]
 HTTP200
 

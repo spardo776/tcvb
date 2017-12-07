@@ -6,11 +6,14 @@ then
 else
   sh ./test_commands.sh > test_commands.out
   diff test_commands.ref test_commands.out
+
   if [ "$?" = 0 ]
   then
-	echo "SUCCEED"
+  cat test_commands.out
+	status='\e[32m***SUCCEED***\e[39;49m'
   else
-	echo "FAILED"
+	status='\e[31m***FAILED***\e[39;49m'
   fi
+  echo -e $status
 fi
 
