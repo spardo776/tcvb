@@ -7,51 +7,7 @@
  **/
 var fs = require("fs");
 
-/*
- ** data dictionary
-
-    {
-     "<object_name>": 
-        {
-            "caption": "<caption>",
-            "fields": {
-            "<field_name>": "<rule string : M for mandat, I for integer",
-            ...
-            },
-            "pkey": ["field_name", ...]
-        },
-    ...
-    },
-
- ** 
- */
-
-var go_dict = {
-    "group": {
-        "caption": "groupe",
-        "fields": {
-            "day": "MS",
-            "hour": "MI",
-            "court": "MI",
-            "level": "MS",
-            "size": "MI",
-            "year": "MI"
-        },
-        "pkey": ["day", "hour", "court"]
-    },
-
-    "member": {
-        "caption": "membre",
-        "fields": {
-            "name": "MS",
-            "firstname": "MS",
-            "year": "MI",
-            "group_id": "MS"
-        },
-        "pkey": ["name", "firstname"]
-    }
-};
-
+var go_dict= require("./dict_tcvb");
 
 /*
  ** utilities
@@ -351,7 +307,7 @@ function f_wbs_get_group(req, res) {
         "cb_failure": f_wbs_failure,
         "cb_success": function(po_ctxt) { 
             if (po_ctxt.data_in.hasOwnProperty("is_free"))
-            { console.log('est isfree')
+            { 
                 po_ctxt.data_out=po_ctxt.data_out.filter(
                     function (po_object) {
                         return (! po_object.member)||(! po_object.member.length)||(po_object.size - po_object.member.length > 0);
