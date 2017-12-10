@@ -71,6 +71,18 @@ HTTP204
 HTTP200
 
 
+=== update group _mercredi_10_1 ===
+
+OK
+HTTP200
+
+
+=== show group rouge(size 4) ===
+
+[{"day":"mercredi","hour":10,"court":1,"level":"rouge","size":4,"year":2006,"id":"_mercredi_10_1","member":[]}]
+HTTP200
+
+
 === delete group _mercredi_10_1 ===
 
 

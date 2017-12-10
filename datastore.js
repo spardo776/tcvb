@@ -32,14 +32,14 @@ function f_get_data_path(ls_class) {
 // validate object fields
 function f_validate_fields(po_ctxt, po_object) {
 
-    var lo_mydict = go_dict[po_ctxt.name];
+    var lo_mydict = po_ctxt.dict[po_ctxt.name];
 
     Object.keys(lo_mydict.fields).forEach(
         function(ps_field_name) {
             var lo_msg = {};
 
             var lx_field_value = po_ctxt.data_in[ps_field_name];
-            var ls_field_rule = go_dict[po_ctxt.name].fields[ps_field_name];
+            var ls_field_rule = po_ctxt.dict[po_ctxt.name].fields[ps_field_name];
             if (ls_field_rule.match(/M/) && (!lx_field_value)) {
                 lo_msg.msg = ps_field_name + " est obligatoire";
                 po_ctxt.msgs.push(lo_msg);
@@ -62,7 +62,7 @@ exports.f_del_object = function (po_ctxt) {
 
     console.log('f_del_object', po_ctxt.name, po_ctxt.data_in);
 
-    var lo_mydict = go_dict[po_ctxt.name];
+    var lo_mydict = po_ctxt.dict[po_ctxt.name];
     po_ctxt.msgs = [];
     po_ctxt.data_out = [];
     po_ctxt.http_success=204;
@@ -99,7 +99,7 @@ exports.f_add_object=function (po_ctxt) {
     po_ctxt.http_failure=400;
     po_ctxt.http_body=false;
 
-    var lo_mydict = go_dict[po_ctxt.name];
+    var lo_mydict = po_ctxt.dict[po_ctxt.name];
 
     f_validate_fields(po_ctxt, lo_object);
 
@@ -146,7 +146,63 @@ exports.f_add_object=function (po_ctxt) {
     }
 };
 
+// generic add function
+exports.f_upd_object=function (po_ctxt) {
+    
+        console.log('f_upd_object', po_ctxt.name, po_ctxt.data_in);
+    
+        var lo_object = {};
+    
+        po_ctxt.msgs = [];
+        po_ctxt.data_out = [];
+        po_ctxt.http_success=200;
+        po_ctxt.http_failure=400;
+        po_ctxt.http_body=false;
+    
+        var lo_mydict = po_ctxt.dict[po_ctxt.name];
+    
+            
+        f_validate_fields(po_ctxt, lo_object);
+    
+        lo_object.id=po_ctxt.data_in.id;
 
+        if (!po_ctxt.msgs.length) {
+                    
+            var ls_filename = f_get_data_path(po_ctxt.name) + lo_object.id + ".json";
+            // check unicity
+            fs.stat(ls_filename,
+                function(err) {
+                    if (! ( (err) && (err.code === "ENOENT"))) {
+                        // complete and store record
+                        var ls_data = JSON.stringify(lo_object);
+                        fs.writeFile(ls_filename, ls_data, function(err) {
+                            if (err) {
+                                po_ctxt.msgs.push({
+                                    "msg": "echec modification " + lo_mydict.caption,
+                                    "diag": err
+                                });
+                                po_ctxt.cb_failure(po_ctxt);
+    
+                            } else {
+                                po_ctxt.cb_success(po_ctxt);
+                            }
+                        });
+                    } else {
+                        po_ctxt.msgs.push({
+                            "msg": lo_mydict.caption + "n'existe pas",
+                            "diag": err
+                        });
+                        po_ctxt.cb_failure(po_ctxt);
+    
+                    }
+                }
+            );
+        } else {
+            po_ctxt.cb_failure(po_ctxt);
+        }
+    };
+    
+    
 // generic get children
 function f_get_children(po_ctxt) {
 
@@ -170,7 +226,7 @@ function f_get_children(po_ctxt) {
                         lo_child_data_in[po_ctxt.name + "_id"] = po_object.id;
 
                         // get children
-                        f_get_object({
+                        exports.f_get_object({
                             "name": ps_child_name,
                             "data_in": lo_child_data_in,
                             "res" : po_ctxt.res, // same as object
@@ -275,7 +331,7 @@ exports.f_get_object = function (po_ctxt) {
 
 // callback wbs failure
 exports.f_wbs_failure = function (po_ctxt) {
-    console.log('f_wbs_failure', po_ctxt.msgs.length);
+    console.log('f_wbs_failure', po_ctxt.msgs.length, po_ctxt.msgs[0]);
     po_ctxt.res.setHeader("Content-type", "application/json");
     po_ctxt.res.status(po_ctxt.http_failure).json(po_ctxt.msgs);
 };

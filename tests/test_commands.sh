@@ -41,6 +41,12 @@ curl $curlopt -w '\nHTTP%{http_code}\n\n' -H "Content-Type: application/json" --
 title "show group rouge with no member"
 curl $curlopt 'http://localhost:8080/api/group?level=rouge'
 
+title "update group _mercredi_10_1"
+curl $curlopt -w '\nHTTP%{http_code}\n\n' -H "Content-Type: application/json" --request PUT --data @upd_group.json 'http://localhost:8080/api/group' 
+
+title "show group rouge(size 4)"
+curl $curlopt 'http://localhost:8080/api/group?level=rouge'
+
 title "delete group _mercredi_10_1"
 curl $curlopt -w '\nHTTP%{http_code}\n\n' -H "Content-Type: application/json" --request DELETE 'http://localhost:8080/api/group/_mercredi_10_1' 
 
