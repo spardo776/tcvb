@@ -152,10 +152,12 @@ app
     .post("/api/member", f_wbs_add_member)
     .put("/api/member", f_wbs_upd_member)
     .delete("/api/member/:member_id", f_wbs_del_member)
-    .use(function(req, res) {
-        res.setHeader("Content-Type", "text/plain");
-        res.status(404).send("Page not found;");
-    })
+    .use(express.static(__dirname+"/static"))
+    // .use(function(req, res) {
+    //     res.setHeader("Content-Type", "text/plain");
+    //     res.status(404).send("Page not found");
+    // })
     .listen(port);
 
-console.log("listening on port " + port);
+var log_date=new Date(Date.now());    
+console.log(log_date.toUTCString()+" listening on port " + port);
