@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>alarms with bootstrap</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- include css -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb"
+        crossorigin="anonymous">
+
+
+
+    <!-- include js -->
+</head>
+
+<body>
+    <!-- header -->
+    <div style="background:lightgrey">
+        <h4 style="text-align:center">search alarms with bootstrap</h4>
+    </div>
+
+    <!-- main -->
+    <div class="container">
+        <form>
+            <!--grid -->
+            <div class="form-group">
+                <!-- search -->
+                <input class="form-control" type="text" placeholder="search">
+            </div>
+            <div class="form-row">
+                <!-- col 1 -->
+                <div class="form-group col-md">
+                    <label for="bb">level</label> 
+                    <div id="bb" class="btn-group form-control" role="group" >
+                        <button type="button" class="btn btn-secondary">
+                            <span style="background-color:grey">&nbsp;&nbsp;</span>
+                        </button>
+                        <button type="button" class="btn btn-secondary">
+                            <span style="background-color:purple">&nbsp;&nbsp;</span>
+                        </button>
+                        <button type="button" class="btn btn-secondary">
+                            <span style="background-color:red">&nbsp;&nbsp;</span>
+                        </button>
+                        <button type="button" class="btn btn-secondary">
+                            <span style="background-color:orange">&nbsp;&nbsp;</span>
+                        </button>
+                        <button type="button" class="btn btn-secondary">
+                            <span style="background-color:green">&nbsp;&nbsp;</span>
+                        </button>
+                    </div>
+                </div>
+                <!-- col 2 -->
+                <div class="form-group col-md">
+                    <label for="farm">farm</label>
+                    <select id="farm" class="form-control">
+                        <option value="all">all</option>
+                        <option value="vdr-a">vdra-a</option>
+                        <option value="vdr-p">vdr-q</option>
+                        <option value="vdr-q">vdr-p</option>
+                    </select>
+                </div>
+            </div>
+        </form>
+        <p>
+            ?
+        </p>
+    </div>
+
+    <!-- footer -->
+    <div style="background:lightgrey;">
+        <h4 style="text-align:center">...</h4>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

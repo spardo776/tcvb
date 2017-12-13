@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>alarms with materialize</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
+
+    <!-- Compiled and minified JavaScript -->
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+</head>
+
+<body>
+    <!-- header -->
+    <header>
+        <nav>
+            <div class="nav-wrapper">
+                <a href="#" class="brand-logo center">search alarms with materialize</a>
+            </div>
+        </nav>
+    </header>
+
+
+    <!-- main -->
+    <main class="container">
+        
+            <!-- search -->
+                <div>
+                <form>
+                    <!-- search -->
+                    <div class="input-field">
+                        <i class="material-icons prefix">search</i>
+                        <input>
+                    </div>
+                    <!--grid -->
+                    <div class="row">
+                        <!-- col 1 -->
+                        <div class="input-field col s12 m6">
+                            <label>level</label>
+                                <a class="btn-flat waves-effect grey" href="#"></a>
+                                <a class="btn-flat waves-effect purple"></a>
+                                <a class="btn-flat waves-effect red"></a>
+                                <a class="btn-flat waves-effect orange"></a>
+                                <a class="btn-flat waves-effect green"></a>    
+        
+                        </div>
+
+                        <!-- col 2 -->
+                        <div class="input-field col s12 m6">
+                <select>
+                    <option value="all">all</option>
+                    <option value="vdra-a">vdra-a</option>
+                    <option value="vdra-p">vdra-p</option>
+                    <option value="vdra-q">vdra-q</option>
+                </select>
+                            <label>farm</label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!--collapsible response -->
+            <div>
+                <ul class="collapsible" data-collapsible="accordion">
+                    <li>
+                        <div class="collapsible-header">xvoi.vmgini-pweb2</div>
+                        <div class="collapsible-body">
+                            <ul class="collection">
+                                <a href="#" class="collection-item">
+                                    <span style="background-color:red;border-radius:5px">&nbsp;&nbsp;</span>&nbsp;s60 (purge old files)</a>
+                                <a href="#" class="collection-item">
+                                    <span style="background-color:orange;border-radius:5px">&nbsp;&nbsp;</span>&nbsp;s64 (apache rotate)</a>
+                                <a href="#" class="collection-item">
+                                    <span style="background-color:green;border-radius:5px">&nbsp;&nbsp;</span>&nbsp;s92 (monitor flows out)</a>
+                            </ul>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            
+    </main>
+
+
+    <!-- footer -->
+    <footer class="page-footer">
+        <h5 class="center-align">no horizontal radiobuttons - used buttons instead</h5>
+        <div class="footer-copyright">
+            <div class="container">
+                test
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        $(document).ready(function () {
+            console.log('init select');
+            $('select').material_select();
+        });
+    </script>
+
+</body>
+
+</html>

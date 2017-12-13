@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>alarms with pure</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- include css -->
+
+    <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css" integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w"
+        crossorigin="anonymous">
+    <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/grids-responsive-min.css">
+
+    <!-- include js -->
+</head>
+
+<body>
+    <!-- header -->
+    <div style="background:lightgrey">
+        <h4 style="text-align:center">search alarms with pure</h4>
+    </div>
+
+    <!-- main -->
+    <div>
+        <form class="pure-form pure-form-stacked">
+            <!--grid -->
+            <div class="pure-g">
+                <!-- search -->
+                <div class="pure-u-1">
+                    <input class="pure-input-1" type="text" placeholder="search">
+                </div>
+                <!-- col 1 -->
+                <div class="pure-u-1 pure-u-md-1-2">
+                    <label for="bb">level</label>
+                    <div id="bb" class="pure-button-group" role="group" aria-label="...">
+                        <button class="pure-button">
+                                <span style="background-color:grey">&nbsp;&nbsp;</span>
+                        </button>
+                        <button class="pure-button">
+                            <span style="background-color:purple">&nbsp;&nbsp;</span>
+                        </button>
+                        <button class="pure-button">
+                            <span style="background-color:red">&nbsp;&nbsp;</span>
+                        </button>
+                        <button class="pure-button">
+                            <span style="background-color:orange">&nbsp;&nbsp;</span>
+                        </button>
+                        <button class="pure-button">
+                            <span style="background-color:green">&nbsp;&nbsp;</span>
+                        </button>
+                    </div>
+                </div>
+                <!-- col 2 -->
+                <div class="pure-u-1 pure-u-md-1-2">
+                    <label for="farm">farm</label>
+                    <select id="farm" class="pure-input-1">
+                        <option value="all">all</option>
+                        <option value="vdr-a">vdra-a</option>
+                        <option value="vdr-p">vdr-q</option>
+                        <option value="vdr-q">vdr-p</option>
+                    </select>
+                </div>
+            </div>
+        </form>
+        <p>
+            ?
+        </p>
+    </div>
+
+    <!-- footer -->
+    <div style="background:lightgrey;">
+        <h4 style="text-align:center">no accordion in framework. no horizontal radiobuttons - used buttons instead</h4>
+    </div>
+</body>
+
+</html>
