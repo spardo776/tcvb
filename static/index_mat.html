@@ -1,22 +1,19 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <title>alarms with materialize</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
     <!-- Compiled and minified CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
-
-    <!-- Compiled and minified JavaScript -->
-    <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
-
-
+    <!-- icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-
 </head>
-
+<!--
+    good documentation https://foundation.zurb.com/sites/docs
+    google material design
+    version 1.0 alpha
+    no customized checkbox => use button group for levels
+-->
 <body>
     <!-- header -->
     <header>
@@ -26,11 +23,8 @@
             </div>
         </nav>
     </header>
-
-
     <!-- main -->
     <main class="container">
-        
             <!-- search -->
                 <div>
                 <form>
@@ -51,7 +45,6 @@
                                 <a class="btn-flat waves-effect green"></a>    
         
                         </div>
-
                         <!-- col 2 -->
                         <div class="input-field col s12 m6">
                 <select>
@@ -65,7 +58,6 @@
                     </div>
                 </form>
             </div>
-
             <!--collapsible response -->
             <div>
                 <ul class="collapsible" data-collapsible="accordion">
@@ -86,25 +78,23 @@
             </div>
             
     </main>
-
-
     <!-- footer -->
     <footer class="page-footer">
         <h5 class="center-align">no horizontal radiobuttons - used buttons instead</h5>
-        <div class="footer-copyright">
+        <!-- <div class="footer-copyright">
             <div class="container">
                 test
             </div>
-        </div>
+        </div> -->
     </footer>
-
+    <!-- Compiled and minified JavaScript -->
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
     <script>
-        $(document).ready(function () {
-            console.log('init select');
-            $('select').material_select();
-        });
-    </script>
-
+            $(document).ready(function () {
+                console.log('init select');
+                $('select').material_select();
+            });
+        </script>
 </body>
-
 </html>

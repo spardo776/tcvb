@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>alarms with foundation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- include css -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/semantic-ui/2.2.13/semantic.min.css">
+
+</head>
+<!--
+    good documentation https://foundation.zurb.com/sites/docs
+    no header => use topbar
+    no footer => use top bar
+    no customized checkbox => use button group for levels
+-->
+
+<body>
+    <!-- header -->
+    <div class="top-bar">
+        <div class="top-bar-left">
+            <ul class="menu">
+                <li class="menu-text">search alarm with foundation</li>
+            </ul>
+        </div>
+    </div>
+    <!-- main -->
+    <br>
+    <div class="container">
+        <form>
+            <!-- search -->
+
+            <!--grid -->
+            <div class="grid-container">
+                <div class="grid-x">
+                    <div class="cell">
+                        <input type="text" placeholder="search">
+                    </div>
+                    <!-- col 1 -->
+                    <div class="medium-6 cell">
+                        <label for="bg">level</label>
+                        <div id="bg" class="button-group">
+                            <a class="secondary button">&nbsp;&nbsp;&nbsp;</a>
+                            <a class="button" style="background-color:purple">&nbsp;&nbsp;&nbsp;</a>
+                            <a class="alert button">&nbsp;&nbsp;&nbsp;</a>
+                            <a class="warning button">&nbsp;&nbsp;&nbsp;</a>
+                            <a class="success button">&nbsp;&nbsp;&nbsp;</a>
+                        </div>
+                    </div>
+                    <!-- col 2 -->
+                    <div class="medium-6 cell">
+                        <label for="farm">farm</label>
+                        <select id="farm" class="form-control">
+                            <option value="all">all</option>
+                            <option value="vdr-a">vdra-a</option>
+                            <option value="vdr-p">vdr-q</option>
+                            <option value="vdr-q">vdr-p</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <!-- result -->
+        <div class="grid-container">
+
+            <div class="accordion" data-accordion data-allow-all-closed="true">
+                <li class="accordion-item" data-accordion-item>
+                    <a href="#" class="accordion-title">xvoi.vmgini-pweb</a>
+                    <div class="accordion-content" data-tab-content>
+                        <div>
+                            <a href="#">
+                                <span style="background-color:red;border-radius:5px">&nbsp;&nbsp;</span>&nbsp;s60 (purge old files)</a>
+                        </div>
+                        <div>
+                            <a href="#">
+                                <span style="background-color:orange;border-radius:5px">&nbsp;&nbsp;</span>&nbsp;s64 (apache rotate)</a>
+                        </div>
+                        <div>
+                            <a href="#">
+                                <span style="background-color:green;border-radius:5px">&nbsp;&nbsp;</span>&nbsp;s92 (monitor flows out)</a>
+                        </div>
+                    </div>
+                </li>
+            </div>
+        </div>
+    </div>
+    <br>
+    <!-- footer -->
+    <div class="top-bar">
+        <div class="top-bar-left">
+            <ul class="menu">
+                <li class="menu-text">...</li>
+            </ul>
+        </div>
+    </div>
+    <!-- include js -->
+        <script src="https://cdn.jsdelivr.net/semantic-ui/2.2.13/semantic.min.js"></script>
+</body>
+
+</html>
