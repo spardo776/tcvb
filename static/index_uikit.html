@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>alarms with uikit</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- include css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.0-beta.35/css/uikit.min.css" />
+
+</head>
+<!--
+    has prefix
+-->
+
+<body>
+    <!-- header -->
+    <div class="">
+        <div class="">
+            search alarm with uikit
+        </div>
+    </div>
+    <!-- main -->
+
+    <div class="uk-container">
+        <form class="">
+            <!-- search -->
+                <div class="">
+                    <span class="uk-form-icon" uk-icon="icon: search"></span>
+                    <input class="uk-input" placeholder="search" type="text">
+                </div>
+            <div uk-grid class="uk-child-width-1-2@m">
+                <!-- col 1 -->
+                <div class="">
+                    <label for="bg">level</label>
+                    <div id="bg" class="uk-button-group">
+                        <a class="uk-button uk-button-default" style="background-color: grey">&nbsp;&nbsp;&nbsp;</a>
+                        <a class="uk-button uk-button-default" style="background-color: purple">&nbsp;&nbsp;&nbsp;</a>
+                        <a class="uk-button uk-button-default" style="background-color: red">&nbsp;&nbsp;&nbsp;</a>
+                        <a class="uk-button uk-button-default" style="background-color: yellow">&nbsp;&nbsp;&nbsp;</a>
+                        <a class="uk-button uk-button-default" style="background-color: green">&nbsp;&nbsp;&nbsp;</a>
+                    </div>
+                </div>
+
+                <!-- col 2 -->
+                <div class="">
+                    <label for="farm">farm</label>
+                    <select id="farm" class="uk-select">
+                        <option value="all">all</option>
+                        <option value="vdr-a">vdra-a</option>
+                        <option value="vdr-p">vdr-q</option>
+                        <option value="vdr-q">vdr-p</option>
+                    </select>
+                </div>
+            </div>
+        </form>
+        <!-- result -->
+
+        <div>
+            <ul uk-accordion>
+                <li>
+                    <h3 class="uk-accordion-title">xvoi.vmgini-pweb</h3>
+                    <div class="uk-accordion-content">
+                        <div>
+                            <a href="#">
+                                <span style="background-color:red;border-radius:5px">&nbsp;&nbsp;</span>&nbsp;s60 (purge old files)</a>
+                        </div>
+                        <div>
+                            <a href="#">
+                                <span style="background-color:orange;border-radius:5px">&nbsp;&nbsp;</span>&nbsp;s64 (apache rotate)</a>
+                        </div>
+                        <div>
+                            <a href="#">
+                                <span style="background-color:green;border-radius:5px">&nbsp;&nbsp;</span>&nbsp;s92 (monitor flows out)</a>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <!-- footer -->
+    <div class="">
+        <div class="">
+            ...
+        </div>
+    </div>
+    <!-- include js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.0-beta.35/js/uikit.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.0-beta.35/js/uikit-icons.min.js"></script>
+</body>
+</html>
