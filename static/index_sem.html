@@ -10,78 +10,102 @@
 </head>
 
 <body>
-    <!-- header -->
-    <div class="ui menu">
-        <div class="header item">
-            search alarm with semantic UI
-        </div>
+    <div class="ui sidebar">
+        <h3>help</h3>
+        <p>
+
+            this page allows to search for a specific alarm. You can filter by level and farm. to select all levels press the grey button.
+            the text search field can be used to filter on the alarm name. The result is provided by module, and can be expanded
+            to show all related alarms.
+        </p>
     </div>
-    <!-- main -->
-
-    <div class="ui container">
-        <form class="ui equal width form">
-            <!-- search -->
-            <div class="field">
-                <div class="ui icon input">
-                    <i class="search icon"></i>
-                    <input placeholder="search" type="text">
-                </div>
-            </div>
-            <div class="fields">
-                <!-- col 1 -->
-                <div class="field">
-                <label for="bg">level</label>
-                <div class="ui buttons">
-                    <a class="ui grey button">&nbsp;&nbsp;&nbsp;</a>
-                    <a class="ui purple button">&nbsp;&nbsp;&nbsp;</a>
-                    <a class="ui red button">&nbsp;&nbsp;&nbsp;</a>
-                    <a class="ui yellow button">&nbsp;&nbsp;&nbsp;</a>
-                    <a class="ui green button">&nbsp;&nbsp;&nbsp;</a>
-                </div>
-                </div>
-
-                <!-- col 2 -->
-                <div class="field">
-                    <label for="farm">farm</label>
-                    <select id="farm" class="ui selection dropdown">
-                        <option value="all">all</option>
-                        <option value="vdr-a">vdra-a</option>
-                        <option value="vdr-p">vdr-q</option>
-                        <option value="vdr-q">vdr-p</option>
-                    </select>
-                </div>
-            </div>
-        </form>
-        <!-- result -->
-        <div>
-            <div class="ui styled accordion fluid">
-                <div class="title">
-                    <i class="dropdown icon"></i>
-                    xvoi.vmgini-pweb
-                </div>
-                <div class="content">
-                    <div>
-                        <a href="#">
-                            <span style="background-color:red;border-radius:5px">&nbsp;&nbsp;</span>&nbsp;s60 (purge old files)</a>
-                    </div>
-                    <div>
-                        <a href="#">
-                            <span style="background-color:orange;border-radius:5px">&nbsp;&nbsp;</span>&nbsp;s64 (apache rotate)</a>
-                    </div>
-                    <div>
-                        <a href="#">
-                            <span style="background-color:green;border-radius:5px">&nbsp;&nbsp;</span>&nbsp;s92 (monitor flows out)</a>
-                    </div>
-                </div>
+    <div class="pusher">
+        <!-- header -->
+        <div class="ui menu">
+            <div class="header item">
+                search alarm with semantic UI
             </div>
         </div>
-    </div>
+        <!-- breadcrumb -->
+        <div class="ui breadcrumb">
+            <a class="section">alarm</a>
+            <div class="divider"> / </div>
+            <a class="section">search</a>
+            <div class="divider"> / </div>
+            <div class="active section">semantic ui</div>
+        </div>
+        <!-- main -->
+
+        <div class="ui container">
+            <form class="ui equal width form">
+                <!-- search -->
+                <div class="field">
+                    <div class="ui icon input">
+                        <i class="search icon"></i>
+                        <input placeholder="search" type="text">
+                    </div>
+                </div>
+                <div class="fields">
+                    <!-- col 1 -->
+                    <div class="field">
+                        <label for="bg">level</label>
+                        <div class="ui buttons">
+                            <a class="ui grey button" data-tooltip="all levels" data-position="bottom center">&nbsp;&nbsp;&nbsp;</a>
+                            <a class="ui purple button">&nbsp;&nbsp;&nbsp;</a>
+                            <a class="ui red button">&nbsp;&nbsp;&nbsp;</a>
+                            <a class="ui yellow button">&nbsp;&nbsp;&nbsp;</a>
+                            <a class="ui green button">&nbsp;&nbsp;&nbsp;</a>
+                        </div>
+                    </div>
+
+                    <!-- col 2 -->
+                    <div class="field">
+                        <label for="farm">farm</label>
+                        <select id="farm" class="ui selection dropdown">
+                            <option value="all">all</option>
+                            <option value="vdr-a">vdra-a</option>
+                            <option value="vdr-p">vdr-q</option>
+                            <option value="vdr-q">vdr-p</option>
+                        </select>
+                    </div>
+                </div>
+            </form>
+            <!-- result -->
+            <div>
+                <a class="ui blue circular label">1</a>
+                <div class="ui styled accordion fluid">
+                    <div class="title">
+                        <i class="dropdown icon"></i>
+                        xvoi.vmgini-pweb
+                    </div>
+                    <div class="content ui divided list">
+                        <div class="item">
+                            <a href="#">
+                                <span style="background-color:red;border-radius:5px">&nbsp;&nbsp;</span>&nbsp;s60 (purge old files)</a>
+                        </div>
+                        <div class="item">
+                            <a href="#">
+                                <span style="background-color:orange;border-radius:5px">&nbsp;&nbsp;</span>&nbsp;s64 (apache rotate)</a>
+                        </div>
+                        <div class="item">
+                            <a href="#">
+                                <span style="background-color:green;border-radius:5px">&nbsp;&nbsp;</span>&nbsp;s92 (monitor flows out)</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="ui warning message">
+                <i class="close icon"></i>
+                <div class="header">
+                    this is a warning alert !
+                </div>
+            </div>
+        </div>
 
 
-    <!-- footer -->
-    <div class="ui menu">
-        <div class="header item">
-            ...
+        <!-- footer -->
+        <div class="ui menu">
+            <a id="bo_help" class="item" href="#">help</a>
         </div>
     </div>
     <!-- include js -->
@@ -91,6 +115,18 @@
         $(document).ready(function () {
 
             $('.ui.accordion').accordion();
+
+            $('.message .close')
+                .on('click', function () {
+                    $(this)
+                        .closest('.message')
+                        .transition('fade')
+                        ;
+                });
+            $(bo_help).on('click',
+                function () {
+                    $('.ui.sidebar')
+                    .sidebar('toggle')});
         });
 
     </script>

@@ -14,36 +14,49 @@
 
 <body>
     <!-- header -->
-    <div class="">
-        <div class="">
-            search alarm with uikit
+    <nav class="uk-margin uk-background-primary uk-light" uk-navbar>
+        <div class="uk-navbar-center">
+            <a class="uk-navbar-item uk-logo" href="#">search alarm with uikit </a>
         </div>
-    </div>
+    </nav>
+    <!-- breadcrumb -->
+    <ul class="uk-breadcrumb">
+        <li>
+            <a href="">alarm</a>
+        </li>
+        <li>
+            <a href="">search</a>
+        </li>
+        <li>
+            <span href="">uikit</span>
+        </li>
+    </ul>
     <!-- main -->
-
     <div class="uk-container">
-        <form class="">
+
+        <form class="uk-form-stacked">
             <!-- search -->
-                <div class="">
-                    <span class="uk-form-icon" uk-icon="icon: search"></span>
-                    <input class="uk-input" placeholder="search" type="text">
+            <div uk-grid>
+                <div class="uk-width-1-1">
+                    <div class="uk-search uk-search-default uk-width-1-1" >
+                        <span uk-search-icon></span>
+                        <input class="uk-search-input" type="search" placeholder="search..">
+                    </div>
                 </div>
-            <div uk-grid class="uk-child-width-1-2@m">
-                <!-- col 1 -->
-                <div class="">
-                    <label for="bg">level</label>
+                <!-- row2 col 1 -->
+                <div class="uk-width-1-2@m uk-margin">
+                    <label class="uk-form-label">level</label>
                     <div id="bg" class="uk-button-group">
-                        <a class="uk-button uk-button-default" style="background-color: grey">&nbsp;&nbsp;&nbsp;</a>
+                        <a class="uk-button uk-button-default" style="background-color: grey" title="all levels" uk-tooltip="pos: bottom">&nbsp;&nbsp;&nbsp;</a>
                         <a class="uk-button uk-button-default" style="background-color: purple">&nbsp;&nbsp;&nbsp;</a>
                         <a class="uk-button uk-button-default" style="background-color: red">&nbsp;&nbsp;&nbsp;</a>
                         <a class="uk-button uk-button-default" style="background-color: yellow">&nbsp;&nbsp;&nbsp;</a>
                         <a class="uk-button uk-button-default" style="background-color: green">&nbsp;&nbsp;&nbsp;</a>
                     </div>
                 </div>
-
-                <!-- col 2 -->
-                <div class="">
-                    <label for="farm">farm</label>
+                <!-- row2 col 2 -->
+                <div class="uk-width-1-2@m uk-margin">
+                    <label class="uk-form-label">farm</label>
                     <select id="farm" class="uk-select">
                         <option value="all">all</option>
                         <option value="vdr-a">vdra-a</option>
@@ -54,37 +67,71 @@
             </div>
         </form>
         <!-- result -->
-
-        <div>
+        <span class="uk-badge">1</span>
+        <div class="uk-card uk-card-body uk-card-default">
             <ul uk-accordion>
                 <li>
                     <h3 class="uk-accordion-title">xvoi.vmgini-pweb</h3>
                     <div class="uk-accordion-content">
-                        <div>
-                            <a href="#">
-                                <span style="background-color:red;border-radius:5px">&nbsp;&nbsp;</span>&nbsp;s60 (purge old files)</a>
-                        </div>
-                        <div>
-                            <a href="#">
-                                <span style="background-color:orange;border-radius:5px">&nbsp;&nbsp;</span>&nbsp;s64 (apache rotate)</a>
-                        </div>
-                        <div>
-                            <a href="#">
-                                <span style="background-color:green;border-radius:5px">&nbsp;&nbsp;</span>&nbsp;s92 (monitor flows out)</a>
-                        </div>
+                        <ul class="uk-list uk-list-divider">
+                            <li>
+                                <a href="#">
+                                    <span style="background-color:red;border-radius:5px">&nbsp;&nbsp;</span>&nbsp;s60 (purge old files)</a>
+                            </li>
+                            <li>
+                                <a href="#">
+                                    <span style="background-color:orange;border-radius:5px">&nbsp;&nbsp;</span>&nbsp;s64 (apache rotate)</a>
+                            </li>
+                            <li>
+                                <a href="#">
+                                    <span style="background-color:green;border-radius:5px">&nbsp;&nbsp;</span>&nbsp;s92 (monitor flows out)</a>
+                            </li>
+                        </ul>
                     </div>
                 </li>
             </ul>
         </div>
-    </div>
-    <!-- footer -->
-    <div class="">
-        <div class="">
-            ...
+        <div class="uk-alert-warning" uk-alert>
+            <a class="uk-alert-close" uk-close></a>
+            <p>this is a warning alert</p>
         </div>
+    </div>
+
+    <!-- footer -->
+
+    <nav class="uk-margin uk-background-primary uk-light" uk-navbar>
+        <div class="uk-navbar-center">
+            <a class="uk-navbar-item uk-logo" href="#help" uk-toggle>help</a>
+        </div>
+    </nav>
+    <!-- side text -->
+    <div class="uk-offcanvas-content">
+        <!-- This is the off-canvas -->
+        <div id="help" uk-offcanvas>
+            <div class="uk-offcanvas-bar">
+
+                <button class="uk-offcanvas-close" type="button" uk-close></button>
+                <h3>help</h3>
+                <p>
+
+                    this page allows to search for a specific alarm. You can filter by level and farm. to select all levels press the grey button.
+                    the text search field can be used to filter on the alarm name. The result is provided by module, and
+                    can be expanded to show all related alarms.
+                </p>
+            </div>
+        </div>
+
     </div>
     <!-- include js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.0-beta.35/js/uikit.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.0-beta.35/js/uikit-icons.min.js"></script>
+    <script>UIkit.notification({
+            message: 'ready !',
+            status: 'primary',
+            timeout: 2000
+        });
+    </script>
+
 </body>
+
 </html>
