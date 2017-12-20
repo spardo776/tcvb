@@ -6,91 +6,124 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- include css -->
     <link rel="stylesheet" href="foundation/css/foundation.css" />
-
 </head>
 <!--
     good documentation https://foundation.zurb.com/sites/docs
-    no header => use topbar
+    no header => use top bar
     no footer => use top bar
     no customized checkbox => use button group for levels
+    no notification
 -->
 
 <body>
-    <!-- header -->
-    <div class="top-bar">
-        <div class="top-bar-left">
-            <ul class="menu">
-                <li class="menu-text">search alarm with foundation</li>
-            </ul>
-        </div>
-    </div>
-    <!-- main -->
-    <br>
-    <div class="container">
-        <form>
-            <!-- search -->
+    <div class="off-canvas position-left" id="offCanvas" data-off-canvas data-transition="overlap">
+        <h3>help</h3>
+        <p>
 
-            <!--grid -->
-            <div class="grid-container">
-                <div class="grid-x">
-                    <div class="cell">
-                        <input type="text" placeholder="search">
-                    </div>
-                    <!-- col 1 -->
-                    <div class="medium-6 cell">
-                        <label for="bg">level</label>
-                        <div id="bg" class="button-group">
-                            <a class="secondary button">&nbsp;&nbsp;&nbsp;</a>
-                            <a class="button" style="background-color:purple">&nbsp;&nbsp;&nbsp;</a>
-                            <a class="alert button">&nbsp;&nbsp;&nbsp;</a>
-                            <a class="warning button">&nbsp;&nbsp;&nbsp;</a>
-                            <a class="success button">&nbsp;&nbsp;&nbsp;</a>
+            this page allows to search for a specific alarm. You can filter by level and farm. to select all levels press the grey button.
+            the text search field can be used to filter on the alarm name. The result is provided by module, and can be expanded
+            to show all related alarms.
+        </p>
+        <button class="close-button" type="button" data-close>
+                <span>&times;</span>
+        </button>
+    </div>
+    <div class="off-canvas-content" data-off-canvas-content>
+        <!-- header -->
+        <div class="top-bar">
+            <div class="top-bar-left">
+                <ul class="menu">
+                    <li class="menu-text">search alarm with foundation</li>
+                </ul>
+            </div>
+        </div>
+        <!-- breadcrumb -->
+        <br>
+        <ul class="breadcrumbs">
+            <li>
+                <a href="#">alarm</a>
+            </li>
+            <li>
+                <a href="#">search</a>
+            </li>
+            <li>foundation</li>
+        </ul>
+        <!-- main -->
+        <br>
+        <div class="container">
+            <form>
+                <!-- search -->
+                <!--grid -->
+                <div class="grid-container">
+                    <div class="grid-x">
+                        <div class="cell">
+                            <input type="text" placeholder="search">
                         </div>
-                    </div>
-                    <!-- col 2 -->
-                    <div class="medium-6 cell">
-                        <label for="farm">farm</label>
-                        <select id="farm" class="form-control">
-                            <option value="all">all</option>
-                            <option value="vdr-a">vdra-a</option>
-                            <option value="vdr-p">vdr-q</option>
-                            <option value="vdr-q">vdr-p</option>
-                        </select>
+                        <!-- col 1 -->
+                        <div class="medium-6 cell">
+                            <label for="bg">level</label>
+                            <div id="bg" class="button-group">
+                                <a class="secondary button" data-tooltip class="has-tip" data-position="bottom" data-disable-hover="false" title="all levels">&nbsp;&nbsp;&nbsp;</a>
+                                <a class="button" style="background-color:purple">&nbsp;&nbsp;&nbsp;</a>
+                                <a class="alert button">&nbsp;&nbsp;&nbsp;</a>
+                                <a class="warning button">&nbsp;&nbsp;&nbsp;</a>
+                                <a class="success button">&nbsp;&nbsp;&nbsp;</a>
+                            </div>
+                        </div>
+                        <!-- col 2 -->
+                        <div class="medium-6 cell">
+                            <label for="farm">farm</label>
+                            <select id="farm" class="form-control">
+                                <option value="all">all</option>
+                                <option value="vdr-a">vdra-a</option>
+                                <option value="vdr-p">vdr-q</option>
+                                <option value="vdr-q">vdr-p</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </form>
-        <!-- result -->
-        <div class="grid-container">
-
-            <div class="accordion" data-accordion data-allow-all-closed="true">
-                <li class="accordion-item" data-accordion-item>
-                    <a href="#" class="accordion-title">xvoi.vmgini-pweb</a>
-                    <div class="accordion-content" data-tab-content>
-                        <div>
-                            <a href="#">
-                                <span style="background-color:red;border-radius:5px">&nbsp;&nbsp;</span>&nbsp;s60 (purge old files)</a>
+            </form>
+            <!-- result -->
+            <div class="grid-container">
+                <span class="badge">1</span>
+                <div class="accordion" data-accordion data-allow-all-closed="true">
+                    <li class="accordion-item" data-accordion-item>
+                        <a href="#" class="accordion-title">xvoi.vmgini-pweb</a>
+                        <div class="accordion-content" data-tab-content>
+                            <div>
+                                <a href="#">
+                                    <span style="background-color:red;border-radius:5px">&nbsp;&nbsp;</span>&nbsp;s60 (purge old files)</a>
+                            </div>
+                            <div>
+                                <a href="#">
+                                    <span style="background-color:orange;border-radius:5px">&nbsp;&nbsp;</span>&nbsp;s64 (apache rotate)</a>
+                            </div>
+                            <div>
+                                <a href="#">
+                                    <span style="background-color:green;border-radius:5px">&nbsp;&nbsp;</span>&nbsp;s92 (monitor flows out)</a>
+                            </div>
                         </div>
-                        <div>
-                            <a href="#">
-                                <span style="background-color:orange;border-radius:5px">&nbsp;&nbsp;</span>&nbsp;s64 (apache rotate)</a>
-                        </div>
-                        <div>
-                            <a href="#">
-                                <span style="background-color:green;border-radius:5px">&nbsp;&nbsp;</span>&nbsp;s92 (monitor flows out)</a>
-                        </div>
-                    </div>
-                </li>
+                    </li>
+                </div>
+                <br>
+                <div class="warning callout" data-closable="slide-out-right">
+                    <h6>this is a warning alert !</h6>
+                    <button class="close-button" type="button" data-close>
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
             </div>
         </div>
-    </div>
-    <br>
-    <!-- footer -->
-    <div class="top-bar">
-        <div class="top-bar-left">
-            <ul class="menu">
-                <li class="menu-text">...</li>
-            </ul>
+        <br>
+        <!-- footer -->
+        <div class="top-bar">
+            <div class="top-bar-left">
+                <ul class="menu">
+                    <li class="menu-text">
+                        <a data-toggle="offCanvas">help</a>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
     <!-- include js -->

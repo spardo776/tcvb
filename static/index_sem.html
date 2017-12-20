@@ -8,9 +8,16 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.2.13/dist/semantic.min.css">
 
 </head>
-
+<!--
+    no header => use ui menu
+    no footer => use ui menu
+    no customized checkbox => use button group for levels
+    no label / badge => use button
+    no notification
+    side bar is dimmed - overlay mode does not seem to work 
+-->
 <body>
-    <div class="ui sidebar">
+    <div class="ui sidebar white">
         <h3>help</h3>
         <p>
 
@@ -21,7 +28,7 @@
     </div>
     <div class="pusher">
         <!-- header -->
-        <div class="ui menu">
+        <div class="ui menu inverted blue">
             <div class="header item">
                 search alarm with semantic UI
             </div>
@@ -34,6 +41,8 @@
             <div class="divider"> / </div>
             <div class="active section">semantic ui</div>
         </div>
+        <br>
+        <br>
         <!-- main -->
 
         <div class="ui container">
@@ -104,7 +113,7 @@
 
 
         <!-- footer -->
-        <div class="ui menu">
+        <div class="ui menu inverted blue">
             <a id="bo_help" class="item" href="#">help</a>
         </div>
     </div>
