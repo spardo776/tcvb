@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>alarms with materialize</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -13,6 +14,7 @@
     version 1.0 alpha
     no customized checkbox => use button group for levels
 -->
+
 <body>
     <!-- header -->
     <header>
@@ -22,78 +24,116 @@
             </div>
         </nav>
     </header>
+    
+  <nav>
+        <div class="nav-wrapper">
+          <div class="col s12">
+            <a href="#!" class="breadcrumb">alarm</a>
+            <a href="#!" class="breadcrumb">search</a>
+            <a href="#!" class="breadcrumb">materialize</a>
+          </div>
+        </div>
+      </nav>
+                
     <!-- main -->
     <main class="container">
-            <!-- search -->
-                <div>
-                <form>
-                    <!-- search -->
-                    <div class="input-field">
-                        <i class="material-icons prefix">search</i>
-                        <input>
+        <!-- search -->
+        <div>
+            <form>
+                <!-- search -->
+                <div class="input-field">
+                    <i class="material-icons prefix">search</i>
+                    <input>
+                </div>
+                <!--grid -->
+                <div class="row">
+                    <!-- col 1 -->
+                    <div class="input-field col s12 m6">
+                        <label>level</label>
+                        <a class="btn-flat waves-effect grey tooltipped" data-tooltip="all levels" href="#"></a>
+                        <a class="btn-flat waves-effect purple"></a>
+                        <a class="btn-flat waves-effect red"></a>
+                        <a class="btn-flat waves-effect orange"></a>
+                        <a class="btn-flat waves-effect green"></a>
+
                     </div>
-                    <!--grid -->
-                    <div class="row">
-                        <!-- col 1 -->
-                        <div class="input-field col s12 m6">
-                            <label>level</label>
-                                <a class="btn-flat waves-effect grey" href="#"></a>
-                                <a class="btn-flat waves-effect purple"></a>
-                                <a class="btn-flat waves-effect red"></a>
-                                <a class="btn-flat waves-effect orange"></a>
-                                <a class="btn-flat waves-effect green"></a>    
-        
-                        </div>
-                        <!-- col 2 -->
-                        <div class="input-field col s12 m6">
-                <select>
-                    <option value="all">all</option>
-                    <option value="vdra-a">vdra-a</option>
-                    <option value="vdra-p">vdra-p</option>
-                    <option value="vdra-q">vdra-q</option>
-                </select>
-                            <label>farm</label>
-                        </div>
+                    <!-- col 2 -->
+                    <div class="input-field col s12 m6">
+                        <select>
+                            <option value="all">all</option>
+                            <option value="vdra-a">vdra-a</option>
+                            <option value="vdra-p">vdra-p</option>
+                            <option value="vdra-q">vdra-q</option>
+                        </select>
+                        <label>farm</label>
                     </div>
-                </form>
+                </div>
+            </form>
+        </div>
+        <div class="chip">
+            1
+        </div>
+        <!--collapsible response -->
+        <div>
+            <ul class="collapsible" data-collapsible="accordion">
+                <li>
+                    <div class="collapsible-header">xvoi.vmgini-pweb2</div>
+                    <div class="collapsible-body">
+                        <ul class="collection">
+                            <a href="#" class="collection-item">
+                                <span style="background-color:red;border-radius:5px">&nbsp;&nbsp;</span>&nbsp;s60 (purge old files)</a>
+                            <a href="#" class="collection-item">
+                                <span style="background-color:orange;border-radius:5px">&nbsp;&nbsp;</span>&nbsp;s64 (apache rotate)</a>
+                            <a href="#" class="collection-item">
+                                <span style="background-color:green;border-radius:5px">&nbsp;&nbsp;</span>&nbsp;s92 (monitor flows out)</a>
+                        </ul>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <!-- alert -->
+        <div class="card yellow lighten-4 card-alert">
+            <div class="card-content orange-text">
+                this is (not a native) alert ! <a class="yellow lighten-4 orange-text right close-alert" href="#">&times;</a>
             </div>
-            <!--collapsible response -->
-            <div>
-                <ul class="collapsible" data-collapsible="accordion">
-                    <li>
-                        <div class="collapsible-header">xvoi.vmgini-pweb2</div>
-                        <div class="collapsible-body">
-                            <ul class="collection">
-                                <a href="#" class="collection-item">
-                                    <span style="background-color:red;border-radius:5px">&nbsp;&nbsp;</span>&nbsp;s60 (purge old files)</a>
-                                <a href="#" class="collection-item">
-                                    <span style="background-color:orange;border-radius:5px">&nbsp;&nbsp;</span>&nbsp;s64 (apache rotate)</a>
-                                <a href="#" class="collection-item">
-                                    <span style="background-color:green;border-radius:5px">&nbsp;&nbsp;</span>&nbsp;s92 (monitor flows out)</a>
-                            </ul>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-            
+        </div>
+
     </main>
     <!-- footer -->
     <footer class="page-footer">
-        <h5 class="center-align">no horizontal radiobuttons - used buttons instead</h5>
+
+        <h5 class="center-align">
+            <a class="button-collapse white-text " data-activates="slide-out" href="#">help</a>
+        </h5>
         <!-- <div class="footer-copyright">
             <div class="container">
                 test
             </div>
         </div> -->
     </footer>
+    <!-- side nav 
+    <a href="#"  class="">Side nav demo</a> -->
+
+    <ul id="slide-out" class="side-nav">
+        <h5>help</h5>
+        <p>
+            this page allows to search for a specific alarm. You can filter by level and farm. to select all levels press the grey button.
+            the text search field can be used to filter on the alarm name. The result is provided by module, and can be expanded
+            to show all related alarms.
+        </p>
+    </ul>
+
     <!-- Compiled and minified JavaScript -->
     <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
     <script>
-            $(document).ready(function () {
-                console.log('init select');
-                $('select').material_select();
-            });
-        </script>
+        $(document).ready(function () {
+            $('select').material_select();
+            Materialize.toast('ready !', 3000);
+            $(".button-collapse").sideNav();
+            $(".close-alert").click( function() { $(this).parents(".card-alert").hide()});
+        });
+    </script>
 </body>
+
 </html>
