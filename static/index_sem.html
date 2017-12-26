@@ -16,6 +16,7 @@
     no notification
     side bar is dimmed - overlay mode does not seem to work 
 -->
+
 <body>
     <div class="ui sidebar white">
         <h3>help</h3>
@@ -45,13 +46,27 @@
         <br>
         <!-- main -->
 
+
+        <!--
+        <div class="ui search">
+            <div class="ui icon input">
+                <input class="prompt" placeholder="Search countries..." type="text">
+                <i class="search icon"></i>
+            </div>
+            <div class="results"></div>
+        </div>
+    -->
+
         <div class="ui container">
             <form class="ui equal width form">
                 <!-- search -->
                 <div class="field">
-                    <div class="ui icon input">
-                        <i class="search icon"></i>
-                        <input placeholder="search" type="text">
+                    <div class="ui search">
+                        <div class="ui icon input">
+                            <i class="search icon"></i>
+                            <input placeholder="search" class="prompt" type="text">
+                        </div>
+                        <div class="results"></div>
                     </div>
                 </div>
                 <div class="fields">
@@ -122,9 +137,9 @@
     <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.2.13/dist/semantic.min.js"></script>
     <script>
         $(document).ready(function () {
-
+            // accordion
             $('.ui.accordion').accordion();
-
+            // alert
             $('.message .close')
                 .on('click', function () {
                     $(this)
@@ -132,10 +147,18 @@
                         .transition('fade')
                         ;
                 });
+            //sidebar    
             $(bo_help).on('click',
                 function () {
                     $('.ui.sidebar')
-                    .sidebar('toggle')});
+                        .sidebar('toggle')
+                });
+            // autocomplete
+            $('.ui.search')
+                .search({
+                    source: [{ title: 'xvoi' }, { title: 'xtra' }, { title: 'xawp' }, { title: 'xwrp' }, { title: 'xipi' }, { title: 'xpro' }]
+                })
+                ;
         });
 
     </script>

@@ -43,7 +43,7 @@
                 <!-- search -->
                 <div class="input-field">
                     <i class="material-icons prefix">search</i>
-                    <input>
+                    <input class="autocomplete">
                 </div>
                 <!--grid -->
                 <div class="row">
@@ -128,10 +128,29 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
     <script>
         $(document).ready(function () {
+            // init select
             $('select').material_select();
+            // toaster
             Materialize.toast('ready !', 3000);
+            // init sidenav
             $(".button-collapse").sideNav();
+            // init alert close butto,
             $(".close-alert").click( function() { $(this).parents(".card-alert").hide()});
+            // init autocomplete
+            
+  $('input.autocomplete').autocomplete({
+    data: {
+      "xvoi": null,
+      "xmux": null,
+      "xawp": null, 
+      "xipi": null,
+      "xtra": null,
+      "xcia": null,
+      "xrms": null,
+      "xgri": null,
+      "xwrp": null
+    }  
+  });
         });
     </script>
 </body>
