@@ -1,0 +1,184 @@
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB"
+        crossorigin="anonymous">
+    <style>
+        #go_header {
+            height: 100px;
+            background-color: yellow;
+        }
+
+        #go_footer {
+            height: 100px;
+            background-color: yellow;
+        }
+
+        #go_scroll {
+            margin-top: 100px;
+            margin-bottom: 100px;
+        }
+
+        #go_menu {
+            position: absolute;
+            width: 100px;
+            border: 1px solid black;
+            z-index: 1030;
+            background-color: aqua;
+            top: 0px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="go_header" class="fixed-top">header
+        <button type="button" id="bo_header">...</button>
+    </div>
+    <div id="go_scroll">
+        <table>
+            <tr>
+                <td>
+                    <button type="button">...</button>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <button type="button">...</button>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <button type="button">...</button>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <button type="button">...</button>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <button type="button">...</button>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <button type="button">...</button>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <button type="button">...</button>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <button type="button">...</button>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <button type="button">...</button>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <button type="button">...</button>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <button type="button">...</button>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <button type="button">...</button>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <button type="button">...</button>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <button type="button">...</button>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <button type="button">...</button>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <button type="button">...</button>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <button type="button">...</button>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <button type="button">...</button>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <button type="button">...</button>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <button type="button">...</button>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <button type="button">...</button>
+                </td>
+            </tr>
+
+        </table>
+    </div>
+    <div id="go_footer" class="fixed-bottom">footer
+        <button id="bo_footer" class="menu_top" type="button">...</button>
+
+    </div>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+    <script>
+        var go_menu;
+        function f_action() {
+            console.log('action ' + this.id);
+            var $lo_button = $(this);
+            var ls_html = "<div id=go_menu><ul><li>1</li><li>2</li><li>3</li></ul></div>";
+            $('#go_menu').remove();
+            $(this).offsetParent().append(ls_html);
+            if ($lo_button.hasClass('menu_top')) {
+                console.log('menu_top');
+                $('#go_menu').offset( { 'top' : $lo_button.offset().top - $('#go_menu').outerHeight() ,
+                'left': $lo_button.offset().left});
+            } else {
+                $('#go_menu').offset( { 'top' : $lo_button.offset().top + $lo_button.outerHeight(),
+                'left': $lo_button.offset().left});
+
+            }
+
+        };
+        $(document).ready(
+            function () {
+                $("button").click(f_action);
+                console.log('ready');
+            }
+        );
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,57 @@
+<html>
+
+<head>
+
+</head>
+
+<body>
+
+    <div id="myid" v-bind:title="mytitle">
+        <-- v-bind to bind data and element properties -->
+
+            {{ name }}
+
+            <span v-for="firstname in firstnames">
+                <!-- v-for : loop on a binded array-->
+                {{ firstname }}
+            </span>
+            <div v-if="age > 18">
+                category : adult
+            </div>
+            avis:
+            <input v-model="avis"> {{avis}}
+            <ul>
+                <!-- custom element : parameters passed with v-bind:property -->
+                <activity v-for="activity in activities" v-bind:name="activity.name" v-bind:key="activity.id"></activity>
+            </ul>
+    </div>
+
+    <script src="https://unpkg.com/vue"></script>
+    <script>
+        // after app div declaration
+
+        // a component (custom element)
+        Vue.component('activity', {
+            props: ['name'], // parameters are element properties
+            template: '<li>{{ name }}</li>' // the template = html rendering
+        })
+            < !--l appli Vue -- >
+        const app = new Vue(
+            {
+                el: '#myid', //mapping to app element
+
+                data: { // data storage
+                    name: "doe",
+                    firstnames: ["john", "theodore"], // use v-for for binding
+                    age: 33, // v-if example
+                    mytitle: "identity", // v-bind example
+                    avis: "", // input v-mode example
+                    activities: [{ id: 1, name: "foot" }, { id: 2, name: "basket" }] // component
+                }
+            }
+        );
+
+    </script>
+</body>
+
+</html>
