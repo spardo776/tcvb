@@ -161,20 +161,21 @@
             var ls_html = "<div id=go_menu><ul><li>1</li><li>2</li><li>3</li></ul></div>";
             $('#go_menu').remove();
             $(this).offsetParent().append(ls_html);
+            var $lo_menu=$('#go_menu');
             var li_top, li_left;
             if ($lo_button.hasClass('menu_top')) {
                 // top
-                li_top = $lo_button.offset().top - $('#go_menu').outerHeight();
+                li_top = $lo_button.offset().top - $lo_menu.outerHeight();
                 li_top = Math.max ( li_top, $(window).scrollTop()); // stick top viewport
                 li_left = $lo_button.offset().left
             } else {
                 // bottom
                     li_top = $lo_button.offset().top + $lo_button.outerHeight();
-                    li_top =Math.min(li_top,  $(window).scrollTop() + window.innerHeight - $('#go_menu').outerHeight() ); // stick bottom viewport
+                    li_top =Math.min(li_top,  $(window).scrollTop() + window.innerHeight - $lo_menu.outerHeight() ); // stick bottom viewport
                     li_left= $lo_button.offset().left;
             }
-            $('#go_menu').offset({ 'top': li_top, 'left': li_left});
-            console.log("offset.top=" + $('#go_menu').offset().top + " menu height="+ $('#go_menu').outerHeight() + " scroll=" + $(window).scrollTop() + "viewport height=" + window.innerHeight);
+            $lo_menu.offset({ 'top': li_top, 'left': li_left});
+            console.log("offset.top=" + $lo_menu.offset().top + " menu height="+ $lo_menu.outerHeight() + " scroll=" + $(window).scrollTop() + "viewport height=" + window.innerHeight);
 
 
         };

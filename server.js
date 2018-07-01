@@ -22,7 +22,7 @@ function f_wbs_get_group(req, res) {
         "children": [ "member"], 
         "cb_failure": go_ds.f_wbs_failure,
         "cb_success": function(po_ctxt) { 
-            if (po_ctxt.data_in.hasOwnProperty("is_free"))
+            if (po_ctxt.data_in.hasOwnProperty("isfree"))
             { 
                 po_ctxt.data_out=po_ctxt.data_out.filter(
                     function (po_object) {
