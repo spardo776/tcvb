@@ -16,7 +16,7 @@ var app = new Vue({
             var ls_url = "http://localhost:8080/api/group?";
             var lb_filtered = false;
 
-            if ((!lb_filtered) && lo_app_data.filter.match('\d+')) {
+            if ((!lb_filtered) && lo_app_data.filter.match('[12][0-9][0-9[0-9]')) {
                 ls_url = ls_url + "year=" + lo_app_data.filter;
                 lb_filtered = true;
             }
