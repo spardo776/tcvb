@@ -15,7 +15,7 @@ title "list groups vert"
 curl $curlopt 'http://localhost:8080/api/group?level=vert'
 
 title "list groups vert free"
-curl $curlopt -w '\nHTTP%{http_code}\n\n' 'http://localhost:8080/api/group?level=vert&is_free'
+curl $curlopt -w '\nHTTP%{http_code}\n\n' 'http://localhost:8080/api/group?level=vert&isfree'
 
 title "add group _mercredi_10_1"
 curl $curlopt -w '\nHTTP%{http_code}\n\n' -H "Content-Type: application/json" --request POST --data @add_group.json 'http://localhost:8080/api/group' 

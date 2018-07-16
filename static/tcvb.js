@@ -7,7 +7,11 @@ var app = new Vue({
         filter: '',
         groups: [],
         isfree: true,
-        noresult: false
+        noresult: false,
+
+    },
+    computed: {
+
     },
     methods: {
         f_filter: function () {
@@ -29,14 +33,18 @@ var app = new Vue({
                 lb_filtered = true;
             }
             if (lo_app_data.isfree) {
-                ls_url = ls_url + (lb_filtered ? "&is_free" : "is_free");
+                ls_url = ls_url + (lb_filtered ? "&isfree" : "isfree");
+            }
+            if (!lb_filtered) {
+                //invalid filter - reset
+                lo_app_data.filter="";
             }
             console.log("url=" + ls_url);
 
 
             axios.get(ls_url).then(
                 function (response) {
-                    console.log("found=" + response.data.length);
+                    console.log("rowcount=" + response.data.length);
                     lo_app_data.noresult = (response.data.length === 0);
                     lo_app_data.groups = response.data;
 
@@ -44,8 +52,9 @@ var app = new Vue({
 
 
         },
-        f_open_group : function(){
-            console.log('open group=')
+        f_open_group : function(ps_group_id){
+            var lo_app_data = this;
+            console.log('open group='+ps_group_id)
         }
 
     }
