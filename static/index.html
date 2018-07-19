@@ -15,40 +15,8 @@
         <div id="go_header" class="fixed-top">
         </div>
         <div id="go_scroll" class="container">
-            <div class="form-group">
-                <label for="go_filter">filtre</label>
-                <input id="go_filter" class="form-control" v-model="filter" v-on:change="f_filter" placeholder="année, niveau, jour ...">
-
-            </div>
-
-            <div class="form-group">
-                <div class="form-check">
-                    <input id="go_isfree" class="form-check-input" type="checkbox" v-model="isfree" v-on:change="f_filter">
-                    <label class="form-check-label" for="go_isfree">
-                        libre
-                    </label>
-                </div>
-            </div>
-            <table class="table">
-                <thead>
-                    <th>jour/heure</th>
-                    <th>niveau/age</th>
-                    <th>effectif</th>
-                </thead>
-                <tbody>
-                    <tr v-for="group in groups" v-bind:key="group.id" v-on:click="f_open_group(group.id)" >
-                        <td>
-                            {{group.day}} {{group.hour}}h
-                        </td>
-                        <td >
-                            <span v-bind:class="'class-level-'+group.level">{{group.year}}</span>
-                        </td>
-                        <td>
-                            <span v-bind:class="{ 'class-isnotfree': !group.isfree, 'class-isfree': group.isfree}">{{group.member.length}}/{{group.size}}</span>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            <!-- group-list></group-list -->
+            <router-view></router-view>
         </div>
         <div id="go_footer " class="fixed-bottom ">
 
@@ -58,6 +26,7 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js "></script>
     <script src="https://unpkg.com/vue@2.5.16/dist/vue.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
     <script src="tcvb.js "></script>
 </body>
 
