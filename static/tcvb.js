@@ -1,15 +1,41 @@
 "use strict";
+
+const member_add = Vue.component('member-add', 
+{
+    template :
+`
+prénom :<input>
+nom : <input>
+age : <input>
+`,
+data : function() {return({ member : {} })}
+});
+
 const group_detail = Vue.component('group-detail', 
 {
     template :
-    `group {{id}}
-    <!--
-    {{ group.day }} {{ group.hour }}h
+    `<div>
+    {{ group.day }} {{ group.hour }}h - court{{group.court}} - <span v-bind:class="'class-level-'+group.level">{{ group.year }}</span>
     <table>
+    <thead>
+    <tr>
+    <th>prénom</th>
+    <th>nom</th>
+    <th>age</th>
+    <th></th>
+    </tr>
+    </thead>
+    <tbody>
     <tr v-for="member in group.member" v-bind:key="member.id">
     <td>{{member.name}}</td>
+    <td>{{member.firstname}}</td>
+    <td>{{member.year}}</td>
+    <button>-</button>
     </tr>
-    </table> -->
+    </tbody>
+    </table>
+    <button v-if="group.isfree">+</button>
+    </div>
     `,
     props : [ 'id'],
     data:
@@ -22,22 +48,22 @@ const group_detail = Vue.component('group-detail',
     methods: {
         f_load: 
         function () {
-            lo_data=this;
+            var lo_comp=this;
             console.log('load');
-            var ls_url = "http://localhost:8080/api/group?id=" + lo_data.id;
+            var ls_url = "http://localhost:8080/api/group?id=" + lo_comp.id;
             console.log("url=" + ls_url);
             axios.get(ls_url).then(
                 function (response) {
                     console.log("rowcount=" + response.data.length);
-                    lo_data.noresult = (response.data.length === 0);
-                    lo_data.group = ( lo_data.noresult ? null : response.data[0] );
+                    lo_comp.noresult = (response.data.length === 0);
+                    lo_comp.group = ( lo_comp.noresult ? null : response.data[0] );
                 });
         }
     },
-    beforeRouteUpdate :
-    function (to, from, next) {
-        f_load();
-        next;
+    created :
+    function () {
+        console.log('mounted'); 
+        this.f_load();
     }
 })
 const group_list =  {
