@@ -73,7 +73,7 @@ exports.f_del_object = function (po_ctxt) {
     fs.unlink(ls_filename, function(err) {
         if (err) {
             po_ctxt.msgs.push({
-                msg: lo_mydict.caption + ": n\"existe pas",
+                msg: lo_mydict.caption + " n\"existe pas",
                 diag: err
             });
         }
@@ -133,7 +133,7 @@ exports.f_add_object=function (po_ctxt) {
                     });
                 } else {
                     po_ctxt.msgs.push({
-                        "msg": lo_mydict.caption + ": existe déjà",
+                        "msg": lo_mydict.caption + " existe déjà",
                         "diag": err
                     });
                     po_ctxt.cb_failure(po_ctxt);

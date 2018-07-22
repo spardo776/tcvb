@@ -1,68 +1,96 @@
 "use strict";
 
-const member_add = Vue.component('member-add', 
-{
-    template :
-`
-prénom :<input>
-nom : <input>
-age : <input>
-`,
-data : function() {return({ member : {} })}
-});
-
 const group_detail = Vue.component('group-detail', 
 {
     template :
-    `<div>
-    {{ group.day }} {{ group.hour }}h - court{{group.court}} - <span v-bind:class="'class-level-'+group.level">{{ group.year }}</span>
-    <table>
-    <thead>
-    <tr>
-    <th>prénom</th>
-    <th>nom</th>
-    <th>age</th>
-    <th></th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr v-for="member in group.member" v-bind:key="member.id">
-    <td>{{member.name}}</td>
-    <td>{{member.firstname}}</td>
-    <td>{{member.year}}</td>
-    <button>-</button>
-    </tr>
-    </tbody>
-    </table>
-    <button v-if="group.isfree">+</button>
-    </div>
+    `
+<div>
+{{ group.day }} {{ group.hour }}h - court{{group.court}} - <span v-bind:class="'class-level-'+group.level">{{ group.year }}</span>
+<table>
+   <thead>
+      <tr>
+         <th>prénom</th>
+         <th>nom</th>
+         <th>année</th>
+         <th></th>
+      </tr>
+   </thead>
+   <tbody>
+      <tr v-if="(! group.member) || (group.member.length===0)">
+         <td colspan=3 style="text-align:center;font-style:italic">aucun inscrit</td>
+      </tr>
+      <tr v-for="cur_member in group.member" v-bind:key="cur_member.id">
+         <td>{{cur_member.firstname}}</td>
+         <td>{{cur_member.name}}</td>
+         <td>{{cur_member.year}}</td>
+         <td><button>-</button></td>
+      </tr>
+      <tr v-if="group.isfree">
+         <td><input v-model="new_member.firstname"></td>
+         <td><input v-model="new_member.name"></td>
+         <td><input v-model="new_member.year"></td>
+         <td><button v-on:click="f_add_member()">+</button></td>
+      </tr>
+      <!-- isfree -->
+      <tr v-for="cur_add_error in add_error">
+      <td class="alert alert-danger" colspan=3>{{cur_add_error.msg}}</td>
+      </tr>
+   </tbody>
+</table>
+
+</div> <!-- component -->
     `,
-    props : [ 'id'],
+    props : [ 'id'], // group id
     data:
     function (){
-        return {
+        return ({
             group : {},
-            noresult : true
-        }
+            noresult : true,
+            new_member : { },
+            add_error : { }
+            }
+        );
     },
     methods: {
         f_load: 
+        // group data load
         function () {
             var lo_comp=this;
-            console.log('load');
+            console.log('@f_load');
             var ls_url = "http://localhost:8080/api/group?id=" + lo_comp.id;
-            console.log("url=" + ls_url);
+            console.log("-url=" + ls_url);
             axios.get(ls_url).then(
                 function (response) {
-                    console.log("rowcount=" + response.data.length);
+                    console.log("-rowcount=" + response.data.length);
                     lo_comp.noresult = (response.data.length === 0);
                     lo_comp.group = ( lo_comp.noresult ? null : response.data[0] );
                 });
+        },
+        // add a member in group
+        f_add_member: function () {
+            var lo_comp=this;
+            console.log('@f_add_member');
+            lo_comp.new_member.group_id=lo_comp.group.id;
+            var ls_url="http://localhost:8080/api/member";
+            console.log("-url=" + ls_url);
+            axios.post(ls_url,lo_comp.new_member)
+            .then(
+                function (response) {
+                    console.log("-response.status="+response.status)
+                    lo_comp.f_load(); // refresh group data
+                }
+            )
+            .catch(function (error) {
+                if (error.response) {
+                    lo_comp.add_error=error.response.data;
+                }
+                console.log("-error="+error.message);
+              });
         }
     },
     created :
     function () {
-        console.log('mounted'); 
+        console.log('@created'); 
         this.f_load();
     }
 })
@@ -85,7 +113,7 @@ const group_list =  {
     <table class="table">
         <thead>
             <th>jour/heure</th>
-            <th>niveau/age</th>
+            <th>niveau/année</th>
             <th>effectif</th>
         </thead>
         <tbody>
@@ -115,7 +143,7 @@ const group_list =  {
     methods: {
         f_filter: function () {
             var lo_data = this;
-            console.log("filter=" + lo_data.filter);
+            console.log("@f_filter");
             var ls_url = "http://localhost:8080/api/group?";
             var lb_filtered = false;
 
@@ -138,12 +166,12 @@ const group_list =  {
                 //invalid filter - reset
                 lo_data.filter = "";
             }
-            console.log("url=" + ls_url);
+            console.log("-url=" + ls_url);
 
 
             axios.get(ls_url).then(
                 function (response) {
-                    console.log("rowcount=" + response.data.length);
+                    console.log("-rowcount=" + response.data.length);
                     lo_data.noresult = (response.data.length === 0);
                     lo_data.groups = response.data;
 
@@ -152,10 +180,15 @@ const group_list =  {
 
         },
         f_open_group: function (ps_group_id) {
-            console.log('open group=' + ps_group_id);
+            console.log('@f_open group ' + ps_group_id);
             router.push('/group/'+ps_group_id)
         }
 
+    },
+    created :
+    function () {
+        console.log('created'); 
+        this.f_filter();
     }
 
 };
