@@ -1,12 +1,107 @@
 "use strict";
+const group_edit = Vue.component('group-edit',
+    {
+        template:
+            `
 
-const group_detail = Vue.component('group-detail', 
-{
-    template :
-    `
+
+            <div>
+            <div class="form-row">
+               <div class="form-group col">
+                  <label for="go_day">jour</label>
+                  <select  id ="go_day" class="form-control" v-model="group.day">
+                     <option v-for="cur_daylist in daylist">
+                        {{cur_daylist.name}}
+                     </option>
+                  </select>
+               </div>
+               <div class="form-group col">
+                  <label for="go_hour">heure</label>
+                  <input id ="go_hour" class="form-control" v-model="group.hour"></input>
+               </div>
+               <div class="form-group col">
+                  <label for="go_court">court</label>
+                  <select id ="go_court" class="form-control" v-model="group.court">
+                     <option v-for="cur_courtlist in courtlist">
+                        {{cur_courtlist.name}}
+                     </option>
+                  </select>
+               </div>
+            </div>
+            <div class="form-row">
+               <div class="form-group col">
+                  <label for="go_level">niveau</label>
+                  <select id ="go_level" class="form-control" v-model="group.level">
+                     <option v-for="cur_levellist in levellist">
+                        {{cur_levellist.name}}
+                     </option>
+                  </select>
+               </div>
+               <div class="form-group col">
+                  <label for="go_year">année</label>
+                  <input id ="go_year" class="form-control" v-model="group.year"></input>
+               </div>
+               <div class="form-group col">
+                  <label for="go_size">taille</label>
+                  <input id ="go_size" class="form-control" v-model="group.size"></input>
+               </div>
+            </div>
+            <div class="form-row">
+            <td><button type="button" class="btn btn-primary" v-on:click="f_save()">Sauver</button></td>
+            <td><button type="button" class="btn btn-secondary" v-on:click="f_cancel()">Annuler</button></td>
+            </div>
+         </div>
+         
+                     `,
+        props: ['id'], //group id
+        data: function () {
+            return ({
+                group: {},
+                api_error: [],
+                noresult: true,
+                daylist : [ { name : "lundi"},{ name : "mardi"},{ name : "mercredi"},{ name : "jeudi"},{ name : "vendredi"},{ name : "samedi"},{ name : "dimanche"}],
+                courtlist : [ { name : "1"},{ name : "2"},{ name : "3"},{ name : "jazy"},{ name : "herzog"}],
+                levellist : [ { name : "blanc"},{ name : "violet"},{ name : "rouge"},{ name : "orange"},{ name : "vert"}, { name : "autre"}]
+            }
+            );
+        },
+        methods: {
+            f_load:
+                // group data load
+                function () {
+                    var lo_comp = this;
+                    console.log('@f_load');
+                    if (lo_comp.id) {
+                        var ls_url = "http://localhost:8080/api/group?id=" + lo_comp.id;
+                        console.log("-url=" + ls_url);
+                        axios.get(ls_url).then(
+                            function (response) {
+                                console.log("-rowcount=" + response.data.length);
+                                lo_comp.noresult = (response.data.length === 0);
+                                lo_comp.group = (lo_comp.noresult ? null : response.data[0]);
+                            });
+                    } else {
+                        lo_comp.group = { day: null, hour: null, court: null, level: null, year: null, size: 6 }
+                    }
+                },
+            f_save: function () {
+
+            }
+        },
+        created: function () {
+            console.log('@created');
+            this.f_load();
+        }
+    }
+);
+
+const group_detail = Vue.component('group-detail',
+    {
+        template:
+            `
 <div>
-{{ group.day }} {{ group.hour }}h - court{{group.court}} - <span v-bind:class="'class-level-'+group.level">{{ group.year }}</span>
-<table>
+<h4 class="text-center">{{ group.day }} {{ group.hour }}h - court{{group.court}} - <span v-bind:class="'class-level-'+group.level">{{ group.year }}</span></h4>
+<table class="table">
    <thead>
       <tr>
          <th>prénom</th>
@@ -23,78 +118,78 @@ const group_detail = Vue.component('group-detail',
          <td>{{cur_member.firstname}}</td>
          <td>{{cur_member.name}}</td>
          <td>{{cur_member.year}}</td>
-         <td><button>-</button></td>
+         <td><button type="button" class="btn btn-warning">-</button></td>
       </tr>
       <tr v-if="group.isfree">
-         <td><input v-model="new_member.firstname"></td>
-         <td><input v-model="new_member.name"></td>
-         <td><input v-model="new_member.year"></td>
-         <td><button v-on:click="f_add_member()">+</button></td>
+         <td><input class="form-control" v-model="new_member.firstname"></td>
+         <td><input class="form-control" v-model="new_member.name"></td>
+         <td><input class="form-control" v-model="new_member.year"></td>
+         <td><button type="button" class="btn btn-primary" v-on:click="f_add_member()">+</button></td>
       </tr>
       <!-- isfree -->
-      <tr v-for="cur_add_error in add_error">
-      <td class="alert alert-danger" colspan=3>{{cur_add_error.msg}}</td>
+      <tr v-if="api_error.length" class="alert alert-danger">
+      <td  colspan=4><div v-for="cur_api_error in api_error">{{cur_api_error.msg}}</div></td>
       </tr>
    </tbody>
 </table>
 
 </div> <!-- component -->
     `,
-    props : [ 'id'], // group id
-    data:
-    function (){
-        return ({
-            group : {},
-            noresult : true,
-            new_member : { },
-            add_error : { }
+        props: ['id'], // group id
+        data:
+            function () {
+                return ({
+                    group: {},
+                    noresult: true,
+                    new_member: {},
+                    api_error: []
+                }
+                );
+            },
+        methods: {
+            f_load:
+                // group data load
+                function () {
+                    var lo_comp = this;
+                    console.log('@f_load');
+                    var ls_url = "http://localhost:8080/api/group?id=" + lo_comp.id;
+                    console.log("-url=" + ls_url);
+                    axios.get(ls_url).then(
+                        function (response) {
+                            console.log("-rowcount=" + response.data.length);
+                            lo_comp.noresult = (response.data.length === 0);
+                            lo_comp.group = (lo_comp.noresult ? null : response.data[0]);
+                        });
+                },
+            // add a member in group
+            f_add_member: function () {
+                var lo_comp = this;
+                console.log('@f_add_member');
+                lo_comp.new_member.group_id = lo_comp.group.id;
+                var ls_url = "http://localhost:8080/api/member";
+                console.log("-url=" + ls_url);
+                axios.post(ls_url, lo_comp.new_member)
+                    .then(
+                        function (response) {
+                            console.log("-response.status=" + response.status)
+                            lo_comp.f_load(); // refresh group data
+                        }
+                    )
+                    .catch(function (error) {
+                        if (error.response) {
+                            lo_comp.api_error = error.response.data;
+                        }
+                        console.log("-error=" + error.message);
+                    });
             }
-        );
-    },
-    methods: {
-        f_load: 
-        // group data load
-        function () {
-            var lo_comp=this;
-            console.log('@f_load');
-            var ls_url = "http://localhost:8080/api/group?id=" + lo_comp.id;
-            console.log("-url=" + ls_url);
-            axios.get(ls_url).then(
-                function (response) {
-                    console.log("-rowcount=" + response.data.length);
-                    lo_comp.noresult = (response.data.length === 0);
-                    lo_comp.group = ( lo_comp.noresult ? null : response.data[0] );
-                });
         },
-        // add a member in group
-        f_add_member: function () {
-            var lo_comp=this;
-            console.log('@f_add_member');
-            lo_comp.new_member.group_id=lo_comp.group.id;
-            var ls_url="http://localhost:8080/api/member";
-            console.log("-url=" + ls_url);
-            axios.post(ls_url,lo_comp.new_member)
-            .then(
-                function (response) {
-                    console.log("-response.status="+response.status)
-                    lo_comp.f_load(); // refresh group data
-                }
-            )
-            .catch(function (error) {
-                if (error.response) {
-                    lo_comp.add_error=error.response.data;
-                }
-                console.log("-error="+error.message);
-              });
-        }
-    },
-    created :
-    function () {
-        console.log('@created'); 
-        this.f_load();
-    }
-})
-const group_list =  {
+        created:
+            function () {
+                console.log('@created');
+                this.f_load();
+            }
+    })
+const group_list = {
     template: `
 <div>
     <div class="form-group">
@@ -137,7 +232,7 @@ const group_list =  {
                 filter: '',
                 groups: [],
                 isfree: true,
-                noresult: false
+                noresult: true
             }
         },
     methods: {
@@ -181,15 +276,15 @@ const group_list =  {
         },
         f_open_group: function (ps_group_id) {
             console.log('@f_open group ' + ps_group_id);
-            router.push('/group/'+ps_group_id)
+            router.push('/group/' + ps_group_id)
         }
 
     },
-    created :
-    function () {
-        console.log('created'); 
-        this.f_filter();
-    }
+    created:
+        function () {
+            console.log('created');
+            this.f_filter();
+        }
 
 };
 
@@ -203,6 +298,6 @@ const router = new VueRouter({
 });
 
 const app = new Vue({
-   el: '#go_vue_app',
-   router: router
+    el: '#go_vue_app',
+    router: router
 })

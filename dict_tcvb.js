@@ -34,12 +34,12 @@ Terrain vert : A partir de 9 ans / Court de tennis traditionnel avec balle verte
 exports.group={
             "caption": "groupe",
         "fields": {
-            "day": "MS",
-            "hour": "MI",
-            "court": "MI",
-            "level": "MS",
-            "size": "MI",
-            "year": "MI"
+            "day": { ctrl : "MS", caption : "jour" },
+            "hour": { ctrl : "MI", caption : "heure" },
+            "court": { ctrl : "MI", caption : "court" },
+            "level": { ctrl : "MS", caption : "niveau" },
+            "size": { ctrl : "MI", caption : "taille" },
+            "year": { ctrl : "MI", caption : "année" }
         },
         "pkey": ["day", "hour", "court"]
     };
@@ -47,10 +47,10 @@ exports.group={
 exports.member={
         "caption": "membre",
         "fields": {
-            "name": "MS",
-            "firstname": "MS",
-            "year": "MI",
-            "group_id": "MS"
+            "name": { ctrl : "MS", caption : "nom" },
+            "firstname": { ctrl : "MS", caption : "prénom" },
+            "year": { ctrl : "MI", caption : "année" },
+            "group_id": { ctrl : "MS", caption : "group id" }
         },
         "pkey": ["name", "firstname"]
     };

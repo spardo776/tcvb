@@ -39,14 +39,15 @@ function f_validate_fields(po_ctxt, po_object) {
             var lo_msg = {};
 
             var lx_field_value = po_ctxt.data_in[ps_field_name];
-            var ls_field_rule = po_ctxt.dict[po_ctxt.name].fields[ps_field_name];
+            var ls_field_rule = po_ctxt.dict[po_ctxt.name].fields[ps_field_name].ctrl;
+            var ls_field_caption = po_ctxt.dict[po_ctxt.name].fields[ps_field_name].caption;
             if (ls_field_rule.match(/M/) && (!lx_field_value)) {
-                lo_msg.msg = ps_field_name + " est obligatoire";
+                lo_msg.msg = ls_field_caption + " est obligatoire";
                 po_ctxt.msgs.push(lo_msg);
                 return null;
             }
             if (ls_field_rule.match(/I/) && (!String(lx_field_value).match(/\d+/))) {
-                lo_msg.msg = ps_field_name + " doit etre un nombre";
+                lo_msg.msg = ls_field_caption + " doit etre un nombre";
                 po_ctxt.msgs.push(lo_msg);
                 return null;
             }
