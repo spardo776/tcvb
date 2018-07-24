@@ -1,4 +1,9 @@
 "use strict";
+
+//
+// GROUP-EDIT
+//
+
 const group_edit = Vue.component('group-edit',
     {
         template:
@@ -50,6 +55,9 @@ const group_edit = Vue.component('group-edit',
             <td><button type="button" class="btn btn-primary" v-on:click="f_save()">Sauver</button></td>
             <td><button type="button" class="btn btn-secondary" v-on:click="f_cancel()">Annuler</button></td>
             </div>
+            <div v-if="api_error.length" class="alert alert-danger">
+            <div v-for="cur_api_error in api_error">{{cur_api_error.msg}}</div>
+            </div>
          </div>
          
                      `,
@@ -59,9 +67,9 @@ const group_edit = Vue.component('group-edit',
                 group: {},
                 api_error: [],
                 noresult: true,
-                daylist : [ { name : "lundi"},{ name : "mardi"},{ name : "mercredi"},{ name : "jeudi"},{ name : "vendredi"},{ name : "samedi"},{ name : "dimanche"}],
-                courtlist : [ { name : "1"},{ name : "2"},{ name : "3"},{ name : "jazy"},{ name : "herzog"}],
-                levellist : [ { name : "blanc"},{ name : "violet"},{ name : "rouge"},{ name : "orange"},{ name : "vert"}, { name : "autre"}]
+                daylist: [{ name: "lundi" }, { name: "mardi" }, { name: "mercredi" }, { name: "jeudi" }, { name: "vendredi" }, { name: "samedi" }, { name: "dimanche" }],
+                courtlist: [{ name: "1" }, { name: "2" }, { name: "3" }, { name: "jazy" }, { name: "herzog" }],
+                levellist: [{ name: "blanc" }, { name: "violet" }, { name: "rouge" }, { name: "orange" }, { name: "vert" }, { name: "autre" }]
             }
             );
         },
@@ -71,7 +79,7 @@ const group_edit = Vue.component('group-edit',
                 function () {
                     var lo_comp = this;
                     console.log('@f_load');
-                    if (lo_comp.id) {
+                    if (lo_comp.id !== "0") {
                         var ls_url = "http://localhost:8080/api/group?id=" + lo_comp.id;
                         console.log("-url=" + ls_url);
                         axios.get(ls_url).then(
@@ -85,7 +93,28 @@ const group_edit = Vue.component('group-edit',
                     }
                 },
             f_save: function () {
-
+                console.log('@f_save');
+                var lo_comp = this;
+                var ls_url = "http://localhost:8080/api/group";
+                console.log("-url=" + ls_url);
+                lo_comp.api_error.splice(0);
+                axios.post(ls_url, lo_comp.group)
+                    .then(
+                        function (response) {
+                            console.log("-response.status=" + response.status)
+                            router.push('/')
+                        }
+                    )
+                    .catch(function (error) {
+                        if (error.response) {
+                            lo_comp.api_error = error.response.data;
+                        }
+                        console.log("-error=" + error.message);
+                    });
+            },
+            f_cancel: function () {
+                console.log('@f_cancel');
+                router.push('/')
             }
         },
         created: function () {
@@ -95,45 +124,49 @@ const group_edit = Vue.component('group-edit',
     }
 );
 
+//
+// GROUP-DETAIL
+//
+
 const group_detail = Vue.component('group-detail',
     {
         template:
             `
-<div>
-<h4 class="text-center">{{ group.day }} {{ group.hour }}h - court{{group.court}} - <span v-bind:class="'class-level-'+group.level">{{ group.year }}</span></h4>
-<table class="table">
-   <thead>
-      <tr>
-         <th>prénom</th>
-         <th>nom</th>
-         <th>année</th>
-         <th></th>
-      </tr>
-   </thead>
-   <tbody>
-      <tr v-if="(! group.member) || (group.member.length===0)">
-         <td colspan=3 style="text-align:center;font-style:italic">aucun inscrit</td>
-      </tr>
-      <tr v-for="cur_member in group.member" v-bind:key="cur_member.id">
-         <td>{{cur_member.firstname}}</td>
-         <td>{{cur_member.name}}</td>
-         <td>{{cur_member.year}}</td>
-         <td><button type="button" class="btn btn-warning">-</button></td>
-      </tr>
-      <tr v-if="group.isfree">
-         <td><input class="form-control" v-model="new_member.firstname"></td>
-         <td><input class="form-control" v-model="new_member.name"></td>
-         <td><input class="form-control" v-model="new_member.year"></td>
-         <td><button type="button" class="btn btn-primary" v-on:click="f_add_member()">+</button></td>
-      </tr>
-      <!-- isfree -->
-      <tr v-if="api_error.length" class="alert alert-danger">
-      <td  colspan=4><div v-for="cur_api_error in api_error">{{cur_api_error.msg}}</div></td>
-      </tr>
-   </tbody>
-</table>
+    <div>
+    <h4 class="text-center">{{ group.day }} {{ group.hour }}h - court{{group.court}} - <span v-bind:class="'class-level-'+group.level">{{ group.year }}</span></h4>
+    <table class="table">
+    <thead>
+        <tr>
+            <th>prénom</th>
+            <th>nom</th>
+            <th>année</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr v-if="(! group.member) || (group.member.length===0)">
+            <td colspan=3 style="text-align:center;font-style:italic">aucun inscrit</td>
+        </tr>
+        <tr v-for="cur_member in group.member" v-bind:key="cur_member.id">
+            <td>{{cur_member.firstname}}</td>
+            <td>{{cur_member.name}}</td>
+            <td>{{cur_member.year}}</td>
+            <td><button type="button" class="btn btn-danger" v-on:click="f_del_member()">-</button></td>
+        </tr>
+        <tr v-if="group.isfree">
+            <td><input class="form-control" v-model="new_member.firstname"></td>
+            <td><input class="form-control" v-model="new_member.name"></td>
+            <td><input class="form-control" v-model="new_member.year"></td>
+            <td><button type="button" class="btn btn-primary" v-on:click="f_add_member()">+</button></td>
+        </tr>
+        <!-- isfree -->
+        <tr v-if="api_error.length" class="alert alert-danger">
+        <td  colspan=4><div v-for="cur_api_error in api_error">{{cur_api_error.msg}}</div></td>
+        </tr>
+    </tbody>
+    </table>
 
-</div> <!-- component -->
+    </div> <!-- component -->
     `,
         props: ['id'], // group id
         data:
@@ -168,6 +201,7 @@ const group_detail = Vue.component('group-detail',
                 lo_comp.new_member.group_id = lo_comp.group.id;
                 var ls_url = "http://localhost:8080/api/member";
                 console.log("-url=" + ls_url);
+                lo_comp.api_error.splice(0);
                 axios.post(ls_url, lo_comp.new_member)
                     .then(
                         function (response) {
@@ -188,7 +222,11 @@ const group_detail = Vue.component('group-detail',
                 console.log('@created');
                 this.f_load();
             }
-    })
+    });
+
+//
+// GROUP-LIST
+//
 const group_list = {
     template: `
 <div>
@@ -225,6 +263,8 @@ const group_list = {
         </tr>
     </tbody >
     </table>
+    <td><button type="button" class="btn btn-primary" v-on:click="f_add_group()">+</button></td>
+
 </div>`,
     data:
         function () {
@@ -277,6 +317,10 @@ const group_list = {
         f_open_group: function (ps_group_id) {
             console.log('@f_open group ' + ps_group_id);
             router.push('/group/' + ps_group_id)
+        },
+        f_add_group: function () {
+            console.log('@f_add_group');
+            router.push('/group/0/edit')
         }
 
     },
@@ -293,6 +337,7 @@ const router = new VueRouter({
         [
             { path: '/', component: group_list },
             { path: '/group/:id', component: group_detail, props: true },
+            { path: '/group/:id/edit', component: group_edit, props: true },
         ]
 
 });

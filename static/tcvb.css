@@ -34,6 +34,12 @@
     padding: 0.25rem;
 }
 
+.class-level-autre {
+    background-color: gray;
+    color: white;
+    padding: 0.25rem;
+}
+
 
 .class-isnotfree {
     background-color: red;

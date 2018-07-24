@@ -36,7 +36,7 @@ exports.group={
         "fields": {
             "day": { ctrl : "MS", caption : "jour" },
             "hour": { ctrl : "MI", caption : "heure" },
-            "court": { ctrl : "MI", caption : "court" },
+            "court": { ctrl : "MS", caption : "court" },
             "level": { ctrl : "MS", caption : "niveau" },
             "size": { ctrl : "MI", caption : "taille" },
             "year": { ctrl : "MI", caption : "année" }
