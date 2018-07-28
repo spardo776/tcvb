@@ -165,13 +165,13 @@ const group_detail = Vue.component('group-detail',
                         <td>{{cur_member.firstname}}</td>
                         <td>{{cur_member.name}}</td>
                         <td>{{cur_member.year}}</td>
-                        <td><button type="button" class="btn btn-danger" v-on:click="f_del_member(cur_member)">-</button></td>
+                        <td><button type="button" class="btn btn-danger oi oi-trash" v-on:click="f_del_member(cur_member)"></button></td>
                      </tr>
                      <tr v-if="group.isfree">
                         <td><input class="form-control" v-model="new_member.firstname"></td>
                         <td><input class="form-control" v-model="new_member.name"></td>
                         <td><input class="form-control" v-model="new_member.year"></td>
-                        <td><button type="button" class="btn btn-primary" v-on:click="f_add_member()">+</button></td>
+                        <td><button type="button" class="btn btn-primary oi oi-plus" v-on:click="f_add_member()"></button></td>
                      </tr>
                      <!-- isfree -->
                      <tr v-if="api_error.length" class="alert alert-danger">
@@ -183,8 +183,8 @@ const group_detail = Vue.component('group-detail',
                </table>
             </div>
             <div id="go_footer" class="fixed-bottom text-center">
-            <button class="btn btn-secondary" v-on:click="f_home()">accueil</button>
-            <button v-if="isempty" type="button" class="btn btn-danger" v-on:click="f_del_group(group)">supprimer</button>
+            <button class="btn btn-secondary oi oi-home" v-on:click="f_home()"></button>
+            <button v-if="isempty" type="button" class="btn btn-danger oi oi-trash" v-on:click="f_del_group(group)"></button>
             </div>
          </div>
          <!-- component -->
@@ -350,7 +350,7 @@ const group_list = {
        </table>
     </div>
     <div id="go_footer" class="fixed-bottom text-center">
-    <button type="button" class="btn btn-primary" v-on:click="f_add_group()">+ groupe</button>
+    <button type="button" class="btn btn-primary oi oi-plus" v-on:click="f_add_group()"></button>
     </div>
  </div>
  
