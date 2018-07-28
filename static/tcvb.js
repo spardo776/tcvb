@@ -13,10 +13,11 @@ const group_edit = Vue.component('group-edit',
 
             <div>
             <div id="go_header" class="fixed-top">
+            <h4 class="text-center">ajout groupe</h4>
             </div>
             <div id="go_scroll" class="container-fluid">
                <div class="form-row">
-                  <div class="form-group col">
+                  <div class="form-group col-md">
                      <label for="go_day">jour</label>
                      <select  id ="go_day" class="form-control" v-model="group.day">
                         <option v-for="cur_daylist in daylist">
@@ -24,11 +25,11 @@ const group_edit = Vue.component('group-edit',
                         </option>
                      </select>
                   </div>
-                  <div class="form-group col">
+                  <div class="form-group col-md">
                      <label for="go_hour">heure</label>
                      <input id ="go_hour" class="form-control" v-model="group.hour"></input>
                   </div>
-                  <div class="form-group col">
+                  <div class="form-group col-md">
                      <label for="go_court">court</label>
                      <select id ="go_court" class="form-control" v-model="group.court">
                         <option v-for="cur_courtlist in courtlist">
@@ -38,7 +39,7 @@ const group_edit = Vue.component('group-edit',
                   </div>
                </div>
                <div class="form-row">
-                  <div class="form-group col">
+                  <div class="form-group col-md">
                      <label for="go_level">niveau</label>
                      <select id ="go_level" class="form-control" v-model="group.level">
                         <option v-for="cur_levellist in levellist">
@@ -46,11 +47,11 @@ const group_edit = Vue.component('group-edit',
                         </option>
                      </select>
                   </div>
-                  <div class="form-group col">
+                  <div class="form-group col-md">
                      <label for="go_year">année</label>
                      <input id ="go_year" class="form-control" v-model="group.year"></input>
                   </div>
-                  <div class="form-group col">
+                  <div class="form-group col-md">
                      <label for="go_size">taille</label>
                      <input id ="go_size" class="form-control" v-model="group.size"></input>
                   </div>
@@ -63,8 +64,8 @@ const group_edit = Vue.component('group-edit',
                </div>
             </div>
             <div id="go_footer" class="fixed-bottom text-center">
-            <button type="button" class="btn btn-primary" v-on:click="f_save()">Sauver</button>
-            <button type="button" class="btn btn-secondary" v-on:click="f_cancel()">Annuler</button>
+            <button type="button" class="btn btn-primary oi oi-check" v-on:click="f_save()"></button>
+            <button type="button" class="btn btn-secondary oi oi-x" v-on:click="f_cancel()"></button>
             </div>
          </div>
          
@@ -145,13 +146,17 @@ const group_detail = Vue.component('group-detail',
 
             <div>
             <div id="go_header" class="fixed-top">
-            <h4 class="text-center">groupe : {{ group.day }} {{ group.hour }}h - court {{group.court}} - <span v-bind:class="'class-level-'+group.level">{{ group.year }}</span></h4>
+                <h5 class="text-center">
+                    groupe : {{ group.day }} {{ group.hour }}h - court {{group.court}} - 
+                    <span v-bind:class="'class-level-'+group.level">{{ group.year }}</span>
+                    <button type="button" class="btn btn-warning oi oi-pencil" v-on:click="f_edit_group(group.id)"></button>
+                </h5>
             </div>
             <div id="go_scroll" class="container-fluid">
                <div v-if="isempty" class="text-center">
                   <span style="font-style:italic">aucun inscrit</span>
                </div>
-               <table class="table" v-if="(! isempty)">
+               <table class="table">
                   <thead>
                      <tr>
                         <th>prénom</th>
@@ -171,7 +176,7 @@ const group_detail = Vue.component('group-detail',
                         <td><input class="form-control" v-model="new_member.firstname"></td>
                         <td><input class="form-control" v-model="new_member.name"></td>
                         <td><input class="form-control" v-model="new_member.year"></td>
-                        <td><button type="button" class="btn btn-primary oi oi-plus" v-on:click="f_add_member()"></button></td>
+                        <td><button type="button" class="btn btn-warning oi oi-plus" v-on:click="f_add_member()"></button></td>
                      </tr>
                      <!-- isfree -->
                      <tr v-if="api_error.length" class="alert alert-danger">
@@ -318,7 +323,7 @@ const group_list = {
     <div id="go_scroll" class="container-fluid">
        <div class="form-group">
           <label for= "go_filter" > filtre</label>
-          <input id="go_filter" class="form-control" v-model="filter" v-on:change="f_filter" placeholder="année, niveau, jour ...">
+          <input id="go_filter" class="form-control" v-model="filter" v-on:change="f_filter" placeholder="année, niveau ou jour">
        </div>
        <div class="form-group">
           <div class="form-check">
@@ -350,7 +355,7 @@ const group_list = {
        </table>
     </div>
     <div id="go_footer" class="fixed-bottom text-center">
-    <button type="button" class="btn btn-primary oi oi-plus" v-on:click="f_add_group()"></button>
+    <button type="button" class="btn btn-warning oi oi-plus" v-on:click="f_add_group()"></button>
     </div>
  </div>
  

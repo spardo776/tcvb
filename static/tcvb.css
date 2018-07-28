@@ -4,6 +4,7 @@
 
 #go_footer {
     background-color: white;
+    padding-bottom:0.5rem;
 }
 
 #go_scroll {
@@ -14,50 +15,41 @@
 .class-level-blanc {
     background-color: white;
     color: black;
-    padding: 0.25rem;
 }
 
 .class-level-violet {
     background-color: purple;
     color: white;
-    padding: 0.25rem;
-
 }
 
 .class-level-rouge {
     background-color: red;
     color: white;
-    padding: 0.25rem;
 }
 
 .class-level-orange {
     background-color: orange;
     color: white;
-    padding: 0.25rem;
 }
 
 .class-level-vert {
     background-color: green;
     color: white;
-    padding: 0.25rem;
 }
 
 .class-level-autre {
     background-color: gray;
     color: white;
-    padding: 0.25rem;
 }
 
 
 .class-isnotfree {
     background-color: red;
     color: white;
-    padding: 0.25rem;
 }
 
 .class-isfree {
     background-color: green;
     color: white;
-    padding: 0.25rem;
 }
 
