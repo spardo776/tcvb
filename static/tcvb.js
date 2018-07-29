@@ -1,5 +1,38 @@
 "use strict";
 
+const main_menu = Vue.component('main-menu',
+    {
+        template:
+            `
+        <div>    
+        <ul class="nav nav-pills">
+            <li class="nav-item"><a class="nav-link" v-bind:class="active_tag === 'group' ? 'active' : ''" href="#/group">groupe</a></li>
+            <li class="nav-item"><a class="nav-link" v-bind:class="active_tag === 'member' ? 'active' : ''" href="#/member">membre</a></li>
+        </ul>
+        
+        </div>
+        `,
+        props: ["active_tag"]
+
+    }
+);
+
+const button_bar = Vue.component('button-bar',
+    {
+        template:
+            `
+        <span>    
+        <button class="btn btn-secondary oi oi-home" v-on:click="f_home()"></button>
+        <button class="btn btn-secondary oi oi-chevron-left" v-on:click="f_back()"></button>
+        </span>
+        `,
+        methods: {
+            f_home:
+                function () { router.push('/') },
+            f_back:
+                function () { router.go(-1) }
+        }
+    });
 //
 // GROUP-EDIT
 //
@@ -13,10 +46,16 @@ const group_edit = Vue.component('group-edit',
 
             <div>
             <div id="go_header" class="fixed-top">
-            <h4 class="text-center">ajout groupe</h4>
+            <main-menu active_tag="group"></main-menu>
+            <!-- <h4 class="text-center">ajout groupe</h4> -->
             </div>
             <div id="go_scroll" class="container-fluid">
-               <div class="form-row">
+                <div class="text-center">
+                    <h5>
+                        nouveau groupe
+                    </h5>
+                </div>              
+                <div class="form-row">
                   <div class="form-group col-md">
                      <label for="go_day">jour</label>
                      <select  id ="go_day" class="form-control" v-model="group.day">
@@ -64,8 +103,8 @@ const group_edit = Vue.component('group-edit',
                </div>
             </div>
             <div id="go_footer" class="fixed-bottom text-center">
-            <button type="button" class="btn btn-primary oi oi-check" v-on:click="f_save()"></button>
-            <button type="button" class="btn btn-secondary oi oi-x" v-on:click="f_cancel()"></button>
+            <button-bar></button-bar>
+            <button type="button" class="btn btn-warning oi oi-check" v-on:click="f_save()"></button>
             </div>
          </div>
          
@@ -121,10 +160,6 @@ const group_edit = Vue.component('group-edit',
                         }
                         console.log("-error=" + error.message);
                     });
-            },
-            f_cancel: function () {
-                console.log('@f_cancel');
-                router.push('/')
             }
         },
         created: function () {
@@ -146,31 +181,37 @@ const group_detail = Vue.component('group-detail',
 
             <div>
             <div id="go_header" class="fixed-top">
-                <h5 class="text-center">
-                    groupe : {{ group.day }} {{ group.hour }}h - court {{group.court}} - 
-                    <span v-bind:class="'class-level-'+group.level">{{ group.year }}</span>
+                <main-menu active_tag="group"></main-menu>
+                <!--
+                    
                     <button type="button" class="btn btn-warning oi oi-pencil" v-on:click="f_edit_group(group.id)"></button>
-                </h5>
+                -->
             </div>
             <div id="go_scroll" class="container-fluid">
-               <div v-if="isempty" class="text-center">
-                  <span style="font-style:italic">aucun inscrit</span>
+               <div class="text-center">
+                    <h5>
+                    {{ group.day }} {{ group.hour }}h - court {{group.court}} - 
+                    <span v-bind:class="'class-level-'+group.level">{{ group.year }}</span>
+                    </h5>
                </div>
                <table class="table">
-                  <thead>
+                  <thead class="thead-light">
                      <tr>
-                        <th>prénom</th>
                         <th>nom</th>
+                        <th>prénom</th>
                         <th>année</th>
                         <th></th>
                      </tr>
                   </thead>
                   <tbody>
                      <tr v-for="cur_member in group.member" v-bind:key="cur_member.id">
-                        <td>{{cur_member.firstname}}</td>
                         <td>{{cur_member.name}}</td>
+                        <td>{{cur_member.firstname}}</td>
                         <td>{{cur_member.year}}</td>
                         <td><button type="button" class="btn btn-danger oi oi-trash" v-on:click="f_del_member(cur_member)"></button></td>
+                     </tr>
+                     <tr v-if="isempty" >
+                        <td colspan=4 class="text-center"><span style="font-style:italic">aucun inscrit</span></td>
                      </tr>
                      <tr v-if="group.isfree">
                         <td><input class="form-control" v-model="new_member.firstname"></td>
@@ -188,7 +229,7 @@ const group_detail = Vue.component('group-detail',
                </table>
             </div>
             <div id="go_footer" class="fixed-bottom text-center">
-            <button class="btn btn-secondary oi oi-home" v-on:click="f_home()"></button>
+            <button-bar></button-bar>
             <button v-if="isempty" type="button" class="btn btn-danger oi oi-trash" v-on:click="f_del_group(group)"></button>
             </div>
          </div>
@@ -240,7 +281,7 @@ const group_detail = Vue.component('group-detail',
                         function (response) {
                             console.log("-response.status=" + response.status)
                             lo_comp.f_load(); // refresh group data;
-                            lo_comp.new_member={}
+                            lo_comp.new_member = {}
                         }
                     )
                     .catch(function (error) {
@@ -317,11 +358,16 @@ const group_list = {
 
 
     <div>
-    <div id="go_header" class="fixed-top text-center">
-    <h4>recherche groupe</h4>
+    <div id="go_header" class="fixed-top">
+        <main-menu active_tag="group"></main-menu>
     </div>
     <div id="go_scroll" class="container-fluid">
-       <div class="form-group">
+        <div class="text-center">
+            <h5>
+                groupes
+            </h5>
+        </div>
+        <div class="form-group">
           <label for= "go_filter" > filtre</label>
           <input id="go_filter" class="form-control" v-model="filter" v-on:change="f_filter" placeholder="année, niveau ou jour">
        </div>
@@ -334,7 +380,7 @@ const group_list = {
           </div>
        </div>
        <table class="table">
-          <thead>
+          <thead class="thead-light">
              <th>jour/heure - court</th>
              <th>niveau/année</th>
              <th>effectif</th>
@@ -355,6 +401,7 @@ const group_list = {
        </table>
     </div>
     <div id="go_footer" class="fixed-bottom text-center">
+    <button-bar></button-bar>
     <button type="button" class="btn btn-warning oi oi-plus" v-on:click="f_add_group()"></button>
     </div>
  </div>
@@ -426,10 +473,91 @@ const group_list = {
 
 };
 
+//
+// MEMBER-LIST
+//
+const member_list = {
+    template:
+        `
+
+
+    <div>
+    <div id="go_header" class="fixed-top">
+        <main-menu active_tag="member"></main-menu>
+    </div>
+    <div id="go_scroll" class="container-fluid">
+        <div class="text-center">
+            <h5>
+                membres
+            </h5>
+        </div>
+       <div class="form-group">
+          <label for= "go_filter" > filtre</label>
+          <input id="go_filter" class="form-control" v-model="filter" v-on:change="f_filter" placeholder="nom">
+       </div>
+       <table class="table">
+          <thead class="thead-light">
+             <th>nom prénom</th>
+             <th>année</th>
+             <th>groupe</th>
+          </thead>
+          <tbody>
+             <tr v-for="member in members" v-bind:key="member.id">
+                <td>
+                   {{ member.name }} {{ member.firstname }}
+                </td>
+                <td>
+                {{ member.year }}
+                </td>
+                <td>
+                {{ member.group_id }}  
+                </td>
+             </tr>
+          </tbody >
+       </table>
+    </div>
+    <div id="go_footer" class="fixed-bottom text-center">
+    <button-bar></button-bar>
+    </div>
+ </div>
+ 
+ `,
+    data:
+        function () {
+            return {
+                filter: '',
+                members: [],
+                noresult: true
+            }
+        },
+    methods: {
+        f_filter: function () {
+            var lo_data = this;
+            console.log("@f_filter");
+            var ls_url = "http://localhost:8080/api/member?";
+            ls_url = ls_url + "name=" + lo_data.filter.toUpperCase();
+
+            axios.get(ls_url).then(
+                function (response) {
+                    console.log("-rowcount=" + response.data.length);
+                    lo_data.noresult = (response.data.length === 0);
+                    lo_data.members = response.data;
+
+                }); //TODO error handling
+        },
+    },
+    created:
+        function () {
+            console.log('created');
+        }
+
+};
 const router = new VueRouter({
     routes:
         [
             { path: '/', component: group_list },
+            { path: '/group', component: group_list },
+            { path: '/member', component: member_list },
             { path: '/group/:id', component: group_detail, props: true },
             { path: '/group/:id/edit', component: group_edit, props: true },
         ]

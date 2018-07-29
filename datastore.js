@@ -51,7 +51,13 @@ function f_validate_fields(po_ctxt, po_object) {
                 po_ctxt.msgs.push(lo_msg);
                 return null;
             }
-
+            // upper/lowercase
+            if (ls_field_rule.match(/L/))  {
+                lx_field_value=lx_field_value.toLowerCase()
+            }  
+            if (ls_field_rule.match(/U/))  {
+                lx_field_value=lx_field_value.toUpperCase()
+            }  
             po_object[ps_field_name] = lx_field_value;
 
             return 1;

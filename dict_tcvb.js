@@ -8,7 +8,7 @@
         {
             "caption": "<caption>",
             "fields": {
-            "<field_name>": "<rule string : M for mandat, I for integer",
+            "<field_name>": "<rule string : M andatory, I nteger, Uppercase, L owercase",
             ...
             },
             "pkey": ["field_name", ...]
@@ -34,10 +34,10 @@ Terrain vert : A partir de 9 ans / Court de tennis traditionnel avec balle verte
 exports.group={
             "caption": "groupe",
         "fields": {
-            "day": { ctrl : "MS", caption : "jour" },
+            "day": { ctrl : "MSL", caption : "jour" },
             "hour": { ctrl : "MI", caption : "heure" },
-            "court": { ctrl : "MS", caption : "court" },
-            "level": { ctrl : "MS", caption : "niveau" },
+            "court": { ctrl : "MSL", caption : "court" },
+            "level": { ctrl : "MSL", caption : "niveau" },
             "size": { ctrl : "MI", caption : "taille" },
             "year": { ctrl : "MI", caption : "année" }
         },
@@ -47,8 +47,8 @@ exports.group={
 exports.member={
         "caption": "membre",
         "fields": {
-            "name": { ctrl : "MS", caption : "nom" },
-            "firstname": { ctrl : "MS", caption : "prénom" },
+            "name": { ctrl : "MSU", caption : "nom" },
+            "firstname": { ctrl : "MSL", caption : "prénom" },
             "year": { ctrl : "MI", caption : "année" },
             "group_id": { ctrl : "MS", caption : "group id" }
         },
