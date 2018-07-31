@@ -90,6 +90,7 @@ function f_wbs_get_member(req, res) {
         "name": "member",
         "res": res,
         "data_in": req.query,
+        "parent": ["group"],
         "cb_failure": go_ds.f_wbs_failure,
         "cb_success": go_ds.f_wbs_success
     });
