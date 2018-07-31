@@ -510,7 +510,7 @@ const member_list = {
                 {{ member.year }}
                 </td>
                 <td>
-                {{ member.group_id }}  
+                {{ member.group[0].day }} {{ member.group[0].hour }}h - court {{ member.group[0].court }}   
                 </td>
              </tr>
           </tbody >
@@ -535,7 +535,7 @@ const member_list = {
             var lo_data = this;
             console.log("@f_filter");
             var ls_url = "http://localhost:8080/api/member?";
-            ls_url = ls_url + "name=" + lo_data.filter.toUpperCase();
+            ls_url = ls_url + "name=" + lo_data.filter.toUpperCase().replace("*",".*"); // * wildcard allowed
 
             axios.get(ls_url).then(
                 function (response) {
