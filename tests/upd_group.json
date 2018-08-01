@@ -1,10 +1,10 @@
 {
-"day":"mercredi",
-"hour":10,
+"day":"lundi",
+"hour":18,
 "court" : 1,
-"level":"rouge",
-"year":2006,
+"level":"vert",
+"year":2008,
 "size" : 4,
-"id" : "_mercredi_10_1"
+"id" : "_lundi_18_1"
 }
  
