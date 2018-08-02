@@ -26,17 +26,19 @@ var fs = require("fs");
 
 // build data path
 function f_get_data_path(ls_class) {
+    console.log('f_get_data_path');
     return (__dirname + "/" + process.env.DATA_DIR + "/" + ls_class + "/");
 }
 
 // validate object fields
 function f_validate_fields(po_ctxt, pf_success, pf_failure) {
-
+    console.log("f_validate_fields")
     var lo_object = {};
     var lo_mydict = po_ctxt.dict[po_ctxt.name];
     // check rules from dictionary
     Object.keys(lo_mydict.fields).forEach(
         function (ps_field_name) {
+            console.log("Object.keys(lo_mydict.fields).forEach ",ps_field_name)
             var lo_msg = {};
 
             var lx_field_value = po_ctxt.data_in[ps_field_name];
@@ -67,30 +69,39 @@ function f_validate_fields(po_ctxt, pf_success, pf_failure) {
         });
 
 
-    if (po_ctxt.msgs.length) { pf_failure() } else { pf_success(lo_object) }
-    /*
-        // check primary key    
+    if (po_ctxt.msgs.length) {
+        pf_failure()
+    }
+    else {
+        // check primary key
+        // setup criteria on pkey
         var lo_pkey_data_in = {};
         lo_mydict.pkey.forEach(
             function (ps_field) {
-                lo_pkey_data_in[ps_field] = po_ctxt.data_in[ps_field]
+                console.log('lo_mydict.pkey.forEach',ps_field)
+                lo_pkey_data_in[ps_field] = lo_object[ps_field]
             });
+        // search object with same pkey    
         exports.f_get_object({
             "name": po_ctxt.name,
             "data_in": lo_pkey_data_in,
             "res": po_ctxt.res, // same as object
-            "cb_failure": po_ctxt.cb_failure, // same as object
+            "cb_failure": function() {pf_failure()},
             "cb_success": function (po_pkey_ctxt) {
-                console.log('cb_success', po_pkey_ctxt.name, po_pkey_ctxt.data_in, po_pkey_ctxt.data_out.length);
-                if ((po_pkey_ctxt.data_out.length) && (po_pkey_ctxt.data_out[0].id !== po_ctxt.data_in.id)) {
+                console.log('f_get_object.cb_success', po_pkey_ctxt.name, po_pkey_ctxt.data_in, po_pkey_ctxt.data_out.length);
+                var la_dup_pkey = po_pkey_ctxt.data_out.filter(function (po_object) { return (po_object.id!==po_ctxt.data_in.id); });
+
+                if (la_dup_pkey.length) {
                     po_ctxt.msgs.push({
                         "msg": lo_mydict.caption + " existe déjà",
                     });
+                    pf_failure()
+                } else {
+                    pf_success(lo_object)
                 }
             }
         });
     }
-    */
 }
 
 // generic delete function
@@ -106,20 +117,22 @@ exports.f_del_object = function (po_ctxt) {
     po_ctxt.http_body = false;
 
     var ls_filename = f_get_data_path(po_ctxt.name) + po_ctxt.data_in + ".json";
-    fs.unlink(ls_filename, function (err) {
-        if (err) {
-            po_ctxt.msgs.push({
-                msg: lo_mydict.caption + " n'existe pas",
-                diag: err
-            });
-        }
-        if (po_ctxt.msgs.length) {
-            po_ctxt.cb_failure(po_ctxt);
+    fs.unlink(ls_filename,
+        function (err) {
+            console.log('fs.unlink ' + ls_filename)
+            if (err) {
+                po_ctxt.msgs.push({
+                    msg: lo_mydict.caption + " n'existe pas",
+                    diag: err
+                });
+            }
+            if (po_ctxt.msgs.length) {
+                po_ctxt.cb_failure(po_ctxt);
 
-        } else {
-            po_ctxt.cb_success(po_ctxt);
-        }
-    });
+            } else {
+                po_ctxt.cb_success(po_ctxt);
+            }
+        });
 };
 
 // generic add function
@@ -138,26 +151,30 @@ exports.f_add_object = function (po_ctxt) {
     f_validate_fields(po_ctxt,
         // success CB 
         function (po_object) {
+            console.log('f_validate_fields.cb_success')
             po_object.id = Date.now();
             var ls_filename = f_get_data_path(po_ctxt.name) + po_object.id + ".json";
             // check unicity
             fs.stat(ls_filename,
                 function (err) {
+                    console.log('fs.stat');
                     if ((err) && (err.code === "ENOENT")) {
                         // complete and store record
                         var ls_data = JSON.stringify(po_object);
-                        fs.writeFile(ls_filename, ls_data, function (err) {
-                            if (err) {
-                                po_ctxt.msgs.push({
-                                    "msg": "echec création " + lo_mydict.caption,
-                                    "diag": err
-                                });
-                                po_ctxt.cb_failure(po_ctxt);
+                        fs.writeFile(ls_filename, ls_data,
+                            function (err) {
+                                console.log('fs.writeFile');
+                                if (err) {
+                                    po_ctxt.msgs.push({
+                                        "msg": "echec création " + lo_mydict.caption,
+                                        "diag": err
+                                    });
+                                    po_ctxt.cb_failure(po_ctxt);
 
-                            } else {
-                                po_ctxt.cb_success(po_ctxt);
-                            }
-                        });
+                                } else {
+                                    po_ctxt.cb_success(po_ctxt);
+                                }
+                            });
                     } else {
                         po_ctxt.msgs.push({
                             "msg": lo_mydict.caption + " existe déjà",
@@ -170,7 +187,7 @@ exports.f_add_object = function (po_ctxt) {
             );
         },
         //failure CB
-        function () { po_ctxt.cb_failure(po_ctxt) }
+        function () { console.log('f_validate_fields.cb_failure'); po_ctxt.cb_failure(po_ctxt) }
     );
 };
 
@@ -191,39 +208,44 @@ exports.f_upd_object = function (po_ctxt) {
     f_validate_fields(po_ctxt,
         //success CB
         function (po_object) {
+            console.log('f_validate_fields.cb_success');
             po_object.id = po_ctxt.data_in.id;
             var ls_filename = f_get_data_path(po_ctxt.name) + po_object.id + ".json";
             // check unicity
             fs.stat(ls_filename,
                 function (err) {
+                    console.log('fs.stat');
                     if (!((err) && (err.code === "ENOENT"))) {
                         // complete and store record
                         var ls_data = JSON.stringify(po_object);
-                        fs.writeFile(ls_filename, ls_data, function (err) {
-                            if (err) {
-                                po_ctxt.msgs.push({
-                                    "msg": "echec modification " + lo_mydict.caption,
-                                    "diag": err
-                                });
-                                po_ctxt.cb_failure(po_ctxt);
-    
-                            } else {
-                                po_ctxt.cb_success(po_ctxt);
-                            }
-                        });
+                        fs.writeFile(ls_filename, ls_data,
+                            function (err) {
+                                console.log('fs.writeFile');
+                                if (err) {
+                                    po_ctxt.msgs.push({
+                                        "msg": "echec modification " + lo_mydict.caption,
+                                        "diag": err
+                                    });
+                                    po_ctxt.cb_failure(po_ctxt);
+
+                                } else {
+                                    po_ctxt.cb_success(po_ctxt);
+                                }
+                            });
                     } else {
                         po_ctxt.msgs.push({
                             "msg": lo_mydict.caption + "n'existe pas",
                             "diag": err
                         });
                         po_ctxt.cb_failure(po_ctxt);
-    
+
                     }
                 }
             );
         },
         //failure CB
         function () {
+            console.log('f_validate_fields.cb_failure');
             po_ctxt.cb_failure(po_ctxt);
         }
     );
@@ -239,13 +261,13 @@ function f_get_children(po_ctxt) {
         //loop on children types
         po_ctxt.children.forEach(
             function (ps_child_name, pi_child_idx, pa_children) {
-
+                console.log('po_ctxt.children.forEach',ps_child_name);
                 var lb_lst_child = (pi_child_idx === (pa_children.length - 1));
 
                 //loop on data objects
                 po_ctxt.data_out.forEach(
                     function (po_object, pi_object_idx, pa_object) {
-
+                        console.log('po_ctxt.data_out.forEach', po_object.id);
                         var lb_lst_object = (pi_object_idx === (pa_object.length - 1));
                         // build search criteria (foreign key) 
                         var lo_child_data_in = {};
@@ -259,6 +281,7 @@ function f_get_children(po_ctxt) {
                             "res": po_ctxt.res, // same as object
                             "cb_failure": po_ctxt.cb_failure, // same as object
                             "cb_success": function (po_child_ctxt) {
+                                console.log('f_get_object.cb_success')
                                 po_object[ps_child_name] = po_child_ctxt.data_out;
                                 console.log('cb_success', po_child_ctxt.name, po_child_ctxt.data_in, po_child_ctxt.data_out.length);
                                 //last runner - trigger object success
@@ -285,13 +308,13 @@ function f_get_parent(po_ctxt) {
         //loop on parent types
         po_ctxt.parent.forEach(
             function (ps_parent_name, pi_parent_idx, pa_parent) {
-
+                console.log('po_ctxt.parent.forEach', ps_parent_name);
                 var lb_lst_parent = (pi_parent_idx === (pa_parent.length - 1));
 
                 //loop on data objects
                 po_ctxt.data_out.forEach(
                     function (po_object, pi_object_idx, pa_object) {
-
+                        console.log('po_ctxt.data_out.forEach', po_object.id);
                         var lb_lst_object = (pi_object_idx === (pa_object.length - 1));
                         // build search criteria (foreign key) 
                         var lo_parent_data_in = {};
@@ -337,6 +360,7 @@ exports.f_get_object = function (po_ctxt) {
     //dump each file in data/group directory into an array of json files
     fs.readdir(ls_path,
         function (err, pa_files) {
+            console.log('fs.readdir');
             if (err) {
                 po_ctxt.msgs.push({
                     "msg": "echec accès données",
@@ -350,10 +374,11 @@ exports.f_get_object = function (po_ctxt) {
                     // loop on files
                     la_json_files.forEach(
                         function (file, idx, files) {
+                            console.log('la_json_files.forEach ',file);
                             fs.readFile(
                                 ls_path + file, "utf8",
                                 function (err, data) {
-
+                                    console.log('fs.readFile',file)
                                     var lb_lst_file = (idx === files.length - 1);
 
                                     if (err) {
@@ -370,6 +395,7 @@ exports.f_get_object = function (po_ctxt) {
                                     // loop on filters		
                                     Object.keys(po_ctxt.data_in).forEach(
                                         function (ps_key) {
+                                            console.log('Object.keys(po_ctxt.data_in).forEach',ps_key)
                                             if ((po_ctxt.data_in[ps_key]) &&
                                                 (lo_object[ps_key]) &&
                                                 (!String(lo_object[ps_key]).match("^" + po_ctxt.data_in[ps_key] + "$"))) {
@@ -402,14 +428,14 @@ exports.f_get_object = function (po_ctxt) {
 
 // callback wbs failure
 exports.f_wbs_failure = function (po_ctxt) {
-    console.log('f_wbs_failure', po_ctxt.msgs.length, po_ctxt.msgs[0]);
+    console.log('f_wbs_failure', po_ctxt.name, po_ctxt.data_in, po_ctxt.msgs.length, po_ctxt.msgs[0]);
     po_ctxt.res.setHeader("Content-type", "application/json");
     po_ctxt.res.status(po_ctxt.http_failure).json(po_ctxt.msgs);
 };
 
 // callback wbs success
 exports.f_wbs_success = function (po_ctxt) {
-    console.log('f_wbs_success', po_ctxt.data_out.length);
+    console.log('f_wbs_success', po_ctxt.name, po_ctxt.data_in, po_ctxt.data_out.length);
     po_ctxt.res.setHeader("Content-type", "application/json");
     if (po_ctxt.http_body) {
         po_ctxt.res.status(po_ctxt.http_success).json(po_ctxt.data_out);
