@@ -535,7 +535,7 @@ const member_list = {
             var lo_data = this;
             console.log("@f_filter");
             var ls_url = "http://localhost:8080/api/member?";
-            ls_url = ls_url + "name=" + lo_data.filter.toUpperCase().replace("*",".*"); // * wildcard allowed
+            ls_url = ls_url + "name=" + lo_data.filter.toUpperCase();
 
             axios.get(ls_url).then(
                 function (response) {

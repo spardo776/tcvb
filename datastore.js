@@ -38,7 +38,7 @@ function f_validate_fields(po_ctxt, pf_success, pf_failure) {
     // check rules from dictionary
     Object.keys(lo_mydict.fields).forEach(
         function (ps_field_name) {
-            console.log("Object.keys(lo_mydict.fields).forEach ",ps_field_name)
+            console.log("Object.keys(lo_mydict.fields).forEach ", ps_field_name)
             var lo_msg = {};
 
             var lx_field_value = po_ctxt.data_in[ps_field_name];
@@ -78,7 +78,7 @@ function f_validate_fields(po_ctxt, pf_success, pf_failure) {
         var lo_pkey_data_in = {};
         lo_mydict.pkey.forEach(
             function (ps_field) {
-                console.log('lo_mydict.pkey.forEach',ps_field)
+                console.log('lo_mydict.pkey.forEach', ps_field)
                 lo_pkey_data_in[ps_field] = lo_object[ps_field]
             });
         // search object with same pkey    
@@ -86,10 +86,10 @@ function f_validate_fields(po_ctxt, pf_success, pf_failure) {
             "name": po_ctxt.name,
             "data_in": lo_pkey_data_in,
             "res": po_ctxt.res, // same as object
-            "cb_failure": function() {pf_failure()},
+            "cb_failure": function () { pf_failure() },
             "cb_success": function (po_pkey_ctxt) {
                 console.log('f_get_object.cb_success', po_pkey_ctxt.name, po_pkey_ctxt.data_in, po_pkey_ctxt.data_out.length);
-                var la_dup_pkey = po_pkey_ctxt.data_out.filter(function (po_object) { return (po_object.id!==po_ctxt.data_in.id); });
+                var la_dup_pkey = po_pkey_ctxt.data_out.filter(function (po_object) { return (po_object.id !== po_ctxt.data_in.id); });
 
                 if (la_dup_pkey.length) {
                     po_ctxt.msgs.push({
@@ -261,7 +261,7 @@ function f_get_children(po_ctxt) {
         //loop on children types
         po_ctxt.children.forEach(
             function (ps_child_name, pi_child_idx, pa_children) {
-                console.log('po_ctxt.children.forEach',ps_child_name);
+                console.log('po_ctxt.children.forEach', ps_child_name);
                 var lb_lst_child = (pi_child_idx === (pa_children.length - 1));
 
                 //loop on data objects
@@ -374,11 +374,11 @@ exports.f_get_object = function (po_ctxt) {
                     // loop on files
                     la_json_files.forEach(
                         function (file, idx, files) {
-                            console.log('la_json_files.forEach ',file);
+                            console.log('la_json_files.forEach ', file);
                             fs.readFile(
                                 ls_path + file, "utf8",
                                 function (err, data) {
-                                    console.log('fs.readFile',file)
+                                    console.log('fs.readFile', file)
                                     var lb_lst_file = (idx === files.length - 1);
 
                                     if (err) {
@@ -395,11 +395,17 @@ exports.f_get_object = function (po_ctxt) {
                                     // loop on filters		
                                     Object.keys(po_ctxt.data_in).forEach(
                                         function (ps_key) {
-                                            console.log('Object.keys(po_ctxt.data_in).forEach',ps_key)
+                                            console.log('Object.keys(po_ctxt.data_in).forEach', ps_key)
                                             if ((po_ctxt.data_in[ps_key]) &&
-                                                (lo_object[ps_key]) &&
-                                                (!String(lo_object[ps_key]).match("^" + po_ctxt.data_in[ps_key] + "$"))) {
-                                                lb_select = 0;
+                                                (lo_object[ps_key])) {
+                                                // build filtering regexp
+                                                var ls_filter = po_ctxt.data_in[ps_key]
+                                                    .replace(/[\\\^\$\{\}\[\]\(\)\.\+\|]/g, '') // remove regexp special chars
+                                                    .replace(/\*/g, '.*') // * wildcard allowed
+                                                    .replace(/\?/g, '.'); // ? wildcard allowed
+                                                if (!String(lo_object[ps_key]).match("^" + ls_filter + "$")) {
+                                                    lb_select = 0;
+                                                }
                                             }
                                         }
                                     );
