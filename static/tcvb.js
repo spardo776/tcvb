@@ -9,8 +9,8 @@ const main_menu = Vue.component('main-menu',
             `
         <div>    
         <ul class="nav nav-pills">
-            <li class="nav-item"><a class="nav-link" v-bind:class="active_tag === 'group' ? 'active' : ''" href="#/group">groupe</a></li>
-            <li class="nav-item"><a class="nav-link" v-bind:class="active_tag === 'member' ? 'active' : ''" href="#/member">membre</a></li>
+            <li class="nav-item"><a class="nav-link" v-bind:class="active_tag === 'group' ? 'active' : ''" href="#/group">groupes</a></li>
+            <li class="nav-item"><a class="nav-link" v-bind:class="active_tag === 'member' ? 'active' : ''" href="#/member">membres</a></li>
         </ul>
         
         </div>
@@ -217,9 +217,9 @@ const group_detail = Vue.component('group-detail',
                         <td colspan=4 class="text-center"><span style="font-style:italic">aucun inscrit</span></td>
                      </tr>
                      <tr v-if="group.isfree">
-                        <td><input class="form-control" v-model="new_member.name"></td>
-                        <td><input class="form-control" v-model="new_member.firstname"></td>
-                        <td><input class="form-control" v-model="new_member.year"></td>
+                        <td><input class="form-control" v-model="new_member.name" placeholder="nom"></td>
+                        <td><input class="form-control" v-model="new_member.firstname" placeholder="prénom"></td>
+                        <td><input class="form-control" v-model="new_member.year"  placeholder="année"></td>
                         <td><button type="button" class="btn btn-warning oi oi-plus" v-on:click="f_add_member()"></button></td>
                      </tr>
                      <!-- isfree -->

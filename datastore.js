@@ -41,7 +41,7 @@ function f_validate_fields(po_ctxt, pf_success, pf_failure) {
     // check rules from dictionary
     Object.keys(lo_mydict.fields).forEach(
         function (ps_field_name) {
-            debug("Object.keys(lo_mydict.fields).forEach %s", ps_field_name);
+            debug("f_validate_fields/Object.keys(lo_mydict.fields).forEach %s", ps_field_name);
             var lo_msg = {},
                 lx_field_value = po_ctxt.data_in[ps_field_name],
                 ls_field_rule = po_ctxt.dict[po_ctxt.name].fields[ps_field_name].ctrl,
@@ -80,7 +80,7 @@ function f_validate_fields(po_ctxt, pf_success, pf_failure) {
         // setup criteria on pkey
         lo_mydict.pkey.forEach(
             function (ps_field) {
-                debug('lo_mydict.pkey.forEach %s', ps_field);
+                debug('f_validate_fields/lo_mydict.pkey.forEach %s', ps_field);
                 lo_pkey_data_in[ps_field] = lo_object[ps_field];
             }
         );
@@ -91,7 +91,7 @@ function f_validate_fields(po_ctxt, pf_success, pf_failure) {
             "res": po_ctxt.res, // same as object
             "cb_failure": function () { pf_failure(); },
             "cb_success": function (po_pkey_ctxt) {
-                debug('f_get_object.cb_success %S %j %s', po_pkey_ctxt.name, po_pkey_ctxt.data_in, po_pkey_ctxt.data_out.length);
+                debug('f_validate_fields/f_get_object.cb_success %S %j %s', po_pkey_ctxt.name, po_pkey_ctxt.data_in, po_pkey_ctxt.data_out.length);
                 var la_dup_pkey = po_pkey_ctxt.data_out.filter(function (po_object) { return (po_object.id !== po_ctxt.data_in.id); });
 
                 if (la_dup_pkey.length) {
@@ -100,7 +100,10 @@ function f_validate_fields(po_ctxt, pf_success, pf_failure) {
                     });
                     pf_failure();
                 } else {
-                    pf_success(lo_object);
+                    // run specific validation
+                    po_ctxt.dict[po_ctxt.name].f_validate_object(lo_object,po_ctxt, 
+                        pf_success, 
+                        pf_failure);
                 }
             }
         });
@@ -122,7 +125,7 @@ exports.f_del_object = function (po_ctxt) {
 
     fs.unlink(ls_filename,
         function (err) {
-            debug('fs.unlink %s' + ls_filename);
+            debug('f_del_object/fs.unlink %s' + ls_filename);
             if (err) {
                 po_ctxt.msgs.push({
                     msg: lo_mydict.caption + " n'existe pas",
@@ -149,24 +152,25 @@ exports.f_add_object = function (po_ctxt) {
     po_ctxt.http_failure = 400;
     po_ctxt.http_body = false;
 
+    po_ctxt.edit_mode='add';
     var lo_mydict = po_ctxt.dict[po_ctxt.name];
 
     f_validate_fields(po_ctxt,
         // success CB 
         function (po_object) {
-            debug('f_validate_fields.cb_success');
+            debug('f_add_object/f_validate_fields.cb_success');
             po_object.id = Date.now();
             var ls_filename = f_get_data_path(po_ctxt.name) + po_object.id + ".json";
             // check unicity
             fs.stat(ls_filename,
                 function (err) {
-                    debug('fs.stat');
+                    debug('f_add_object/f_validate_fields/fs.stat');
                     if (err && (err.code === "ENOENT")) {
                         // complete and store record
                         var ls_data = JSON.stringify(po_object);
                         fs.writeFile(ls_filename, ls_data,
                             function (err) {
-                                debug('fs.writeFile');
+                                debug('f_add_object/f_validate_fields/fs.writeFile');
                                 if (err) {
                                     po_ctxt.msgs.push({
                                         "msg": "echec création " + lo_mydict.caption,
@@ -190,7 +194,7 @@ exports.f_add_object = function (po_ctxt) {
             );
         },
         //failure CB
-        function () { debug('f_validate_fields.cb_failure'); po_ctxt.cb_failure(po_ctxt); }
+        function () { debug('f_validate_fields/cb_failure'); po_ctxt.cb_failure(po_ctxt); }
     );
 };
 
@@ -205,25 +209,26 @@ exports.f_upd_object = function (po_ctxt) {
     po_ctxt.http_failure = 400;
     po_ctxt.http_body = false;
 
+    po_ctxt.edit_mode='update';
     var lo_mydict = po_ctxt.dict[po_ctxt.name];
 
 
     f_validate_fields(po_ctxt,
         //success CB
         function (po_object) {
-            debug('f_validate_fields.cb_success');
+            debug('f_upd_object/f_validate_fields/cb_success');
             po_object.id = po_ctxt.data_in.id;
             var ls_filename = f_get_data_path(po_ctxt.name) + po_object.id + ".json";
             // check unicity
             fs.stat(ls_filename,
                 function (err) {
-                    debug('fs.stat');
+                    debug('f_upd_object/f_validate_fields/fs.stat');
                     if (!(err && (err.code === "ENOENT"))) {
                         // complete and store record
                         var ls_data = JSON.stringify(po_object);
                         fs.writeFile(ls_filename, ls_data,
                             function (err) {
-                                debug('fs.writeFile');
+                                debug('f_upd_object/f_validate_fields/fs.writeFile');
                                 if (err) {
                                     po_ctxt.msgs.push({
                                         "msg": "echec modification " + lo_mydict.caption,
@@ -401,7 +406,7 @@ exports.f_get_object = function (po_ctxt) {
                                             if ((po_ctxt.data_in[ps_key]) &&
                                                 (lo_object[ps_key])) {
                                                 // build filtering regexp
-                                                var ls_filter = po_ctxt.data_in[ps_key]
+                                                var ls_filter = String(po_ctxt.data_in[ps_key])
                                                     .replace(/[\\\^\$\{\}\[\]\(\)\.\+\|]/g, '') // remove regexp special chars
                                                     .replace(/\*/g, '.*') // * wildcard allowed
                                                     .replace(/\?/g, '.'); // ? wildcard allowed
