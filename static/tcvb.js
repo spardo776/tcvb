@@ -1,4 +1,7 @@
+// jslint --edition=latest --node  --white --color  --this  tcvb.js
+
 "use strict";
+
 
 const main_menu = Vue.component('main-menu',
     {
@@ -28,9 +31,9 @@ const button_bar = Vue.component('button-bar',
         `,
         methods: {
             f_home:
-                function () { router.push('/') },
+                function () { router.push('/'); },
             f_back:
-                function () { router.go(-1) }
+                function () { router.go(-1); }
         }
     });
 //
@@ -138,7 +141,7 @@ const group_edit = Vue.component('group-edit',
                                 lo_comp.group = (lo_comp.noresult ? null : response.data[0]);
                             });
                     } else {
-                        lo_comp.group = { day: null, hour: null, court: null, level: null, year: null, size: 6 }
+                        lo_comp.group = { day: null, hour: null, court: null, level: null, year: null, size: 6 };
                     }
                 },
             f_save: function () {
@@ -150,8 +153,8 @@ const group_edit = Vue.component('group-edit',
                 axios.post(ls_url, lo_comp.group)
                     .then(
                         function (response) {
-                            console.log("-response.status=" + response.status)
-                            router.push('/')
+                            console.log("-response.status=" + response.status);
+                            router.push('/');
                         }
                     )
                     .catch(function (error) {
@@ -214,8 +217,8 @@ const group_detail = Vue.component('group-detail',
                         <td colspan=4 class="text-center"><span style="font-style:italic">aucun inscrit</span></td>
                      </tr>
                      <tr v-if="group.isfree">
-                        <td><input class="form-control" v-model="new_member.firstname"></td>
                         <td><input class="form-control" v-model="new_member.name"></td>
+                        <td><input class="form-control" v-model="new_member.firstname"></td>
                         <td><input class="form-control" v-model="new_member.year"></td>
                         <td><button type="button" class="btn btn-warning oi oi-plus" v-on:click="f_add_member()"></button></td>
                      </tr>
@@ -249,7 +252,7 @@ const group_detail = Vue.component('group-detail',
                 );
             },
         computed: {
-            isempty: function () { var lo_comp = this; return ((!lo_comp.group.member) || (lo_comp.group.member.length === 0)) }
+            isempty: function () { var lo_comp = this; return ((!lo_comp.group.member) || (lo_comp.group.member.length === 0)); }
         },
         methods: {
             f_home:
@@ -281,7 +284,7 @@ const group_detail = Vue.component('group-detail',
                         function (response) {
                             console.log("-response.status=" + response.status)
                             lo_comp.f_load(); // refresh group data;
-                            lo_comp.new_member = {}
+                            lo_comp.new_member = {};
                         }
                     )
                     .catch(function (error) {
@@ -414,7 +417,7 @@ const group_list = {
                 groups: [],
                 isfree: true,
                 noresult: true
-            }
+            };
         },
     methods: {
         f_filter: function () {
@@ -457,11 +460,11 @@ const group_list = {
         },
         f_open_group: function (ps_group_id) {
             console.log('@f_open group ' + ps_group_id);
-            router.push('/group/' + ps_group_id)
+            router.push('/group/' + ps_group_id);
         },
         f_add_group: function () {
             console.log('@f_add_group');
-            router.push('/group/0/edit')
+            router.push('/group/0/edit');
         }
 
     },
@@ -528,7 +531,7 @@ const member_list = {
                 filter: '',
                 members: [],
                 noresult: true
-            }
+            };
         },
     methods: {
         f_filter: function () {
@@ -544,7 +547,7 @@ const member_list = {
                     lo_data.members = response.data;
 
                 }); //TODO error handling
-        },
+        }
     },
     created:
         function () {
@@ -559,7 +562,7 @@ const router = new VueRouter({
             { path: '/group', component: group_list },
             { path: '/member', component: member_list },
             { path: '/group/:id', component: group_detail, props: true },
-            { path: '/group/:id/edit', component: group_edit, props: true },
+            { path: '/group/:id/edit', component: group_edit, props: true }
         ]
 
 });
@@ -567,4 +570,4 @@ const router = new VueRouter({
 const app = new Vue({
     el: '#go_vue_app',
     router: router
-})
+});

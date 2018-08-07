@@ -1,4 +1,3 @@
-/*jslint white, single, node */
 
 /*
  ** data dictionary

@@ -1,4 +1,3 @@
-/*jslint white, single, node */
 
 "use strict";
 
@@ -10,7 +9,6 @@
 var go_dict = require("./dict_tcvb");
 
 var go_ds = require('./datastore');
-
 
 // WBS get group
 function f_wbs_get_group(req, res) {
@@ -139,7 +137,11 @@ function f_wbs_del_member(req, res) {
  */
 
 var express = require("express");
+var morgan = require("morgan");
+
 var app = express();
+
+app.use(morgan(':date[iso] :remote-addr :remote-user :method :url HTTP/:http-version :status :res[content-length] - :response-time ms'));
 
 app.use(express.urlencoded({
     extended: true
