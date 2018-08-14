@@ -59,7 +59,7 @@ const group_edit = Vue.component('group-edit',
                         nouveau groupe
                     </h5>
                 </div>              
-                <div class="form-row">
+                <form><div class="form-row">
                   <div class="form-group col-md">
                      <label for="go_day">jour</label>
                      <select  id ="go_day" class="form-control" v-model="group.day">
@@ -70,7 +70,7 @@ const group_edit = Vue.component('group-edit',
                   </div>
                   <div class="form-group col-md">
                      <label for="go_hour">heure</label>
-                     <input id ="go_hour" class="form-control" v-model="group.hour"></input>
+                     <input id ="go_hour" type="number" class="form-control" v-model="group.hour"></input>
                   </div>
                   <div class="form-group col-md">
                      <label for="go_court">court</label>
@@ -92,16 +92,13 @@ const group_edit = Vue.component('group-edit',
                   </div>
                   <div class="form-group col-md">
                      <label for="go_year">année</label>
-                     <input id ="go_year" class="form-control" v-model="group.year"></input>
+                     <input id ="go_year" type="number" class="form-control" v-model="group.year"></input>
                   </div>
                   <div class="form-group col-md">
                      <label for="go_size">taille</label>
-                     <input id ="go_size" class="form-control" v-model="group.size"></input>
+                     <input id ="go_size" type="number" class="form-control" v-model="group.size"></input>
                   </div>
-               </div>
-               <div class="form-row">
-                
-               </div>
+               </div></form>
                <div v-if="api_error.length" class="alert alert-danger">
                   <div v-for="cur_api_error in api_error">{{cur_api_error.msg}}</div>
                </div>
@@ -131,13 +128,13 @@ const group_edit = Vue.component('group-edit',
                 // group data load
                 function () {
                     var lo_comp = this;
-                    console.log('@f_load');
+                    //console.log('@f_load');
                     if (lo_comp.id !== "0") {
-                        var ls_url = "http://localhost:8080/api/group?id=" + lo_comp.id;
-                        console.log("-url=" + ls_url);
+                        var ls_url = "/api/group?id=" + lo_comp.id;
+                        //console.log("-url=" + ls_url);
                         axios.get(ls_url).then(
                             function (response) {
-                                console.log("-rowcount=" + response.data.length);
+                                //console.log("-rowcount=" + response.data.length);
                                 lo_comp.noresult = (response.data.length === 0);
                                 lo_comp.group = (lo_comp.noresult ? null : response.data[0]);
                             });
@@ -146,15 +143,15 @@ const group_edit = Vue.component('group-edit',
                     }
                 },
             f_save: function () {
-                console.log('@f_save');
+                //console.log('@f_save');
                 var lo_comp = this;
-                var ls_url = "http://localhost:8080/api/group";
-                console.log("-url=" + ls_url);
+                var ls_url = "/api/group";
+                //console.log("-url=" + ls_url);
                 lo_comp.api_error.splice(0);
                 axios.post(ls_url, lo_comp.group)
                     .then(
                         function (response) {
-                            console.log("-response.status=" + response.status);
+                            //console.log("-response.status=" + response.status);
                             router.push('/');
                         }
                     )
@@ -162,12 +159,12 @@ const group_edit = Vue.component('group-edit',
                         if (error.response) {
                             lo_comp.api_error = error.response.data;
                         }
-                        console.log("-error=" + error.message);
+                        //console.log("-error=" + error.message);
                     });
             }
         },
         created: function () {
-            console.log('@created');
+            //console.log('@created');
             this.f_load();
         }
     }
@@ -220,7 +217,7 @@ const group_detail = Vue.component('group-detail',
                      <tr v-if="group.isfree">
                         <td><input class="form-control" v-model="new_member.name" placeholder="nom"></td>
                         <td><input class="form-control" v-model="new_member.firstname" placeholder="prénom"></td>
-                        <td><input class="form-control" v-model="new_member.year"  placeholder="année"></td>
+                        <td><input class="form-control" v-model="new_member.year" type="number" placeholder="année"></td>
                         <td><button type="button" class="btn btn-warning oi oi-plus" v-on:click="f_add_member()"></button></td>
                      </tr>
                      <!-- isfree -->
@@ -262,12 +259,12 @@ const group_detail = Vue.component('group-detail',
                 // group data load
                 function () {
                     var lo_comp = this;
-                    console.log('@f_load');
-                    var ls_url = "http://localhost:8080/api/group?id=" + lo_comp.id;
-                    console.log("-url=" + ls_url);
+                    //console.log('@f_load');
+                    var ls_url = "/api/group?id=" + lo_comp.id;
+                    //console.log("-url=" + ls_url);
                     axios.get(ls_url).then(
                         function (response) {
-                            console.log("-rowcount=" + response.data.length);
+                            //console.log("-rowcount=" + response.data.length);
                             lo_comp.noresult = (response.data.length === 0);
                             lo_comp.group = (lo_comp.noresult ? null : response.data[0]);
                         });
@@ -275,15 +272,15 @@ const group_detail = Vue.component('group-detail',
             // add a member in group
             f_add_member: function () {
                 var lo_comp = this;
-                console.log('@f_add_member');
+                //console.log('@f_add_member');
                 lo_comp.new_member.group_id = lo_comp.group.id;
-                var ls_url = "http://localhost:8080/api/member";
-                console.log("-url=" + ls_url);
+                var ls_url = "/api/member";
+                //console.log("-url=" + ls_url);
                 lo_comp.api_error.splice(0);
                 axios.post(ls_url, lo_comp.new_member)
                     .then(
                         function (response) {
-                            console.log("-response.status=" + response.status)
+                            //console.log("-response.status=" + response.status)
                             lo_comp.f_load(); // refresh group data;
                             lo_comp.new_member = {};
                         }
@@ -292,21 +289,21 @@ const group_detail = Vue.component('group-detail',
                         if (error.response) {
                             lo_comp.api_error = error.response.data;
                         }
-                        console.log("-error=" + error.message);
+                        //console.log("-error=" + error.message);
                     });
             },
             // delete a member
             f_del_member: function (po_member) {
                 var lo_comp = this;
-                console.log('@f_del_member');
+                //console.log('@f_del_member');
                 bootbox.confirm("supprimer inscrit " + po_member.firstname + " " + po_member.name + " ?",
                     function (pb_result) {
                         if (pb_result) {
-                            var ls_url = "http://localhost:8080/api/member/" + po_member.id;
+                            var ls_url = "/api/member/" + po_member.id;
                             axios.delete(ls_url)
                                 .then(
                                     function (response) {
-                                        console.log("-response.status=" + response.status);
+                                        //console.log("-response.status=" + response.status);
                                         lo_comp.f_load(); // refresh group data
                                     }
                                 )
@@ -314,7 +311,7 @@ const group_detail = Vue.component('group-detail',
                                     if (error.response) {
                                         lo_comp.api_error = error.response.data;
                                     }
-                                    console.log("-error=" + error.message);
+                                    //console.log("-error=" + error.message);
                                 });
                         }
                     });
@@ -323,15 +320,15 @@ const group_detail = Vue.component('group-detail',
             // delete a group
             f_del_group: function (po_group) {
                 var lo_comp = this;
-                console.log('@f_del_group');
+                //console.log('@f_del_group');
                 bootbox.confirm("supprimer groupe " + po_group.day + " " + po_group.hour + "h " + "court " + po_group.court + " ?",
                     function (pb_result) {
                         if (pb_result) {
-                            var ls_url = "http://localhost:8080/api/group/" + po_group.id;
+                            var ls_url = "/api/group/" + po_group.id;
                             axios.delete(ls_url)
                                 .then(
                                     function (response) {
-                                        console.log("-response.status=" + response.status);
+                                        //console.log("-response.status=" + response.status);
                                         f_home(); // refresh group data
                                     }
                                 )
@@ -339,7 +336,7 @@ const group_detail = Vue.component('group-detail',
                                     if (error.response) {
                                         lo_comp.api_error = error.response.data;
                                     }
-                                    console.log("-error=" + error.message);
+                                    //console.log("-error=" + error.message);
                                 });
                         }
                     });
@@ -348,7 +345,7 @@ const group_detail = Vue.component('group-detail',
         },
         created:
             function () {
-                console.log('@created');
+                //console.log('@created');
                 this.f_load();
             }
     });
@@ -423,8 +420,8 @@ const group_list = {
     methods: {
         f_filter: function () {
             var lo_data = this;
-            console.log("@f_filter");
-            var ls_url = "http://localhost:8080/api/group?";
+            //console.log("@f_filter");
+            var ls_url = "/api/group?";
             var lb_filtered = false;
 
             if ((!lb_filtered) && lo_data.filter.match('[12][0-9][0-9[0-9]')) {
@@ -446,12 +443,12 @@ const group_list = {
                 //invalid filter - reset
                 lo_data.filter = "";
             }
-            console.log("-url=" + ls_url);
+            //console.log("-url=" + ls_url);
 
 
             axios.get(ls_url).then(
                 function (response) {
-                    console.log("-rowcount=" + response.data.length);
+                    //console.log("-rowcount=" + response.data.length);
                     lo_data.noresult = (response.data.length === 0);
                     lo_data.groups = response.data;
 
@@ -460,18 +457,18 @@ const group_list = {
 
         },
         f_open_group: function (ps_group_id) {
-            console.log('@f_open group ' + ps_group_id);
+            //console.log('@f_open group ' + ps_group_id);
             router.push('/group/' + ps_group_id);
         },
         f_add_group: function () {
-            console.log('@f_add_group');
+            //console.log('@f_add_group');
             router.push('/group/0/edit');
         }
 
     },
     created:
         function () {
-            console.log('created');
+            //console.log('created');
             this.f_filter();
         }
 
@@ -537,13 +534,13 @@ const member_list = {
     methods: {
         f_filter: function () {
             var lo_data = this;
-            console.log("@f_filter");
-            var ls_url = "http://localhost:8080/api/member?";
+            //console.log("@f_filter");
+            var ls_url = "/api/member?";
             ls_url = ls_url + "name=" + lo_data.filter.toUpperCase();
 
             axios.get(ls_url).then(
                 function (response) {
-                    console.log("-rowcount=" + response.data.length);
+                    //console.log("-rowcount=" + response.data.length);
                     lo_data.noresult = (response.data.length === 0);
                     lo_data.members = response.data;
 
@@ -552,7 +549,7 @@ const member_list = {
     },
     created:
         function () {
-            console.log('created');
+            //console.log('created');
         }
 
 };
