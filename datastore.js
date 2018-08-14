@@ -89,18 +89,24 @@ function f_validate_fields(po_ctxt, pf_success, pf_failure) {
             "name": po_ctxt.name,
             "data_in": lo_pkey_data_in,
             "res": po_ctxt.res, // same as object
-            "cb_failure": function () { pf_failure(); },
+            "cb_failure": function () {
+                debug('f_validate_fields/f_get_object.cb_failure');
+                 pf_failure(); },
             "cb_success": function (po_pkey_ctxt) {
-                debug('f_validate_fields/f_get_object.cb_success %S %j %s', po_pkey_ctxt.name, po_pkey_ctxt.data_in, po_pkey_ctxt.data_out.length);
+                debug('f_validate_fields/f_get_object/cb_success %s %j %s', po_pkey_ctxt.name, po_pkey_ctxt.data_in, po_pkey_ctxt.data_out.length);
+                debug('- search object with same pkey - success')
                 var la_dup_pkey = po_pkey_ctxt.data_out.filter(function (po_object) { return (po_object.id !== po_ctxt.data_in.id); });
 
                 if (la_dup_pkey.length) {
+                    debug('- push duplicate error - call failure cb')
+
                     po_ctxt.msgs.push({
                         "msg": lo_mydict.caption + " existe déjà"
                     });
                     pf_failure();
                 } else {
                     // run specific validation
+                    debug('- call object validation')
                     po_ctxt.dict[po_ctxt.name].f_validate_object(lo_object,po_ctxt, 
                         pf_success, 
                         pf_failure);
@@ -158,19 +164,19 @@ exports.f_add_object = function (po_ctxt) {
     f_validate_fields(po_ctxt,
         // success CB 
         function (po_object) {
-            debug('f_add_object/f_validate_fields.cb_success');
+            debug('f_add_object/f_validate_fields/cb_success');
             po_object.id = Date.now();
             var ls_filename = f_get_data_path(po_ctxt.name) + po_object.id + ".json";
             // check unicity
             fs.stat(ls_filename,
                 function (err) {
-                    debug('f_add_object/f_validate_fields/fs.stat');
+                    debug('f_add_object/f_validate_fields/cb_success/fs.stat');
                     if (err && (err.code === "ENOENT")) {
                         // complete and store record
                         var ls_data = JSON.stringify(po_object);
                         fs.writeFile(ls_filename, ls_data,
                             function (err) {
-                                debug('f_add_object/f_validate_fields/fs.writeFile');
+                                debug('f_add_object/f_validate_fields/cb_success/fs.writeFile');
                                 if (err) {
                                     po_ctxt.msgs.push({
                                         "msg": "echec création " + lo_mydict.caption,
@@ -194,7 +200,7 @@ exports.f_add_object = function (po_ctxt) {
             );
         },
         //failure CB
-        function () { debug('f_validate_fields/cb_failure'); po_ctxt.cb_failure(po_ctxt); }
+        function () { debug('f_add_object/f_validate_fields/cb_failure'); po_ctxt.cb_failure(po_ctxt); }
     );
 };
 
@@ -222,13 +228,13 @@ exports.f_upd_object = function (po_ctxt) {
             // check unicity
             fs.stat(ls_filename,
                 function (err) {
-                    debug('f_upd_object/f_validate_fields/fs.stat');
+                    debug('f_upd_object/f_validate_fields/cb_success/fs.stat');
                     if (!(err && (err.code === "ENOENT"))) {
                         // complete and store record
                         var ls_data = JSON.stringify(po_object);
                         fs.writeFile(ls_filename, ls_data,
                             function (err) {
-                                debug('f_upd_object/f_validate_fields/fs.writeFile');
+                                debug('f_upd_object/f_validate_fields/cb_success/fs.writeFile');
                                 if (err) {
                                     po_ctxt.msgs.push({
                                         "msg": "echec modification " + lo_mydict.caption,
@@ -253,7 +259,7 @@ exports.f_upd_object = function (po_ctxt) {
         },
         //failure CB
         function () {
-            debug('f_validate_fields.cb_failure');
+            debug('f_upd_object/f_validate_fields/cb_failure');
             po_ctxt.cb_failure(po_ctxt);
         }
     );
@@ -268,13 +274,13 @@ function f_get_parent(po_ctxt) {
         //loop on parent types
         po_ctxt.parent.forEach(
             function (ps_parent_name, pi_parent_idx, pa_parent) {
-                debug('po_ctxt.parent.forEach %s', ps_parent_name);
+                debug('f_get_parent/po_ctxt.parent.forEach %s', ps_parent_name);
                 var lb_lst_parent = (pi_parent_idx === (pa_parent.length - 1));
 
                 //loop on data objects
                 po_ctxt.data_out.forEach(
                     function (po_object, pi_object_idx, pa_object) {
-                        debug('po_ctxt.data_out.forEach %s', po_object.id);
+                        debug('f_get_parent/po_ctxt.data_out.forEach %s', po_object.id);
                         var lb_lst_object = (pi_object_idx === (pa_object.length - 1)),
                             lo_parent_data_in = {};
                         // build search criteria (foreign key) 
@@ -289,7 +295,7 @@ function f_get_parent(po_ctxt) {
                             "cb_failure": po_ctxt.cb_failure, // same as object
                             "cb_success": function (po_parent_ctxt) {
                                 po_object[ps_parent_name] = po_parent_ctxt.data_out;
-                                debug('cb_success %s %j %s', po_parent_ctxt.name, po_parent_ctxt.data_in, po_parent_ctxt.data_out.length);
+                                debug('f_get_parent/po_ctxt.parent.forEach/po_ctxt.data_out.forEach/f_get_object/cb_success %s %j %s', po_parent_ctxt.name, po_parent_ctxt.data_in, po_parent_ctxt.data_out.length);
                                 //last runner - trigger object success
                                 if (lb_lst_parent && lb_lst_object) {
                                     po_ctxt.cb_success(po_ctxt);
@@ -314,13 +320,13 @@ function f_get_children(po_ctxt) {
         //loop on children types
         po_ctxt.children.forEach(
             function (ps_child_name, pi_child_idx, pa_children) {
-                debug('po_ctxt.children.forEach %s', ps_child_name);
+                debug('f_get_children/po_ctxt.children.forEach %s', ps_child_name);
                 var lb_lst_child = (pi_child_idx === (pa_children.length - 1));
 
                 //loop on data objects
                 po_ctxt.data_out.forEach(
                     function (po_object, pi_object_idx, pa_object) {
-                        debug('po_ctxt.data_out.forEach %s', po_object.id);
+                        debug('f_get_children/po_ctxt.children.forEach/po_ctxt.data_out.forEach %s', po_object.id);
                         var lb_lst_object = (pi_object_idx === (pa_object.length - 1)),
                             lo_child_data_in = {};
                         // build search criteria (foreign key) 
@@ -334,9 +340,8 @@ function f_get_children(po_ctxt) {
                             "res": po_ctxt.res, // same as object
                             "cb_failure": po_ctxt.cb_failure, // same as object
                             "cb_success": function (po_child_ctxt) {
-                                debug('f_get_object.cb_success');
+                                debug('f_get_children/po_ctxt.children.forEach/po_ctxt.data_out.forEach/f_get_object/cb_success %s %j %s', po_child_ctxt.name, po_child_ctxt.data_in, po_child_ctxt.data_out.length);
                                 po_object[ps_child_name] = po_child_ctxt.data_out;
-                                debug('cb_success %s %j %s', po_child_ctxt.name, po_child_ctxt.data_in, po_child_ctxt.data_out.length);
                                 //last runner - trigger object success
                                 if (lb_lst_child && lb_lst_object) {
                                     f_get_parent(po_ctxt);
@@ -368,7 +373,7 @@ exports.f_get_object = function (po_ctxt) {
     //dump each file in data/group directory into an array of json files
     fs.readdir(ls_path,
         function (err, pa_files) {
-            debug('fs.readdir');
+            debug('f_get_object/fs.readdir');
             if (err) {
                 po_ctxt.msgs.push({
                     "msg": "echec accès données",
@@ -382,11 +387,11 @@ exports.f_get_object = function (po_ctxt) {
                     // loop on files
                     la_json_files.forEach(
                         function (file, idx, files) {
-                            debug('la_json_files.forEach %s', file);
+                            debug('f_get_object/fs.readdir/la_json_files.forEach %s', file);
                             fs.readFile(
                                 ls_path + file, "utf8",
                                 function (err, data) {
-                                    debug('fs.readFile %s', file);
+                                    debug('f_get_object/fs.readdir/a_json_files.forEach/fs.readFile %s', file);
                                     var lb_lst_file = (idx === files.length - 1),
                                         lo_object = JSON.parse(data),
                                         lb_select = 1;
@@ -402,7 +407,7 @@ exports.f_get_object = function (po_ctxt) {
                                     // loop on filters		
                                     Object.keys(po_ctxt.data_in).forEach(
                                         function (ps_key) {
-                                            debug('Object.keys(po_ctxt.data_in).forEach %s', ps_key);
+                                            debug('f_get_object/fs.readdir/a_json_files.forEach/fs.readFile/Object.keys(po_ctxt.data_in).forEach %s', ps_key);
                                             if ((po_ctxt.data_in[ps_key]) &&
                                                 (lo_object[ps_key])) {
                                                 // build filtering regexp

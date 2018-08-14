@@ -1,7 +1,7 @@
 
 DATA_DIR="data/$1"
 export DATA_DIR
-DEBUG="datastore"
+#DEBUG="datastore dict_tcvb"
 export DEBUG
 if [ -d $DATA_dIR ]
 then

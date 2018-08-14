@@ -1,4 +1,4 @@
-debug
+
 /*
  ** data dictionary
 
@@ -48,7 +48,7 @@ exports.group = {
     },
     "pkey": ["day", "hour", "court"],
     "f_validate_object": function (po_object, po_ctxt, pf_success, pf_failure) {
-        debug('f_validate_object %s',po_ctxt.name);
+        debug('>f_validate_object %s',po_ctxt.name);
         if (po_object.year < 1920 || po_object.year > 2015) {
             po_ctxt.msgs.push({ msg: 'année invalide' });
         }
@@ -67,7 +67,6 @@ exports.member = {
     "pkey": ["name", "firstname"],
     "f_validate_object":
         function (po_object, po_ctxt, pf_success, pf_failure) {
-
             debug('f_validate_object %s',po_ctxt.name);
 
             if (po_object.year < 1920 || po_object.year > 2015) {
@@ -85,16 +84,18 @@ exports.member = {
                         "data_in": { "id": po_object.group_id },
                         "children": ["member"],
                         "cb_failure": pf_failure,
-                        "cb_success": function (po_ctxt) {
+                        "cb_success": function (po_ctxt_group) {
                             debug('f_validate_object/f_get_object/cb_success');
 
                             var lo_group;
-                            if (po_ctxt.data_out.length === 1) {
-                                lo_group = po_ctxt.data_out[0];
+                            if (po_ctxt_group.data_out.length === 1) {
+                                lo_group = po_ctxt_group.data_out[0];
                                 if ((!lo_group.member) || (!lo_group.member.length) || (lo_group.size - lo_group.member.length > 0)) {
+                                    debug('group is not full');
                                     pf_success(po_object);
                                 }
                                 else {
+                                    debug('group is full');
                                     po_ctxt.msgs.push({ msg: 'groupe complet' });
                                     pf_failure();
                                 }
@@ -102,6 +103,7 @@ exports.member = {
                                 po_ctxt.msgs.push({ msg: 'echec recherche groupe' });
                                 pf_failure();
                             }
+
                         }
                     });
 
@@ -110,5 +112,7 @@ exports.member = {
                     pf_success(po_object);
                 }
             }
+            debug('<f_validate_object');
+
         }
 };

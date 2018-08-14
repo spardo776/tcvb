@@ -2,6 +2,7 @@
 
 "use strict";
 
+bootbox.setLocale('fr')
 
 const main_menu = Vue.component('main-menu',
     {
@@ -198,7 +199,7 @@ const group_detail = Vue.component('group-detail',
                     </h5>
                </div>
                <table class="table">
-                  <thead class="thead-light">
+                  <thead>
                      <tr>
                         <th>nom</th>
                         <th>prénom</th>
@@ -383,7 +384,7 @@ const group_list = {
           </div>
        </div>
        <table class="table">
-          <thead class="thead-light">
+          <thead>
              <th>jour/heure - court</th>
              <th>niveau/année</th>
              <th>effectif</th>
@@ -499,7 +500,7 @@ const member_list = {
           <input id="go_filter" class="form-control" v-model="filter" v-on:change="f_filter" placeholder="nom">
        </div>
        <table class="table">
-          <thead class="thead-light">
+          <thead>
              <th>nom prénom</th>
              <th>année</th>
              <th>groupe</th>
