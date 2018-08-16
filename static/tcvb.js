@@ -3,6 +3,12 @@
 "use strict";
 
 bootbox.setLocale('fr')
+const go_levellist = [{ name: "blanc" }, { name: "violet" }, { name: "rouge" }, { name: "orange" }, { name: "vert" }, { name: "autre" }] ;
+
+const go_courtlist = [{ name: "1" }, { name: "2" }, { name: "3" }, { name: "jazy" }, { name: "herzog" }];
+
+const go_daylist = [{ name: "lundi", order: 1 }, { name: "mardi", order: 2 }, { name: "mercredi", order: 3 }, { name: "jeudi", order: 4 }, { name: "vendredi", order: 5 }, { name: "samedi", order: 6 }, { name: "dimanche", order: 7 }] ;
+// TODO : utiliser cet objet  lors du tri du résultat
 
 const main_menu = Vue.component('main-menu',
     {
@@ -117,9 +123,9 @@ const group_edit = Vue.component('group-edit',
                 group: {},
                 api_error: [],
                 noresult: true,
-                daylist: [{ name: "lundi" }, { name: "mardi" }, { name: "mercredi" }, { name: "jeudi" }, { name: "vendredi" }, { name: "samedi" }, { name: "dimanche" }],
-                courtlist: [{ name: "1" }, { name: "2" }, { name: "3" }, { name: "jazy" }, { name: "herzog" }],
-                levellist: [{ name: "blanc" }, { name: "violet" }, { name: "rouge" }, { name: "orange" }, { name: "vert" }, { name: "autre" }]
+                daylist: go_daylist,
+                courtlist: go_courtlist,
+                levellist: go_levellist
             }
             );
         },
@@ -266,6 +272,10 @@ const group_detail = Vue.component('group-detail',
                         function (response) {
                             //console.log("-rowcount=" + response.data.length);
                             lo_comp.noresult = (response.data.length === 0);
+                            if (!lo_comp.noresult) {
+                                // sort members
+                                response.data[0].member.sort(function (a, b) { return a.name.localeCompare(b.name) });
+                            }
                             lo_comp.group = (lo_comp.noresult ? null : response.data[0]);
                         });
                 },
@@ -428,11 +438,11 @@ const group_list = {
                 ls_url = ls_url + "year=" + lo_data.filter;
                 lb_filtered = true;
             }
-            if ((!lb_filtered) && (lo_data.filter.match('lundi|mardi|mercredi|jeudi|vendredi|samedi|dimanche'))) {
+            if ((!lb_filtered) && go_daylist.find(function(po_day){ return(lo_data.filter.match(po_day.name))})) {
                 ls_url = ls_url + "day=" + lo_data.filter;
                 lb_filtered = true;
             }
-            if ((!lb_filtered) && (lo_data.filter.match('vert|orange|violet'))) {
+            if ((!lb_filtered) && go_levellist.find(function(po_level){ return(lo_data.filter.match(po_level.name))})) {
                 ls_url = ls_url + "level=" + lo_data.filter;
                 lb_filtered = true;
             }
@@ -450,6 +460,17 @@ const group_list = {
                 function (response) {
                     //console.log("-rowcount=" + response.data.length);
                     lo_data.noresult = (response.data.length === 0);
+
+                    response.data.sort(function (a, b) {
+                        var lo_lkp_order = { };
+                        go_daylist.forEach(function(po_day) { lo_lkp_order[po_day.name]=po_day.order;});
+                        if (a.day === b.day) {
+                            return (a.hour - b.hour);
+                        } else {
+                            return (lo_lkp_order[a.day] - lo_lkp_order[b.day]);
+                        }
+                    });
+
                     lo_data.groups = response.data;
 
                 }); //TODO error handling
