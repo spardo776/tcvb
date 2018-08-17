@@ -147,7 +147,8 @@ app.use(morgan(':date[iso] :remote-addr :remote-user :method :url HTTP/:http-ver
 
 app.use(express_basic_auth(
     { users: go_expasswd.users,
-        challenge: true
+        challenge: true,
+        realm: "Inscriptions TCVB"
     }));
 
 app.use(express.urlencoded({

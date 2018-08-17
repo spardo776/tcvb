@@ -234,8 +234,9 @@ const group_detail = Vue.component('group-detail',
             <div id="go_scroll" class="container-fluid">
                <div class="text-center">
                     <h5>
-                    {{ group.day }} {{ group.hour }} - court {{group.court}} - 
-                    <span v-bind:class="'class-level-'+group.level">{{ group.year }}</span>
+                    {{ group.day.slice(0,3) }} {{ group.hour }} [{{ group.court }}]  
+                    <span v-bind:class="'class-level-'+group.level">{{ group.level }}</span>
+                    {{ group.year }}
                     </h5>
                </div>
                <table class="table">
@@ -375,7 +376,7 @@ const group_detail = Vue.component('group-detail',
             f_del_group: function (po_group) {
                 var lo_comp = this;
                 //console.log('@f_del_group');
-                bootbox.confirm("supprimer groupe " + po_group.day + " " + po_group.hour + " " + "court " + po_group.court + " ?",
+                bootbox.confirm("supprimer groupe " + po_group.day + " " + po_group.hour + " " + "[" + po_group.court + "] ?",
                     function (pb_result) {
                         if (pb_result) {
                             var ls_url = "/api/group/" + po_group.id;
@@ -436,7 +437,7 @@ const group_list = {
        </div>
        <table class="table">
           <thead>
-             <th>jour/heure - court</th>
+             <th>groupe</th>
              <th>niveau</th>
              <th>année</th>
              <th>effectif</th>
@@ -444,7 +445,7 @@ const group_list = {
           <tbody>
              <tr v-for="group in groups" v-bind:key="group.id" v-on:click="f_open_group(group.id)">
                 <td>
-                   {{ group.day }} {{ group.hour }} - {{ group.court }}
+                   {{ group.day.slice(0,3) }} {{ group.hour }} [{{ group.court }}]
                 </td>
                  <td>
                    <span v-bind:class="'class-level-'+group.level">{{ group.level }}</span>
@@ -580,7 +581,7 @@ const member_list = {
                 {{ member.year }}
                 </td>
                 <td>
-                {{ member.group[0].day }} {{ member.group[0].hour }} - court {{ member.group[0].court }}   
+                {{ member.group[0].day.slice(0,3) }} {{ member.group[0].hour }} [{{ member.group[0].court }}]
                 </td>
              </tr>
           </tbody >

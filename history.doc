@@ -2,7 +2,7 @@
 - lists for hours, years and sizes
 - hour is now a string
 - level displayed on group-list
-- basic auth (expressèbasic-auth module)
+- basic auth (express-basic-auth module)
 - fix integer check in datastore.js
 
 2018-08-16
