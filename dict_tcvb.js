@@ -40,7 +40,7 @@ exports.group = {
     "caption": "groupe",
     "fields": {
         "day": { ctrl: "MSL", caption: "jour" },
-        "hour": { ctrl: "MI", caption: "heure" },
+        "hour": { ctrl: "MS", caption: "heure" },
         "court": { ctrl: "MSL", caption: "court" },
         "level": { ctrl: "MSL", caption: "niveau" },
         "size": { ctrl: "MI", caption: "taille" },

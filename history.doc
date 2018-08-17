@@ -1,4 +1,11 @@
-17 aug 2019
+2018-08-17
+- lists for hours, years and sizes
+- hour is now a string
+- level displayed on group-list
+- basic auth (expressèbasic-auth module)
+- fix integer check in datastore.js
+
+2018-08-16
 - sort groups +  members
 - global lists day/court/level
 - use min version of vue and vue-router

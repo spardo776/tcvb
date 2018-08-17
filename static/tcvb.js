@@ -2,13 +2,35 @@
 
 "use strict";
 
-bootbox.setLocale('fr')
-const go_levellist = [{ name: "blanc" }, { name: "violet" }, { name: "rouge" }, { name: "orange" }, { name: "vert" }, { name: "autre" }] ;
+bootbox.setLocale('fr');
+
+const go_levellist = [{ name: "blanc" }, { name: "violet" }, { name: "rouge" }, { name: "orange" }, { name: "vert" }, { name: "autre" }];
 
 const go_courtlist = [{ name: "1" }, { name: "2" }, { name: "3" }, { name: "jazy" }, { name: "herzog" }];
 
-const go_daylist = [{ name: "lundi", order: 1 }, { name: "mardi", order: 2 }, { name: "mercredi", order: 3 }, { name: "jeudi", order: 4 }, { name: "vendredi", order: 5 }, { name: "samedi", order: 6 }, { name: "dimanche", order: 7 }] ;
-// TODO : utiliser cet objet  lors du tri du résultat
+const go_sizelist = [{ name: 4 }, { name: 6 }, { name: 8 }];
+
+const go_daylist = [{ name: "lundi", order: 1 }, { name: "mardi", order: 2 }, { name: "mercredi", order: 3 }, { name: "jeudi", order: 4 }, { name: "vendredi", order: 5 }, { name: "samedi", order: 6 }, { name: "dimanche", order: 7 }];
+
+var go_yearlist = [];
+
+for (var i = 2000; i < 2016; i++) {
+    go_yearlist.push({ name: i });
+}
+
+var go_hourlist = [];
+
+for (var i = 9; i < 22; i++) {
+    if (i < 10)
+    {
+        go_hourlist.push({ name: '0'+i+":00 " });
+        go_hourlist.push({ name: '0'+i+":30" });
+
+    } else {
+        go_hourlist.push({ name: i+":00 " });
+        go_hourlist.push({ name: i+":30" });
+    }
+}
 
 const main_menu = Vue.component('main-menu',
     {
@@ -76,7 +98,11 @@ const group_edit = Vue.component('group-edit',
                   </div>
                   <div class="form-group col-md">
                      <label for="go_hour">heure</label>
-                     <input id ="go_hour" type="number" class="form-control" v-model="group.hour"></input>
+                     <select id ="go_hour" class="form-control" v-model="group.hour">
+                     <option v-for="cur_hourlist in hourlist">
+                        {{cur_hourlist.name}}
+                     </option>
+                  </select>                     
                   </div>
                   <div class="form-group col-md">
                      <label for="go_court">court</label>
@@ -98,11 +124,19 @@ const group_edit = Vue.component('group-edit',
                   </div>
                   <div class="form-group col-md">
                      <label for="go_year">année</label>
-                     <input id ="go_year" type="number" class="form-control" v-model="group.year"></input>
+                     <select id ="go_year" class="form-control" v-model="group.year">
+                        <option v-for="cur_yearlist in yearlist">
+                           {{cur_yearlist.name}}
+                        </option>
+                     </select>
                   </div>
                   <div class="form-group col-md">
                      <label for="go_size">taille</label>
-                     <input id ="go_size" type="number" class="form-control" v-model="group.size"></input>
+                     <select  id ="go_size" class="form-control" v-model="group.size">
+                        <option v-for="cur_sizelist in sizelist">
+                           {{cur_sizelist.name}}
+                        </option>
+                     </select>
                   </div>
                </div></form>
                <div v-if="api_error.length" class="alert alert-danger">
@@ -124,8 +158,11 @@ const group_edit = Vue.component('group-edit',
                 api_error: [],
                 noresult: true,
                 daylist: go_daylist,
+                hourlist: go_hourlist,
                 courtlist: go_courtlist,
-                levellist: go_levellist
+                levellist: go_levellist,
+                yearlist: go_yearlist,
+                sizelist: go_sizelist
             }
             );
         },
@@ -197,7 +234,7 @@ const group_detail = Vue.component('group-detail',
             <div id="go_scroll" class="container-fluid">
                <div class="text-center">
                     <h5>
-                    {{ group.day }} {{ group.hour }}h - court {{group.court}} - 
+                    {{ group.day }} {{ group.hour }} - court {{group.court}} - 
                     <span v-bind:class="'class-level-'+group.level">{{ group.year }}</span>
                     </h5>
                </div>
@@ -223,7 +260,13 @@ const group_detail = Vue.component('group-detail',
                      <tr v-if="group.isfree">
                         <td><input class="form-control" v-model="new_member.name" placeholder="nom"></td>
                         <td><input class="form-control" v-model="new_member.firstname" placeholder="prénom"></td>
-                        <td><input class="form-control" v-model="new_member.year" type="number" placeholder="année"></td>
+                        <td>
+                        <select id ="go_year" class="form-control" v-model="new_member.year">
+                        <option v-for="cur_yearlist in yearlist">
+                           {{cur_yearlist.name}}
+                        </option>
+                        </select>
+                        </td>
                         <td><button type="button" class="btn btn-warning oi oi-plus" v-on:click="f_add_member()"></button></td>
                      </tr>
                      <!-- isfree -->
@@ -251,7 +294,8 @@ const group_detail = Vue.component('group-detail',
                     group: {},
                     noresult: true,
                     new_member: {},
-                    api_error: []
+                    api_error: [],
+                    yearlist: go_yearlist,
                 }
                 );
             },
@@ -331,7 +375,7 @@ const group_detail = Vue.component('group-detail',
             f_del_group: function (po_group) {
                 var lo_comp = this;
                 //console.log('@f_del_group');
-                bootbox.confirm("supprimer groupe " + po_group.day + " " + po_group.hour + "h " + "court " + po_group.court + " ?",
+                bootbox.confirm("supprimer groupe " + po_group.day + " " + po_group.hour + " " + "court " + po_group.court + " ?",
                     function (pb_result) {
                         if (pb_result) {
                             var ls_url = "/api/group/" + po_group.id;
@@ -393,16 +437,20 @@ const group_list = {
        <table class="table">
           <thead>
              <th>jour/heure - court</th>
-             <th>niveau/année</th>
+             <th>niveau</th>
+             <th>année</th>
              <th>effectif</th>
           </thead>
           <tbody>
              <tr v-for="group in groups" v-bind:key="group.id" v-on:click="f_open_group(group.id)">
                 <td>
-                   {{ group.day }} {{ group.hour }}h - {{ group.court }}
+                   {{ group.day }} {{ group.hour }} - {{ group.court }}
                 </td>
-                <td>
-                   <span v-bind:class="'class-level-'+group.level">{{ group.year }}</span>
+                 <td>
+                   <span v-bind:class="'class-level-'+group.level">{{ group.level }}</span>
+                </td>                
+               <td>
+                   {{ group.year }}
                 </td>
                 <td>
                    <span v-bind:class="{'class-isnotfree' : !group.isfree, 'class-isfree' : group.isfree}">{{ group.member.length }}/{{ group.size }}</span>
@@ -434,15 +482,15 @@ const group_list = {
             var ls_url = "/api/group?";
             var lb_filtered = false;
 
-            if ((!lb_filtered) && lo_data.filter.match('[12][0-9][0-9[0-9]')) {
+            if ((!lb_filtered) && go_yearlist.find(function (po_year) { return (lo_data.filter.match(po_year.name)) })) {
                 ls_url = ls_url + "year=" + lo_data.filter;
                 lb_filtered = true;
             }
-            if ((!lb_filtered) && go_daylist.find(function(po_day){ return(lo_data.filter.match(po_day.name))})) {
+            if ((!lb_filtered) && go_daylist.find(function (po_day) { return (lo_data.filter.match(po_day.name)) })) {
                 ls_url = ls_url + "day=" + lo_data.filter;
                 lb_filtered = true;
             }
-            if ((!lb_filtered) && go_levellist.find(function(po_level){ return(lo_data.filter.match(po_level.name))})) {
+            if ((!lb_filtered) && go_levellist.find(function (po_level) { return (lo_data.filter.match(po_level.name)) })) {
                 ls_url = ls_url + "level=" + lo_data.filter;
                 lb_filtered = true;
             }
@@ -462,10 +510,10 @@ const group_list = {
                     lo_data.noresult = (response.data.length === 0);
 
                     response.data.sort(function (a, b) {
-                        var lo_lkp_order = { };
-                        go_daylist.forEach(function(po_day) { lo_lkp_order[po_day.name]=po_day.order;});
+                        var lo_lkp_order = {};
+                        go_daylist.forEach(function (po_day) { lo_lkp_order[po_day.name] = po_day.order; });
                         if (a.day === b.day) {
-                            return (a.hour - b.hour);
+                            return (a.hour.localeCompare(b.hour));
                         } else {
                             return (lo_lkp_order[a.day] - lo_lkp_order[b.day]);
                         }
@@ -532,7 +580,7 @@ const member_list = {
                 {{ member.year }}
                 </td>
                 <td>
-                {{ member.group[0].day }} {{ member.group[0].hour }}h - court {{ member.group[0].court }}   
+                {{ member.group[0].day }} {{ member.group[0].hour }} - court {{ member.group[0].court }}   
                 </td>
              </tr>
           </tbody >

@@ -51,7 +51,7 @@ function f_validate_fields(po_ctxt, pf_success, pf_failure) {
                 po_ctxt.msgs.push(lo_msg);
                 return null;
             }
-            if (ls_field_rule.match(/I/) && (!String(lx_field_value).match(/\d+/))) {
+            if (ls_field_rule.match(/I/) && (!String(lx_field_value).match(/^\d+$/))) {
                 lo_msg.msg = ls_field_caption + " doit etre un nombre";
                 po_ctxt.msgs.push(lo_msg);
                 return null;
