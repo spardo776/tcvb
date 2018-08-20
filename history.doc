@@ -1,3 +1,13 @@
+2018-08-20
+- handle <enter> key on all forms
+- group-edit : form is stacked
+- group-edit : form is stacked
+- group-detail : merge name + firstname cols
+- group-detail : new member form is now inline
+- group-list : inline form for filter
+- group-list : get rid of error 'group.member is undefined'
+- member-list : inline form for filter
+
 2018-08-17
 - lists for hours, years and sizes
 - hour is now a string
