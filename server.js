@@ -139,7 +139,7 @@ function f_wbs_del_member(req, res) {
 var express = require("express");
 var morgan = require("morgan");
 var express_basic_auth = require ("express-basic-auth");
-var go_expasswd = require("./expasswd.js");
+var go_expasswd = require("./conf/expasswd.js");
 
 var app = express();
 
