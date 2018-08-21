@@ -1,11 +1,19 @@
 
+if [ "$1"  = "live" ]
+then
+	RUNNER="node"
+else
+	RUNNER="nodemon"
+	#DEBUG="datastore dict_tcvb"
+	#export DEBUG
+fi
+
 DATA_DIR="data/$1"
 export DATA_DIR
-#DEBUG="datastore dict_tcvb"
-export DEBUG
-if [ -d $DATA_DIR ]
+
+if [ -d "$DATA_DIR" ]
 then
-	nodemon server.js
+	$RUNNER server.js
 else
 	echo "$DATA_DIR does not exist"
 fi
