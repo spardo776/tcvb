@@ -44,14 +44,11 @@ exports.group = {
         "court": { ctrl: "MSL", caption: "court" },
         "level": { ctrl: "MSL", caption: "niveau" },
         "size": { ctrl: "MI", caption: "taille" },
-        "year": { ctrl: "MI", caption: "année" }
+        "year": { ctrl: "MS", caption: "année" }
     },
     "pkey": ["day", "hour", "court"],
     "f_validate_object": function (po_object, po_ctxt, pf_success, pf_failure) {
         debug('>f_validate_object %s',po_ctxt.name);
-        if (po_object.year < 1920 || po_object.year > 2015) {
-            po_ctxt.msgs.push({ msg: 'année invalide' });
-        }
         if (po_ctxt.msgs.length) { pf_failure(); } else { pf_success(po_object); }
     }
 };
@@ -61,7 +58,8 @@ exports.member = {
     "fields": {
         "name": { ctrl: "MSU", caption: "nom" },
         "firstname": { ctrl: "MSL", caption: "prénom" },
-        "year": { ctrl: "MI", caption: "année" },
+        "level": { ctrl: "MSL", caption: "niveau" },
+        "year": { ctrl: "MS", caption: "année" },
         "group_id": { ctrl: "MS", caption: "group id" }
     },
     "pkey": ["name", "firstname"],
@@ -69,9 +67,6 @@ exports.member = {
         function (po_object, po_ctxt, pf_success, pf_failure) {
             debug('f_validate_object %s',po_ctxt.name);
 
-            if (po_object.year < 1920 || po_object.year > 2015) {
-                po_ctxt.msgs.push({ msg: 'année invalide' });
-            }
             if (po_ctxt.msgs.length) {
                 pf_failure();
             }

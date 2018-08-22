@@ -411,10 +411,7 @@ exports.f_get_object = function (po_ctxt) {
                                             if ((po_ctxt.data_in[ps_key]) &&
                                                 (lo_object[ps_key])) {
                                                 // build filtering regexp
-                                                var ls_filter = String(po_ctxt.data_in[ps_key])
-                                                    .replace(/[\\\^\$\{\}\[\]\(\)\.\+\|]/g, '') // remove regexp special chars
-                                                    .replace(/\*/g, '.*') // * wildcard allowed
-                                                    .replace(/\?/g, '.'); // ? wildcard allowed
+                                                var ls_filter = String(po_ctxt.data_in[ps_key]);
                                                 if (!String(lo_object[ps_key]).match("^" + ls_filter + "$")) {
                                                     lb_select = 0;
                                                 }

@@ -131,6 +131,13 @@ function f_wbs_del_member(req, res) {
     });
 }
 
+// WBS user profile
+function f_wbs_user(req,res) {
+    var lo_user= { user : req.auth.user, profile : go_expasswd.profiles[req.auth.user] };
+
+    res.setHeader("Content-type", "application/json");
+    res.status(200).json(lo_user);
+}
 
 /*
  ** init application
@@ -170,6 +177,7 @@ app
     .post("/api/member", f_wbs_add_member)
     .put("/api/member", f_wbs_upd_member)
     .delete("/api/member/:member_id", f_wbs_del_member)
+    .get("/api/user", f_wbs_user)
     .use(express.static(__dirname + "/static"))
     // .use(function(req, res) {
     //     res.setHeader("Content-Type", "text/plain");

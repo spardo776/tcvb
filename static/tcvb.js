@@ -3,33 +3,70 @@
 "use strict";
 
 bootbox.setLocale('fr');
+//
+// UTILS
+//
 
-const go_levellist = [{ name: "nouveau" }, { name: "blanc" }, { name: "violet" }, { name: "rouge" }, { name: "orange" }, { name: "vert-moins" }, { name: "vert" }, { name: "balle-dure" }, { name: "adulte" }];
+function f_build_filter_re(ps_filter, ps_case) {
+    var ls_filter_re;
 
-const go_courtlist = [{ name: "1" }, { name: "2" }, { name: "3" }, { name: "jazy" }];
+    if (ps_case === 'upper') {
+        ls_filter_re = ps_filter.toUpperCase();
+    } else {
+        if (ps_case === 'lower') {
+            ls_filter_re = ps_filter.toLowerCase();
+        } else {
+            ls_filter_re = ps_filter;
+        }
+    }
+
+    ls_filter_re = ls_filter_re
+        .replace(/[\\\^\$\{\}\[\]\(\)\?\+\|]/g, '') // remove regexp special chars
+        .replace(/[\*\.]/g, '.*'); // * and . wildcard allowed => /.*/
+
+    ls_filter_re = '^' + ls_filter_re + '$';
+    console.log(ls_filter_re);
+    return (ls_filter_re);
+}
+
+function f_isadmin() {return(go_user && (go_user.profile==="A"));}
+
+//
+// LISTS OF VALUES 
+//
+
+const go_levellist = [{ name: "nouveau" }, { name: "blanc" }, { name: "violet" }, { name: "rouge" }, { name: "orange" }, { name: "vert" }, { name: "nc" }, { name: "30/4" }, { name: "30/3" }, { name: "30" }, { name: "15/4" }, { name: "libre" }];
+
+const go_courtlist = [{ name: "1" }, { name: "2" }, { name: "3" }, { name: "jazy1" }, { name: "jazy2" }, { name: "jazy3" }];
 
 const go_sizelist = [{ name: 4 }, { name: 6 }, { name: 8 }];
 
 const go_daylist = [{ name: "lundi", order: 1 }, { name: "mardi", order: 2 }, { name: "mercredi", order: 3 }, { name: "jeudi", order: 4 }, { name: "vendredi", order: 5 }, { name: "samedi", order: 6 }, { name: "dimanche", order: 7 }];
 
 var go_yearlist = [];
-
 for (var i = 2000; i < 2016; i++) {
-    go_yearlist.push({ name: i });
+    go_yearlist.push({ name: String(i) });
 }
+go_yearlist.push({ name: "adulte" });
+go_yearlist.push({ name: "libre" });
 
 var go_hourlist = [];
-
 for (var i = 8; i < 22; i++) {
     if (i < 10) {
         go_hourlist.push({ name: '0' + i + ":00" });
-        go_hourlist.push({ name: '0' + i + ":30" });
 
     } else {
         go_hourlist.push({ name: i + ":00" });
-        go_hourlist.push({ name: i + ":30" });
+        // jazy
+        if (i >= 12 && i <= 14) {
+            go_hourlist.push({ name: i + ":15" });
+        }
     }
 }
+
+//
+// COMPONENTS
+//
 
 const main_menu = Vue.component('main-menu',
     {
@@ -37,12 +74,13 @@ const main_menu = Vue.component('main-menu',
             `
          <div>
             <ul class="nav nav-pills">
-               <li class="nav-item"><a class="nav-link" v-bind:class="active_tag === 'group' ? 'active' : ''" href="#/group">groupes</a></li>
-               <li class="nav-item"><a class="nav-link" v-bind:class="active_tag === 'member' ? 'active' : ''" href="#/member">membres</a></li>
-               <!-- <li class="nav-item"><a class="nav-link" v-bind:class="active_tag === 'import' ? 'active' : ''" href="#/import">import</a></li> -->
+               <li class="nav-item"><a class="nav-link" v-bind:class="(isactive && (active_tag === 'group')) ? 'active' : ''" href="#/group">groupes</a></li>
+               <li class="nav-item"><a class="nav-link" v-bind:class="(isactive && (active_tag === 'member')) ? 'active' : ''" href="#/member">membres</a></li>
+               <!-- <li class="nav-item"><a class="nav-link" v-bind:class="(isactive && (active_tag === 'import)) ' ? 'active' : ''" href="#/import">import</a></li> -->
             </ul>
          </div>
             `,
+        data : function() { return({isactive :false}) },    
         props: ["active_tag"]
 
     }
@@ -64,6 +102,118 @@ const button_bar = Vue.component('button-bar',
                 function () { router.go(-1); }
         }
     });
+
+//
+// MEMBER-EDIT
+//
+const member_edit = Vue.component('member-edit',
+    {
+        template:
+            `
+         <div>
+            <div id="go_header" class="fixed-top">
+               <main-menu active_tag="member"></main-menu>
+            </div>
+            <div id="go_scroll" class="container-fluid">
+                  <h5>
+                     {{title}}
+                  </h5>
+               <form class="form-inline" v-on:keyup.enter="f_save()">
+               <label for="go_name" class="sr-only">nom</label>
+               <input class="form-control mr-sm-2 mb-2" v-model="member.name" placeholder="nom" disabled></td>
+               <label for="go_firstname" class="sr-only">prénom</label> 
+               <input class="form-control mr-sm-2 mb-2" v-model="member.firstname" placeholder="prénom" disabled></td>
+               <label for="go_level" class="mr-sm-2 mb-2">niveau</label> 
+               <select id ="go_level" class="form-control mr-sm-2 mb-2" v-model="member.level" placeholder="niveau">
+                  <option v-for="cur_levellist in levellist">
+                     {{cur_levellist.name}}
+                  </option>
+               </select>
+               <label for="go_year" class="mr-sm-2 mb-2">année</label> 
+               <select id ="go_year" class="form-control mr-sm-2 mb-2" v-model="member.year">
+                  <option v-for="cur_yearlist in yearlist">
+                     {{cur_yearlist.name}}
+                  </option>
+               </select>
+               </form>
+               <div v-if="api_error.length" class="alert alert-danger">
+                  <div v-for="cur_api_error in api_error">{{cur_api_error.msg}}</div>
+               </div>
+            </div>
+            <div id="go_footer" class="fixed-bottom text-center">
+               <button-bar></button-bar>
+               <button type="button" class="btn btn-warning oi oi-check mr-2" v-on:click="f_save()"></button>
+            </div>
+         </div>
+        `,
+        props: ['id'], //member id
+        data: function () {
+            return ({
+                member: {},
+                api_error: [],
+                noresult: true,
+                levellist: go_levellist,
+                yearlist: go_yearlist,
+                title: "",
+                isupdate: false
+            }
+            );
+        },
+        methods: {
+            f_load:
+                // member data load
+                function () {
+                    var lo_comp = this;
+                    //console.log('@f_load');
+                    lo_comp.isupdate = (lo_comp.id !== "0");
+                    if (lo_comp.isupdate) {
+                        lo_comp.title = "modifier membre";
+                        var ls_url = "/api/member?id=" + lo_comp.id;
+                        //console.log("-url=" + ls_url);
+                        axios.get(ls_url)
+                            .then(
+                                function (response) {
+                                    //console.log("-rowcount=" + response.data.length);
+                                    lo_comp.noresult = (response.data.length === 0);
+                                    lo_comp.member = (lo_comp.noresult ? null : response.data[0]);
+                                    lo_comp.api_error = [];
+                                })
+                            .catch(function (error) {
+                                lo_comp.api_error = [{ "msg": error.message }];
+                            });
+                    }
+                },
+            f_save: function () {
+                //console.log('@f_save');
+                var lo_comp = this;
+                var ls_url = "/api/member";
+                lo_comp.api_error.splice(0);
+
+                if (lo_comp.isupdate) {
+                    axios.put(ls_url, lo_comp.member)
+                        .then(
+                            function (response) {
+                                //console.log("-response.status=" + response.status);
+                                router.go(-1);
+                            }
+                        )
+                        .catch(function (error) {
+                            if (error.response) {
+                                lo_comp.api_error = error.response.data;
+                            } else {
+                                lo_comp.api_error = [{ "msg": error.message }];
+                            }
+                        });
+                }
+            }
+        },
+        created: function () {
+            //console.log('@created');
+            this.f_load();
+        }
+    }
+);
+
 //
 // GROUP-EDIT
 //
@@ -77,57 +227,54 @@ const group_edit = Vue.component('group-edit',
                <main-menu active_tag="group"></main-menu>
             </div>
             <div id="go_scroll" class="container-fluid">
-               <div class="text-center">
                   <h5>
                      {{title}}
                   </h5>
-               </div>
                <form v-on:keyup.enter="f_save()">
                   <div class="form">
-                     <div class="form-group">
-                        <label for="go_day">jour</label>
-                        <select  id ="go_day" class="form-control" v-model="group.day" v-bind:disabled="isupdate">
+                     <div class="form-group row">
+                        <label for="go_day" class="col-sm-2 col-form-label">jour</label>
+                        <select  id ="go_day" class="form-control col-sm-6" v-model="group.day" v-bind:disabled="isupdate">
                            <option v-for="cur_daylist in daylist">
                               {{cur_daylist.name}}
                            </option>
                         </select>
                      </div>
-                     <div class="form-group">
-                        <label for="go_hour">heure</label>
-                        <select id ="go_hour" class="form-control" v-model="group.hour" v-bind:disabled="isupdate">
+                     <div class="form-group row">
+                        <label for="go_hour" class="col-sm-2 col-form-label">heure</label>
+                        <select id ="go_hour" class="form-control col-sm-6" v-model="group.hour" v-bind:disabled="isupdate">
                            <option v-for="cur_hourlist in hourlist">
                               {{cur_hourlist.name}}
                            </option>
                         </select>
                      </div>
-                     <div class="form-group">
-                        <label for="go_court">court</label>
-                        <select id ="go_court" class="form-control" v-model="group.court">
+                     <div class="form-group row">
+                        <label for="go_court" class="col-sm-2 col-form-label">court</label>
+                        <select id ="go_court" class="form-control col-sm-6" v-model="group.court">
                            <option v-for="cur_courtlist in courtlist">
                               {{cur_courtlist.name}}
                            </option>
                         </select>
                      </div>
-                  </div>
-                     <div class="form-group">
-                        <label for="go_level">niveau</label>
-                        <select id ="go_level" class="form-control" v-model="group.level">
+                     <div class="form-group row">
+                        <label for="go_level" class="col-sm-2 col-form-label">niveau</label>
+                        <select id ="go_level" class="form-control col-sm-6" v-model="group.level">
                            <option v-for="cur_levellist in levellist">
                               {{cur_levellist.name}}
                            </option>
                         </select>
                      </div>
-                     <div class="form-group">
-                        <label for="go_year">année</label>
-                        <select id ="go_year" class="form-control" v-model="group.year">
+                     <div class="form-group row">
+                        <label for="go_year" class="col-sm-2 col-form-label">année</label>
+                        <select id ="go_year" class="form-control col-sm-6" v-model="group.year">
                            <option v-for="cur_yearlist in yearlist">
                               {{cur_yearlist.name}}
                            </option>
                         </select>
                      </div>
-                     <div class="form-group">
-                        <label for="go_size">taille</label>
-                        <select  id ="go_size" class="form-control" v-model="group.size">
+                     <div class="form-group row">
+                        <label for="go_size" class="col-sm-2 col-form-label">taille</label>
+                        <select  id ="go_size" class="form-control col-sm-6" v-model="group.size">
                            <option v-for="cur_sizelist in sizelist">
                               {{cur_sizelist.name}}
                            </option>
@@ -248,17 +395,16 @@ const group_detail = Vue.component('group-detail',
                <main-menu active_tag="group"></main-menu>
             </div>
             <div id="go_scroll" class="container-fluid">
-               <div class="text-center">
                   <h5>
-                     {{ group.day }} {{ group.hour }} [{{ group.court }}]  
+                     groupe : {{ group.day }} {{ group.hour }} [{{ group.court }}]  
                      <span v-bind:class="'class-level-'+group.level">{{ group.level }}</span>
                      {{ group.year }}
                   </h5>
-               </div>
                <table class="table">
                   <thead>
                      <tr>
                         <th>nom prénom</th>
+                        <th>niveau</th>
                         <th>année</th>
                         <th></th>
                      </tr>
@@ -266,8 +412,11 @@ const group_detail = Vue.component('group-detail',
                   <tbody>
                      <tr v-for="cur_member in group.member" v-bind:key="cur_member.id">
                         <td>{{cur_member.name}} {{cur_member.firstname}}</td>
+                        <td>{{cur_member.level}}</td>
                         <td>{{cur_member.year}}</td>
-                        <td><button type="button" class="btn btn-danger oi oi-trash" v-on:click="f_del_member(cur_member)"></button></td>
+                        <td>
+                        <button v-if="f_isadmin()" type="button" class="btn btn-danger oi oi-trash mr-2" v-on:click="f_del_member(cur_member)"></button>
+                        </td>
                      </tr>
                      <tr v-if="isempty" >
                         <td colspan=4 class="text-center"><span style="font-style:italic">aucun inscrit</span></td>
@@ -275,13 +424,19 @@ const group_detail = Vue.component('group-detail',
                   </tbody>
                </table>
                <div v-if="group.isfree">
-                     <h6 style="font-style:italic">nouvel inscrit:</h6>
+                     <h5>inscrire:</h5>
                      <form class="form-inline align-items-center" v-on:keyup.enter="f_add_member()">
                         <label for="go_name" class="sr-only">nom</label>
                         <input class="form-control mr-sm-2 mb-2" v-model="new_member.name" placeholder="nom"></td>
                         <label for="go_firstname" class="sr-only">prénom</label> 
                         <input class="form-control mr-sm-2 mb-2" v-model="new_member.firstname" placeholder="prénom"></td>
-                        <label for="go_year" class="sr-only">année</label> 
+                        <label for="go_level" class="mr-sm-2 mb-2">niveau</label> 
+                        <select id ="go_level" class="form-control mr-sm-2 mb-2" v-model="new_member.level" placeholder="niveau">
+                           <option v-for="cur_levellist in levellist">
+                              {{cur_levellist.name}}
+                           </option>
+                        </select>
+                        <label for="go_year" class="mr-sm-2 mb-2">année</label> 
                         <select id ="go_year" class="form-control mr-sm-2 mb-2" v-model="new_member.year">
                            <option v-for="cur_yearlist in yearlist">
                               {{cur_yearlist.name}}
@@ -296,8 +451,8 @@ const group_detail = Vue.component('group-detail',
             </div>
             <div id="go_footer" class="fixed-bottom text-center">
                <button-bar></button-bar>
-               <button v-if="isempty" type="button" class="btn btn-danger oi oi-trash mr-2" v-on:click="f_del_group(group)"></button>
-               <button type="button" class="btn btn-info oi oi-pencil mr-2" v-on:click="f_upd_group(group)"></button>
+               <button v-if="f_isadmin()" type="button" class="btn btn-info oi oi-pencil mr-2" v-on:click="f_upd_group(group)"></button>
+               <button v-if="(isempty && f_isadmin())" type="button" class="btn btn-danger oi oi-trash mr-2" v-on:click="f_del_group(group)"></button>
             </div>
          </div>
     `,
@@ -310,6 +465,7 @@ const group_detail = Vue.component('group-detail',
                     new_member: {},
                     api_error: [],
                     yearlist: go_yearlist,
+                    levellist: go_levellist
                 }
                 );
             },
@@ -424,7 +580,8 @@ const group_detail = Vue.component('group-detail',
             // update a group
             f_upd_group: function (po_group) {
                 router.push('/group/' + po_group.id + '/edit');
-            }
+            },
+            f_isadmin : f_isadmin
         },
         created:
             function () {
@@ -444,15 +601,13 @@ const group_list = {
    <main-menu active_tag="group"></main-menu>
 </div>
 <div id="go_scroll" class="container-fluid">
-   <div class="text-center">
       <h5>
          groupes
       </h5>
-   </div>
    <form class="form-inline" v-on:keyup.enter="f_filter">
       <div class="input-group mr-sm-2 mb-2">
-         <label for="go_filter" class="sr-only">filtre:</label>
-         <input type="search" id="go_filter" class="form-control" v-model="filter" placeholder="année, niveau ou jour">
+         <label for="go_filter_group" class="sr-only">filtre:</label>
+         <input type="search" id="go_filter_group" class="form-control" v-model="filter" placeholder="année, niveau ou jour">
          <button type="button" class="btn btn-secondary oi oi-magnifying-glass" v-on:click="f_filter"></button>
       </div>
       <div class="custom-control custom-checkbox  mb-2">
@@ -462,6 +617,9 @@ const group_list = {
          </label>
       </div>
    </form>
+   <div v-if="api_error.length" class="alert alert-danger">
+    <div v-for="cur_api_error in api_error">{{cur_api_error.msg}}</div>
+   </div>
    <table class="table">
       <thead>
          <th>groupe</th>
@@ -486,13 +644,11 @@ const group_list = {
          </tr>
       </tbody>
    </table>
-   <div v-if="api_error.length" class="alert alert-danger">
-    <div v-for="cur_api_error in api_error">{{cur_api_error.msg}}</div>
-   </div>
+   
 </div>
 <div id="go_footer" class="fixed-bottom text-center">
    <button-bar></button-bar>
-   <button type="button" class="btn btn-warning oi oi-plus mr-2" v-on:click="f_add_group()"></button>
+   <button v-if="f_isadmin()"   type="button" class="btn btn-warning oi oi-plus mr-2" v-on:click="f_add_group()"></button>
 </div>
 </div>
 
@@ -514,17 +670,24 @@ const group_list = {
             //console.log("@f_filter");
             var ls_url = "/api/group?";
             var lb_filtered = false;
+            // filter cleaning
+            lo_comp.filter.replace(/[^\d\w\.\*]/g);
 
-            if ((!lb_filtered) && go_yearlist.find(function (po_year) { return (lo_comp.filter.match(po_year.name)) })) {
-                ls_url = ls_url + "year=" + lo_comp.filter;
+            var ls_filter_re = f_build_filter_re(lo_comp.filter, 'lower');
+
+            //console.log(ls_filter_re);
+            lb_filtered = (ls_filter_re === "^$"); // no filtering
+
+            if ((!lb_filtered) && go_yearlist.find(function (po_year) { return (String(po_year.name).match(ls_filter_re)) })) {
+                ls_url = ls_url + "year=" + ls_filter_re;
                 lb_filtered = true;
             }
-            if ((!lb_filtered) && go_daylist.find(function (po_day) { return (lo_comp.filter.match(po_day.name)) })) {
-                ls_url = ls_url + "day=" + lo_comp.filter;
+            if ((!lb_filtered) && go_daylist.find(function (po_day) { return (po_day.name.match(ls_filter_re)) })) {
+                ls_url = ls_url + "day=" + ls_filter_re;
                 lb_filtered = true;
             }
-            if ((!lb_filtered) && go_levellist.find(function (po_level) { return (lo_comp.filter.match(po_level.name)) })) {
-                ls_url = ls_url + "level=" + lo_comp.filter;
+            if ((!lb_filtered) && go_levellist.find(function (po_level) { return (po_level.name.match(ls_filter_re)) })) {
+                ls_url = ls_url + "level=" + ls_filter_re;
                 lb_filtered = true;
             }
             if (lo_comp.isfree) {
@@ -532,35 +695,34 @@ const group_list = {
             }
             if (!lb_filtered) {
                 //invalid filter - reset
-                lo_comp.filter = "";
+                lo_comp.api_error = [{ "msg": "filtre incorrect" }];
+            } else {
+                //console.log("-url=" + ls_url);
+                axios.get(ls_url)
+                    .then(
+                        function (response) {
+                            //console.log("-rowcount=" + response.data.length);
+                            lo_comp.noresult = (response.data.length === 0);
+
+                            response.data.sort(function (a, b) {
+                                var lo_lkp_order = {};
+                                go_daylist.forEach(function (po_day) { lo_lkp_order[po_day.name] = po_day.order; });
+                                if (a.day === b.day) {
+                                    return (a.hour.localeCompare(b.hour));
+                                } else {
+                                    return (lo_lkp_order[a.day] - lo_lkp_order[b.day]);
+                                }
+                            });
+
+                            lo_comp.groups = response.data;
+                            lo_comp.api_error = [];
+                        })
+                    .catch(
+                        function (error) {
+                            lo_comp.api_error = [{ "msg": error.message }];
+                        }
+                    );
             }
-            //console.log("-url=" + ls_url);
-
-
-            axios.get(ls_url)
-                .then(
-                    function (response) {
-                        //console.log("-rowcount=" + response.data.length);
-                        lo_comp.noresult = (response.data.length === 0);
-
-                        response.data.sort(function (a, b) {
-                            var lo_lkp_order = {};
-                            go_daylist.forEach(function (po_day) { lo_lkp_order[po_day.name] = po_day.order; });
-                            if (a.day === b.day) {
-                                return (a.hour.localeCompare(b.hour));
-                            } else {
-                                return (lo_lkp_order[a.day] - lo_lkp_order[b.day]);
-                            }
-                        });
-
-                        lo_comp.groups = response.data;
-                        lo_comp.api_error = [];
-                    })
-                .catch(
-                    function (error) {
-                        lo_comp.api_error = [{ "msg": error.message }];
-                    }
-                );
 
 
         },
@@ -571,13 +733,14 @@ const group_list = {
         f_add_group: function () {
             //console.log('@f_add_group');
             router.push('/group/0/edit');
-        }
+        },
+        f_isadmin : f_isadmin
 
     },
     created:
         function () {
             //console.log('created');
-            this.f_filter();
+            //this.f_filter();
         }
 
 };
@@ -595,23 +758,23 @@ const member_list = {
         <main-menu active_tag="member"></main-menu>
     </div>
     <div id="go_scroll" class="container-fluid">
-        <div class="text-center">
             <h5>
                 membres
             </h5>
-        </div>
        <form class="form-inline" v-on:keyup.enter="f_filter">
        <div class="input-group mr-sm-2 mb-2">
-          <label for="go_filter" class="sr-only">filtre:</label>
-          <input type="search" id="go_filter" class="form-control" v-model="filter" placeholder="nom">
+          <label for="go_filter_member" class="sr-only">filtre:</label>
+          <input type="search" id="go_filter_member" class="form-control" v-model="filter" placeholder="nom">
           <button type="button" class="btn btn-secondary oi oi-magnifying-glass" v-on:click="f_filter"></button>
        </div>
        </form>       
        <table class="table">
           <thead>
              <th>nom prénom</th>
+             <th>niveau</th>
              <th>année</th>
              <th>groupe</th>
+             <th></th>
           </thead>
           <tbody>
              <tr v-for="member in members" v-bind:key="member.id">
@@ -619,10 +782,16 @@ const member_list = {
                    {{ member.name }} {{ member.firstname }}
                 </td>
                 <td>
+                {{ member.level }}
+                </td>
+                <td>
                 {{ member.year }}
                 </td>
                 <td>
                 {{ member.group[0].day.slice(0,3) }} {{ member.group[0].hour }} [{{ member.group[0].court }}]
+                </td>
+                <td>
+                <button v-if="f_isadmin()" type="button" class="btn btn-info oi oi-pencil mr-2" v-on:click="f_upd_member(member)"></button>
                 </td>
              </tr>
           </tbody >
@@ -651,7 +820,16 @@ const member_list = {
             var lo_comp = this;
             //console.log("@f_filter");
             var ls_url = "/api/member?";
-            ls_url = ls_url + "name=" + lo_comp.filter.toUpperCase();
+            // filter cleaning
+            lo_comp.filter.replace(/[^\d\w\.\*]/g);
+
+            // build regexp
+            var ls_filter_re = f_build_filter_re(lo_comp.filter, 'upper');
+
+            if (ls_filter_re !== "^$") {
+                // filtering
+                ls_url = ls_url + "name=" + ls_filter_re;
+            }
 
             axios
                 .get(ls_url).then(
@@ -664,7 +842,12 @@ const member_list = {
                 .catch(function (error) {
                     lo_comp.api_error = [{ "msg": error.message }];
                 });
-        }
+        },
+        // update a member
+        f_upd_member: function (po_member) {
+            router.push('/member/' + po_member.id + '/edit');
+        },
+        f_isadmin : f_isadmin
     },
     created:
         function () {
@@ -807,9 +990,23 @@ const router = new VueRouter({
             { path: '/member', component: member_list },
             { path: '/group/:id', component: group_detail, props: true },
             { path: '/group/:id/edit', component: group_edit, props: true },
+            { path: '/member/:id/edit', component: member_edit, props: true },
             { path: '/import', component: group_import }
         ]
 
+});
+
+
+//get user profile
+var go_user;
+
+axios.get('/api/user')
+.then(
+    function (response) {
+        go_user=response.data;
+    })
+.catch(function (error) {
+    console.log(error.message);
 });
 
 

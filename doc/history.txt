@@ -1,3 +1,12 @@
+2018-08-22
+- filter : clean it and support "." as "*"
+- year as string (adulte, libre)
+- update year,level,hour and court lists
+- add level on member
+- member-edit added
+- profiles ahndling  (Admin: add upd del member+group / Normal: add member)
+- main menu: remove active feature 
+- group-edit :  use a grid 
 2018-08-20
 - handle <enter> key on all forms
 - group-edit : form is stacked
