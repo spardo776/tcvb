@@ -29,7 +29,7 @@ function f_build_filter_re(ps_filter, ps_case) {
     return (ls_filter_re);
 }
 
-function f_isadmin() {return(go_user && (go_user.profile==="A"));}
+function f_isadmin() { return (go_user && (go_user.profile === "A")); }
 
 //
 // LISTS OF VALUES 
@@ -80,7 +80,7 @@ const main_menu = Vue.component('main-menu',
             </ul>
          </div>
             `,
-        data : function() { return({isactive :false}) },    
+        data: function () { return ({ isactive: false }) },
         props: ["active_tag"]
 
     }
@@ -233,52 +233,64 @@ const group_edit = Vue.component('group-edit',
                <form v-on:keyup.enter="f_save()">
                   <div class="form">
                      <div class="form-group row">
-                        <label for="go_day" class="col-sm-2 col-form-label">jour</label>
-                        <select  id ="go_day" class="form-control col-sm-6" v-model="group.day" v-bind:disabled="isupdate">
+                        <label for="go_day" class="col-sm-2 col-lg-1 col-form-label">jour</label>
+                        <div class="col-sm-4 col-lg-2">
+                        <select  id ="go_day" class="form-control" v-model="group.day" v-bind:disabled="isupdate">
                            <option v-for="cur_daylist in daylist">
                               {{cur_daylist.name}}
                            </option>
                         </select>
+                        </div>
                      </div>
                      <div class="form-group row">
-                        <label for="go_hour" class="col-sm-2 col-form-label">heure</label>
-                        <select id ="go_hour" class="form-control col-sm-6" v-model="group.hour" v-bind:disabled="isupdate">
+                        <label for="go_hour" class="col-sm-2 col-lg-1 col-form-label">heure</label>
+                        <div class="col-sm-4 col-lg-2">
+                        <select id ="go_hour" class="form-control" v-model="group.hour" v-bind:disabled="isupdate">
                            <option v-for="cur_hourlist in hourlist">
                               {{cur_hourlist.name}}
                            </option>
                         </select>
+                        </div>
                      </div>
                      <div class="form-group row">
-                        <label for="go_court" class="col-sm-2 col-form-label">court</label>
-                        <select id ="go_court" class="form-control col-sm-6" v-model="group.court">
+                        <label for="go_court" class="col-sm-2 col-lg-1 col-form-label">court</label>
+                        <div class="col-sm-4 col-lg-2">
+                        <select id ="go_court" class="form-control" v-model="group.court">
                            <option v-for="cur_courtlist in courtlist">
                               {{cur_courtlist.name}}
                            </option>
                         </select>
+                        </div>
                      </div>
                      <div class="form-group row">
-                        <label for="go_level" class="col-sm-2 col-form-label">niveau</label>
-                        <select id ="go_level" class="form-control col-sm-6" v-model="group.level">
+                        <label for="go_level" class="col-sm-2 col-lg-1 col-form-label">niveau</label>
+                        <div class="col-sm-4 col-lg-2">
+                        <select id ="go_level" class="form-control" v-model="group.level">
                            <option v-for="cur_levellist in levellist">
                               {{cur_levellist.name}}
                            </option>
                         </select>
+                        </div>
                      </div>
                      <div class="form-group row">
-                        <label for="go_year" class="col-sm-2 col-form-label">année</label>
-                        <select id ="go_year" class="form-control col-sm-6" v-model="group.year">
+                        <label for="go_year" class="col-sm-2 col-lg-1 col-form-label">année</label>
+                        <div class="col-sm-4 col-lg-2">
+                        <select id ="go_year" class="form-control" v-model="group.year">
                            <option v-for="cur_yearlist in yearlist">
                               {{cur_yearlist.name}}
                            </option>
                         </select>
+                        </div>
                      </div>
                      <div class="form-group row">
-                        <label for="go_size" class="col-sm-2 col-form-label">taille</label>
-                        <select  id ="go_size" class="form-control col-sm-6" v-model="group.size">
+                        <label for="go_size" class="col-sm-2 col-lg-1 col-form-label">taille</label>
+                        <div class="col-sm-4 col-lg-2">
+                        <select  id ="go_size" class="form-control" v-model="group.size">
                            <option v-for="cur_sizelist in sizelist">
                               {{cur_sizelist.name}}
                            </option>
                         </select>
+                        </div>
                      </div>
                </form>
                <div v-if="api_error.length" class="alert alert-danger">
@@ -581,7 +593,7 @@ const group_detail = Vue.component('group-detail',
             f_upd_group: function (po_group) {
                 router.push('/group/' + po_group.id + '/edit');
             },
-            f_isadmin : f_isadmin
+            f_isadmin: f_isadmin
         },
         created:
             function () {
@@ -734,7 +746,7 @@ const group_list = {
             //console.log('@f_add_group');
             router.push('/group/0/edit');
         },
-        f_isadmin : f_isadmin
+        f_isadmin: f_isadmin
 
     },
     created:
@@ -847,7 +859,7 @@ const member_list = {
         f_upd_member: function (po_member) {
             router.push('/member/' + po_member.id + '/edit');
         },
-        f_isadmin : f_isadmin
+        f_isadmin: f_isadmin
     },
     created:
         function () {
@@ -872,11 +884,11 @@ const group_import = {
                 </textarea>
             </div>
             <button type="button" class="btn btn-secondary" v-on:click="f_parse()">analyser</button>
-            <div class="form-group">
-                <label for="go_text_out">données</label>
-                <textarea class="form-control" id="go_text_out" rows="8" readonly  v-model="text_out">
-                </textarea>
-            </div>
+
+            <div  v-bind:class="(group.status ? 'alert alert-success' : 'alert alert-warning')">{{group}}</div>
+            <div v-for="member in members" v-bind:class="(member.status ? 'alert alert-success' : 'alert alert-warning')">{{member}}</div>
+            <div v-for="bad_row in bad_rows" class="alert alert-danger">{{bad_row}}</div>
+
             <button type="button" class="btn btn-secondary">charger</button>
             <div class="form-group">
                 <label for="go_result">résultat</label>
@@ -894,24 +906,27 @@ const group_import = {
     data:
         function () {
             return {
-                text_in: `lundi ET 	18 H A 19 H  	  	 
-                1 	Deveaux Killian 	05 	Cl
-                2 	Marchand Thomas 	04 	Cl
-                3 	Tran Hugo 	04 	Cl
+                text_in: `lundi ET 	18 H A 19 H 4	30/3	2
+                1 	Deveaux Killian 	05 	30/3
+                2 	Marchand Thomas 	04 	30/3
+                3 	Tran Hugo 	04 	30/3
                 4 	  	  	 
                 5 	  	  	 
                 6`,
-                text_out: 'bb',
+                text_out: '',
+                group : {},
+                members : [],
+                bad_rows : [],
                 result: 'cc',
                 api_error: []
             };
         },
     methods: {
         f_parse: function () {
-            var lo_comp = this;
-            var lo_group = { size: 0 };
-            var la_members = [];
-            var la_bad_rows = [];
+            var lo_comp = this,
+                li_year = 0,
+                lo_lkp_level = { "Or": "orange", "Ro": "rouge", "V": "vert", "N": "nouveau", "Bl": "blanc", "M": "nc", "Vi": "violet" };
+
             // split rows
             var la_text = lo_comp.text_in.split('\n').map(
                 function (ps_line) {
@@ -920,17 +935,37 @@ const group_import = {
             );
             // group line
             console.log(la_text[0]);
-            var la_match = la_text[0].match(/^(\w+)\s+\w+\s+(\d+)\s*H/);
-            if ((la_match) && (la_match.length === 3)
-                && (la_match[1].match('lundi|mardi|mercredi|jeudi|vendredi|samedi|dimanche'))) {
-                lo_group.day = la_match[1];
-                lo_group.hour = la_match[2];
+            var la_match = la_text[0].match(/^(\w+)\s+\w+\s+(\d+)\s*H\s+A\s+\d+\s+H\s+([\d\w]+)\s+([\d\w\/]+)\s+([\d\w]+)/);  // <day> XX <hour> H A NN H <year> <level>	<court>
+            if (la_match) {
+                console.log("match [" + la_match[0] + "]");
+                lo_comp.group.day = la_match[1];
+                lo_comp.group.hour = la_match[2] + ":00";
+                li_year = parseInt(la_match[3]);
+                if (li_year) {
+                    lo_comp.group.year = (li_year > 50 ? "adulte" : String(2000 + li_year));
+                } else {
+                    lo_comp.group.year = la_match[3];
+                }
+                lo_comp.group.level = (lo_lkp_level[la_match[4]] ? lo_lkp_level[la_match[4]] : la_match[4].toLowerCase());
+                lo_comp.group.court = la_match[5];
+
+                if (
+                    go_daylist.find(function (po_elmt) { return (po_elmt.name === lo_comp.group.day) })
+                    && go_yearlist.find(function (po_elmt) { return (po_elmt.name === lo_comp.group.year) })
+                    && go_hourlist.find(function (po_elmt) { return (po_elmt.name === lo_comp.group.hour) })
+                    && go_levellist.find(function (po_elmt) { return (po_elmt.name === lo_comp.group.level) })
+                    && go_courtlist.find(function (po_elmt) { return (po_elmt.name === lo_comp.group.court) })
+                ) {
+                    lo_comp.group.status=true;
+                    console.log("group is OK")
+                } 
             }
             else {
-                la_bad_rows.push(la_text[0]);
+                lo_comp.bad_rows.push(la_text[0]);
             }
             // size : use max member row number
-            lo_group.size = 0;
+            lo_comp.group.size = 0;
+            lo_comp.members.splice(0);
             la_text.forEach(
                 function (ps_line, pi_index) {
 
@@ -938,45 +973,61 @@ const group_import = {
                         li_year,
                         ls_row_status = 'error',
                         ls_level;
-
+                    // skip first row
                     if (pi_index) {
                         console.log(ps_line);
 
                         var la_match = ps_line.match(/^\d+/);
                         if (la_match) {
-                            lo_group.size = ((lo_group.size < parseInt(la_match[0])) ? parseInt(la_match[0]) : lo_group.size)
+                            //set group size
+                            lo_comp.group.size = ((lo_comp.group.size < parseInt(la_match[0])) ? parseInt(la_match[0]) : lo_comp.group.size)
                         }
 
-                        la_match = ps_line.match(/^\d+\s+(\w+)\s+(\w+)\s+(\d+)\s+(\w+)/);
+                        la_match = ps_line.match(/^\d+\s+(\w+)\s+(\w+)\s+([\d\w]+)\s+([\d\w\/]+)/); // n <name> <firstname> <year> <level>
                         if (la_match) {
+                            ls_row_status = 'valid';
+
                             lo_member.name = la_match[1];
                             lo_member.firstname = la_match[2];
                             li_year = parseInt(la_match[3]);
-                            lo_member.year = (li_year > 20 ? 1900 + li_year : 2000 + li_year);
-                            ls_level = la_match[4];
+                            if (li_year) {
+                                lo_member.year = (li_year > 50 ? "adulte" : String(2000 + li_year));
+                            } else {
+                                lo_member.year = la_match[3];
+                            }
+                            lo_member.level = (lo_lkp_level[la_match[4]] ? lo_lkp_level[la_match[4]] : la_match[4].toLowerCase());
+
+                            lo_comp.members.push(lo_member);
+
+                            if (
+                                go_yearlist.find(function (po_elmt) { return (po_elmt.name === lo_member.year) })
+                                && go_levellist.find(function (po_elmt) { return (po_elmt.name === lo_member.level) })
+                            ) {
+                                console.log("member is OK")
+                                lo_member.status=true;
+                            }
+                        }
+                        //ignore empty rows
+                        if ((ps_line.match(/^\d+\s*$/)) || (ps_line.match(/^\s*$/))) {
                             ls_row_status = 'valid';
                         }
-                        la_match = ps_line.match(/^\d+\s*$/);
 
-                        //ignore empty rows
-                        if (la_match) {
-                            ls_row_status = 'ignore';
-                        }
-
-                        if (ls_row_status === 'valid') {
-                            la_members.push(lo_member);
-                        } else {
-                            if (ls_row_status === 'error') {
-                                la_bad_rows.push(ps_line);
-                            }
+                        if (ls_row_status === 'error') {
+                            lo_comp.bad_rows.push(ps_line);
                         }
                     }
 
                 }
             );
-            console.log("group", lo_group);
-            console.log("members", la_members);
-            console.log("bad rows", la_bad_rows);
+
+            lo_comp.text_out = JSON.stringify(lo_comp.group);
+
+            lo_comp.members.forEach(function (po_member) {
+                lo_comp.text_out = lo_comp.text_out + "\n" + JSON.stringify(po_member);
+            });
+            lo_comp.bad_rows.forEach(function (po_bad_row) {
+                lo_comp.text_out = lo_comp.text_out + "\n BAD ROW :" + JSON.stringify(po_bad_row);
+            });
         }
     }
 }
@@ -1001,13 +1052,13 @@ const router = new VueRouter({
 var go_user;
 
 axios.get('/api/user')
-.then(
-    function (response) {
-        go_user=response.data;
-    })
-.catch(function (error) {
-    console.log(error.message);
-});
+    .then(
+        function (response) {
+            go_user = response.data;
+        })
+    .catch(function (error) {
+        console.log(error.message);
+    });
 
 
 const app = new Vue({
