@@ -39,7 +39,7 @@ const go_levellist = [{ name: "nouveau" }, { name: "blanc" }, { name: "violet" }
 
 const go_courtlist = [{ name: "1" }, { name: "2" }, { name: "3" }, { name: "jazy1" }, { name: "jazy2" }, { name: "jazy3" }];
 
-const go_sizelist = [{ name: 4 }, { name: 6 }, { name: 8 }];
+const go_sizelist = [{ name: 4 }, { name: 6 }, { name: 7 },{ name: 8 }];
 
 const go_daylist = [{ name: "lundi", order: 1 }, { name: "mardi", order: 2 }, { name: "mercredi", order: 3 }, { name: "jeudi", order: 4 }, { name: "vendredi", order: 5 }, { name: "samedi", order: 6 }, { name: "dimanche", order: 7 }];
 
@@ -642,7 +642,7 @@ const group_list = {
       <tbody>
          <tr v-for="group in groups" v-bind:key="group.id" v-on:click="f_open_group(group.id)">
             <td>
-               {{ group.day.slice(0,3) }} {{ group.hour }}
+               {{ group.day.slice(0,3) }} {{ group.hour }} [{{group.court}}]
             </td>
             <td>
                <span v-bind:class="'class-level-'+group.level">{{ group.level }}</span>
@@ -879,24 +879,24 @@ const group_import = {
         <div id="go_scroll" class="container-fluid">
           <form>
             <div class="form-group">
-                <label for="go_text_in">texte</label>
+                <label for="go_text_in">text groupe</label>
                 <textarea class="form-control" id="go_text_in" rows="8" v-model="text_in">
                 </textarea>
             </div>
+
             <button type="button" class="btn btn-secondary" v-on:click="f_parse()">analyser</button>
+            {{members.length + 1}}
+
 
             <div  v-bind:class="(group.status ? 'alert alert-success' : 'alert alert-warning')">{{group}}</div>
             <div v-for="member in members" v-bind:class="(member.status ? 'alert alert-success' : 'alert alert-warning')">{{member}}</div>
             <div v-for="bad_row in bad_rows" class="alert alert-danger">{{bad_row}}</div>
 
-            <button type="button" class="btn btn-secondary">charger</button>
-            <div class="form-group">
-                <label for="go_result">résultat</label>
-                <textarea class="form-control" id="go_result" rows="8"  v-model="result">
-                </textarea>
-            </div>
-          </form>
-          
+            <button type="button" class="btn btn-secondary" v-bind:disabled="(! isloadable)" v-on:click="f_load()">importer</button>
+            {{loads.length}}
+            <div v-for="load in loads" v-bind:class="(load.status ? 'alert alert-success' : 'alert alert-danger')">{{load}}</div>
+
+            </form>
         </div>
         <div id="go_footer" class="fixed-bottom text-center">
     <button-bar></button-bar>
@@ -906,19 +906,20 @@ const group_import = {
     data:
         function () {
             return {
-                text_in: `lundi ET 	18 H A 19 H 4	30/3	2
-                1 	Deveaux Killian 	05 	30/3
-                2 	Marchand Thomas 	04 	30/3
-                3 	Tran Hugo 	04 	30/3
-                4 	  	  	 
-                5 	  	  	 
-                6`,
-                text_out: '',
-                group : {},
-                members : [],
-                bad_rows : [],
-                result: 'cc',
-                api_error: []
+                text_in: '',
+                // example: 
+                // lundi ET 	18 H A 19 H 4	30/3	2
+                // 1 	Deveaux Killian 	05 	30/3
+                // 2 	Marchand Thomas 	04 	30/3
+                // 3 	Tran Hugo 	04 	30/3
+                // 4 	  	  	 
+                // 5 	  	  	 
+                // 6
+                group: {},
+                members: [],
+                bad_rows: [],
+                isloadable: false,
+                loads: []
             };
         },
     methods: {
@@ -927,21 +928,30 @@ const group_import = {
                 li_year = 0,
                 lo_lkp_level = { "Or": "orange", "Ro": "rouge", "V": "vert", "N": "nouveau", "Bl": "blanc", "M": "nc", "Vi": "violet" };
 
+            // reset
+            lo_comp.group = {};
+            lo_comp.loads =[];
+            Vue.set(lo_comp.group,'size',0);
+            Vue.set(lo_comp.group,'status',false);
+            lo_comp.members.splice(0);
+            lo_comp.bad_rows.splice(0);
+
             // split rows
             var la_text = lo_comp.text_in.split('\n').map(
                 function (ps_line) {
                     return (ps_line.trim());
                 }
             );
-            // group line
+
+            // parse group line (first row)
             console.log(la_text[0]);
-            var la_match = la_text[0].match(/^(\w+)\s+\w+\s+(\d+)\s*H\s+A\s+\d+\s+H\s+([\d\w]+)\s+([\d\w\/]+)\s+([\d\w]+)/);  // <day> XX <hour> H A NN H <year> <level>	<court>
+            var la_match = la_text[0].match(/^(\w+)\s+\w+\s+(\d+)\s*H\s+A\s+\d+\s+H\s+(\w+)\s+([\w\/]+)\s+(\w+)/);  // <day> XX <hour> H A NN H <year> <level>	<court>
             if (la_match) {
                 console.log("match [" + la_match[0] + "]");
                 lo_comp.group.day = la_match[1];
-                lo_comp.group.hour = la_match[2] + ":00";
+                lo_comp.group.hour = ( parseInt(la_match[2])< 10 ? "0" + la_match[2] + ":00" : la_match[2] + ":00" ) ;
                 li_year = parseInt(la_match[3]);
-                if (li_year) {
+                if (! isNaN(li_year)) {
                     lo_comp.group.year = (li_year > 50 ? "adulte" : String(2000 + li_year));
                 } else {
                     lo_comp.group.year = la_match[3];
@@ -950,22 +960,20 @@ const group_import = {
                 lo_comp.group.court = la_match[5];
 
                 if (
-                    go_daylist.find(function (po_elmt) { return (po_elmt.name === lo_comp.group.day) })
-                    && go_yearlist.find(function (po_elmt) { return (po_elmt.name === lo_comp.group.year) })
-                    && go_hourlist.find(function (po_elmt) { return (po_elmt.name === lo_comp.group.hour) })
-                    && go_levellist.find(function (po_elmt) { return (po_elmt.name === lo_comp.group.level) })
-                    && go_courtlist.find(function (po_elmt) { return (po_elmt.name === lo_comp.group.court) })
+                    (go_daylist.findIndex(function (po_elmt) { return (po_elmt.name === lo_comp.group.day) }) >= 0)
+                    && (go_hourlist.findIndex(function (po_elmt) { return (po_elmt.name === lo_comp.group.hour) }) >= 0)
+                    && (go_levellist.findIndex(function (po_elmt) { return (po_elmt.name === lo_comp.group.level) }) >= 0)
+                    && (go_courtlist.findIndex(function (po_elmt) { return (po_elmt.name === lo_comp.group.court) }) >= 0)
                 ) {
-                    lo_comp.group.status=true;
+                    lo_comp.group.status = true;
                     console.log("group is OK")
-                } 
+                }
             }
             else {
                 lo_comp.bad_rows.push(la_text[0]);
             }
-            // size : use max member row number
-            lo_comp.group.size = 0;
-            lo_comp.members.splice(0);
+
+            // loop on rows
             la_text.forEach(
                 function (ps_line, pi_index) {
 
@@ -977,35 +985,34 @@ const group_import = {
                     if (pi_index) {
                         console.log(ps_line);
 
+                        // compute size : use max member row number
                         var la_match = ps_line.match(/^\d+/);
                         if (la_match) {
                             //set group size
                             lo_comp.group.size = ((lo_comp.group.size < parseInt(la_match[0])) ? parseInt(la_match[0]) : lo_comp.group.size)
                         }
 
-                        la_match = ps_line.match(/^\d+\s+(\w+)\s+(\w+)\s+([\d\w]+)\s+([\d\w\/]+)/); // n <name> <firstname> <year> <level>
+                        // parse member
+                        la_match = ps_line.match(/^\d+\s+([\-\w]+)\s+([\-\w]+)\s+([\d\w]+)\s+([\d\w\/]+)/); // n <name> <firstname> <year> <level>
                         if (la_match) {
                             ls_row_status = 'valid';
 
                             lo_member.name = la_match[1];
                             lo_member.firstname = la_match[2];
                             li_year = parseInt(la_match[3]);
-                            if (li_year) {
+                            if (! isNaN(li_year)) {
                                 lo_member.year = (li_year > 50 ? "adulte" : String(2000 + li_year));
                             } else {
                                 lo_member.year = la_match[3];
                             }
                             lo_member.level = (lo_lkp_level[la_match[4]] ? lo_lkp_level[la_match[4]] : la_match[4].toLowerCase());
 
-                            lo_comp.members.push(lo_member);
+                            lo_member.status = (
+                                (go_yearlist.findIndex(function (po_elmt) { return (po_elmt.name === lo_member.year) }) >= 0)
+                                && (go_levellist.findIndex(function (po_elmt) { return (po_elmt.name === lo_member.level) }) >= 0)
+                            );
 
-                            if (
-                                go_yearlist.find(function (po_elmt) { return (po_elmt.name === lo_member.year) })
-                                && go_levellist.find(function (po_elmt) { return (po_elmt.name === lo_member.level) })
-                            ) {
-                                console.log("member is OK")
-                                lo_member.status=true;
-                            }
+                            lo_comp.members.push(lo_member);
                         }
                         //ignore empty rows
                         if ((ps_line.match(/^\d+\s*$/)) || (ps_line.match(/^\s*$/))) {
@@ -1020,14 +1027,52 @@ const group_import = {
                 }
             );
 
-            lo_comp.text_out = JSON.stringify(lo_comp.group);
+            lo_comp.isloadable = ((lo_comp.group.status)
+                && (lo_comp.members.findIndex(function (po_member) { return (!po_member.status) }) === -1));
+        },
+        f_load: function () {
+            var lo_comp = this;
+            lo_comp.loads.splice(0);
+            axios.post("/api/group", lo_comp.group)
+                .then(
+                    function (response) {
+                        var ls_group_id = response.data[0].id;
+                        lo_comp.loads.push({ status : true, "type" : "group"});
 
-            lo_comp.members.forEach(function (po_member) {
-                lo_comp.text_out = lo_comp.text_out + "\n" + JSON.stringify(po_member);
-            });
-            lo_comp.bad_rows.forEach(function (po_bad_row) {
-                lo_comp.text_out = lo_comp.text_out + "\n BAD ROW :" + JSON.stringify(po_bad_row);
-            });
+                        lo_comp.members.forEach(
+                            function (po_member) {
+                                po_member.group_id = ls_group_id;
+                                axios
+                                    .post("/api/member/", po_member)
+                                    .then(
+                                        function (response) {
+                                            po_member.status = true;
+                                            lo_comp.loads.push({ status : true, "type" : "membre"});
+
+                                        })
+                                    .catch(
+                                        function (error) {
+                                            var ls_error = error.message;
+                                            if (error.response) {
+                                                ls_error = ls_error+"/"+error.response.data[0].msg;
+                                            }
+                                            lo_comp.loads.push({ status : false, "type" : "membre", "error" : ls_error});
+                                        }
+                                    )
+                            }
+                        );
+                    }
+                )
+                .catch(
+                    function (error) {
+                        var ls_error = error.message;
+                        if (error.response) {
+                            ls_error = ls_error+"/"+error.response.data[0].msg;
+                        }
+                        lo_comp.loads.push({ status : false, "type" : "group", "error" : ls_error});
+
+                    }
+                );
         }
     }
 }

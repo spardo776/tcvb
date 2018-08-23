@@ -1,7 +1,7 @@
 
-if [ "$1"  = "live" ]
+if [ "$USER"  = "ubuntu" ]
 then
-	RUNNER="node"
+	RUNNER="pm2 start"
 else
 	RUNNER="nodemon"
 	#DEBUG="datastore dict_tcvb"

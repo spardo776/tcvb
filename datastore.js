@@ -91,7 +91,8 @@ function f_validate_fields(po_ctxt, pf_success, pf_failure) {
             "res": po_ctxt.res, // same as object
             "cb_failure": function () {
                 debug('f_validate_fields/f_get_object.cb_failure');
-                 pf_failure(); },
+                pf_failure();
+            },
             "cb_success": function (po_pkey_ctxt) {
                 debug('f_validate_fields/f_get_object/cb_success %s %j %s', po_pkey_ctxt.name, po_pkey_ctxt.data_in, po_pkey_ctxt.data_out.length);
                 debug('- search object with same pkey - success')
@@ -107,8 +108,8 @@ function f_validate_fields(po_ctxt, pf_success, pf_failure) {
                 } else {
                     // run specific validation
                     debug('- call object validation')
-                    po_ctxt.dict[po_ctxt.name].f_validate_object(lo_object,po_ctxt, 
-                        pf_success, 
+                    po_ctxt.dict[po_ctxt.name].f_validate_object(lo_object, po_ctxt,
+                        pf_success,
                         pf_failure);
                 }
             }
@@ -156,16 +157,17 @@ exports.f_add_object = function (po_ctxt) {
     po_ctxt.data_out = [];
     po_ctxt.http_success = 201;
     po_ctxt.http_failure = 400;
-    po_ctxt.http_body = false;
+    po_ctxt.http_body = true;
 
-    po_ctxt.edit_mode='add';
+    po_ctxt.edit_mode = 'add';
     var lo_mydict = po_ctxt.dict[po_ctxt.name];
 
     f_validate_fields(po_ctxt,
         // success CB 
         function (po_object) {
             debug('f_add_object/f_validate_fields/cb_success');
-            po_object.id = Date.now();
+            po_object.id = String(Date.now()) + String(Math.floor(Math.random() * 100));
+            po_ctxt.data_out.push({ id: po_object.id });
             var ls_filename = f_get_data_path(po_ctxt.name) + po_object.id + ".json";
             // check unicity
             fs.stat(ls_filename,
@@ -182,6 +184,7 @@ exports.f_add_object = function (po_ctxt) {
                                         "msg": "echec création " + lo_mydict.caption,
                                         "diag": err
                                     });
+                                    console.log("datastore - echec création " + lo_mydict.caption, err);
                                     po_ctxt.cb_failure(po_ctxt);
 
                                 } else {
@@ -215,7 +218,7 @@ exports.f_upd_object = function (po_ctxt) {
     po_ctxt.http_failure = 400;
     po_ctxt.http_body = false;
 
-    po_ctxt.edit_mode='update';
+    po_ctxt.edit_mode = 'update';
     var lo_mydict = po_ctxt.dict[po_ctxt.name];
 
 
@@ -240,6 +243,7 @@ exports.f_upd_object = function (po_ctxt) {
                                         "msg": "echec modification " + lo_mydict.caption,
                                         "diag": err
                                     });
+                                    console.log("datastore - echec modification " + lo_mydict.caption, err);
                                     po_ctxt.cb_failure(po_ctxt);
 
                                 } else {
@@ -393,37 +397,55 @@ exports.f_get_object = function (po_ctxt) {
                                 function (err, data) {
                                     debug('f_get_object/fs.readdir/a_json_files.forEach/fs.readFile %s', file);
                                     var lb_lst_file = (idx === files.length - 1),
-                                        lo_object = JSON.parse(data),
+                                        lo_object,
                                         lb_select = 1;
 
                                     if (err) {
                                         po_ctxt.msgs.push({
-                                            "msg": "echec accès données",
+                                            "msg": "echec lecture données",
                                             "diag": err
                                         });
-                                        po_ctxt.cb_failure(po_ctxt);
-                                    }
-
-                                    // loop on filters		
-                                    Object.keys(po_ctxt.data_in).forEach(
-                                        function (ps_key) {
-                                            debug('f_get_object/fs.readdir/a_json_files.forEach/fs.readFile/Object.keys(po_ctxt.data_in).forEach %s', ps_key);
-                                            if ((po_ctxt.data_in[ps_key]) &&
-                                                (lo_object[ps_key])) {
-                                                // build filtering regexp
-                                                var ls_filter = String(po_ctxt.data_in[ps_key]);
-                                                if (!String(lo_object[ps_key]).match("^" + ls_filter + "$")) {
-                                                    lb_select = 0;
+                                        console.log("datastore - echec lecture", err);
+                                    } else {
+                                        try {
+                                            lo_object = JSON.parse(data);
+                                        }
+                                        catch (err) {
+                                            po_ctxt.msgs.push({
+                                                "msg": "echec parsing",
+                                                "diag": err
+                                            });
+                                            console.log("datastore - echec parsing", err);
+                                        }
+                                        if (lo_object) {
+                                            // loop on filters		
+                                            Object.keys(po_ctxt.data_in).forEach(
+                                                function (ps_key) {
+                                                    debug('f_get_object/fs.readdir/a_json_files.forEach/fs.readFile/Object.keys(po_ctxt.data_in).forEach %s', ps_key);
+                                                    if ((po_ctxt.data_in[ps_key]) &&
+                                                        (lo_object[ps_key])) {
+                                                        // build filtering regexp
+                                                        var ls_filter = String(po_ctxt.data_in[ps_key]);
+                                                        if (!String(lo_object[ps_key]).match("^" + ls_filter + "$")) {
+                                                            lb_select = 0;
+                                                        }
+                                                    }
                                                 }
+                                            );
+
+                                            if (lb_select) {
+                                                po_ctxt.data_out.push(lo_object);
                                             }
                                         }
-                                    );
-
-                                    if (lb_select) {
-                                        po_ctxt.data_out.push(lo_object);
                                     }
+                                    // on last file trigger get children  or error CB
                                     if (lb_lst_file) {
-                                        f_get_children(po_ctxt); // last file => trigger get children 
+                                        if (po_ctxt.msgs.length === 0) {
+                                            f_get_children(po_ctxt);
+                                        }
+                                        else {
+                                            po_ctxt.cb_failure(po_ctxt);
+                                        }
                                     }
                                 } // end - cb readfile
                             );
@@ -444,18 +466,37 @@ exports.f_get_object = function (po_ctxt) {
 // callback wbs failure
 exports.f_wbs_failure = function (po_ctxt) {
     debug('f_wbs_failure %s %j %s %s', po_ctxt.name, po_ctxt.data_in, po_ctxt.msgs.length, po_ctxt.msgs[0]);
-    po_ctxt.res.setHeader("Content-type", "application/json");
-    po_ctxt.res.status(po_ctxt.http_failure).json(po_ctxt.msgs);
+
+    // in case wbs cb is invoked several time (that shld not happen !!) - check first if response was already sent ##TODO##
+    if (!po_ctxt.res_sent) {
+        po_ctxt.res.setHeader("Content-type", "application/json");
+        po_ctxt.res.status(po_ctxt.http_failure).json(po_ctxt.msgs);
+        po_ctxt.res_sent = true;
+    }
+    else {
+        console.log('datastore - http res already sent', po_ctxt);
+    }
+
 };
 
 // callback wbs success
 exports.f_wbs_success = function (po_ctxt) {
     debug('f_wbs_success %s %j %s', po_ctxt.name, po_ctxt.data_in, po_ctxt.data_out.length);
-    po_ctxt.res.setHeader("Content-type", "application/json");
-    if (po_ctxt.http_body) {
-        po_ctxt.res.status(po_ctxt.http_success).json(po_ctxt.data_out);
-    } else {
-        po_ctxt.res.sendStatus(po_ctxt.http_success);
+
+    // in case wbs cb is invoked several time (that shld not happen !!) - check first if response was already sent ##TODO##
+    if (!po_ctxt.res_sent) {
+
+        po_ctxt.res.setHeader("Content-type", "application/json");
+        if (po_ctxt.http_body) {
+            po_ctxt.res.status(po_ctxt.http_success).json(po_ctxt.data_out);
+        } else {
+            po_ctxt.res.sendStatus(po_ctxt.http_success);
+        }
+        po_ctxt.res_sent = true;
     }
+    else {
+        console.log('datastore - http res already sent', po_ctxt);
+    }
+
 };
 

@@ -7,27 +7,39 @@
 <body>
 
     <div id="myid" v-bind:title="mytitle">
-        <-- v-bind to bind data and element properties -->
+        <!-- v-bind to bind data and element properties -->
 
-            {{ name }}
+        {{ name }}
 
-            <span v-for="firstname in firstnames">
-                <!-- v-for : loop on a binded array-->
-                {{ firstname }}
-            </span>
-            <div v-if="age > 18">
-                category : adult
-            </div>
-            avis:
-            <input v-model="avis"> {{avis}}
-            <ul>
-                <!-- custom element : parameters passed with v-bind:property -->
-                <activity v-for="activity in activities" v-bind:name="activity.name" v-bind:key="activity.id"></activity>
-            </ul>
+        <span v-for="firstname in firstnames">
+            <!-- v-for : loop on a binded array-->
+            {{ firstname }}
+        </span>
+        <div v-if="age > 18">
+            category : adult
+        </div>
+        avis:
+        <input v-model="avis"> {{avis}}
+        <ul>
+            <!-- custom element : parameters passed with v-bind:property -->
+            <activity v-for="activity in activities" v-bind:name="activity.name" v-bind:key="activity.id"></activity>
+        </ul>
+        <div>
+            eyes and hair: {{details.eyes}} {{details.hair}}
+            <br>
+            size :  {{details.size}} 
+            <br>
+            react_size :  {{details.react_size}} 
+            <br>
+
+        </div>
+        <button v-on:click="f_grow()">grow</button>
+        <button v-on:click="f_grow_react()">grow react</button>
     </div>
 
     <script src="https://unpkg.com/vue"></script>
     <script>
+
         // after app div declaration
 
         // a component (custom element)
@@ -35,7 +47,7 @@
             props: ['name'], // parameters are element properties
             template: '<li>{{ name }}</li>' // the template = html rendering
         })
-            < !--l appli Vue -- >
+        // appl
         const app = new Vue(
             {
                 el: '#myid', //mapping to app element
@@ -46,7 +58,22 @@
                     age: 33, // v-if example
                     mytitle: "identity", // v-bind example
                     avis: "", // input v-mode example
+                    details: { "eyes": "red",  "hair": "brown" },
                     activities: [{ id: 1, name: "foot" }, { id: 2, name: "basket" }] // component
+                },
+                methods: {
+                    f_grow: function () {
+                        lo_comp = this;
+                        if (! lo_comp.details.size) { lo_comp.details.size=165}; // not reactive !!
+                        lo_comp.details.size = lo_comp.details.size + 1;
+                        console.log('not reactive', lo_comp.details);
+                    },
+                    f_grow_react: function () {
+                        lo_comp = this;
+                        if (! lo_comp.details.react_size) { Vue.set(lo_comp.details, 'react_size', 165)}; // reactive !!
+                        lo_comp.details.react_size = lo_comp.details.react_size + 1;
+                        console.log('reactive' , lo_comp.details);
+                    }
                 }
             }
         );
