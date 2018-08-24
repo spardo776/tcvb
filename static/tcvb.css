@@ -12,36 +12,73 @@
     margin-bottom: 40px;
 }
 
+.class-level-nouveau {
+    background-color: yellow;
+    color: black;
+}
 .class-level-blanc {
     background-color: white;
     color: black;
 }
 
-.class-level-violet {
+.class-level-violet, .class-level-nouv-violet {
     background-color: purple;
     color: white;
 }
 
-.class-level-rouge {
+.class-level-rouge, .class-level-nouv-rouge {
     background-color: firebrick;
     color: white;
 }
 
-.class-level-orange {
-    background-color: orange;
+.class-level-orange, .class-level-nouv-orange {
+    background-color: darkorange;
     color: white;
 }
 
 .class-level-vert {
+    background-color: lime;
+    color: white;
+}
+
+.class-level-moyen {
+    background-color: lightgray;
+    color: black;
+}
+
+.class-level-nc {
+    background-color: darkgray;
+    color: white;
+}
+
+.class-level-libre {
     background-color: green;
     color: white;
 }
 
-.class-level-autre {
-    background-color: gray;
+.class-level-30-5 {
+    background-color: lightblue;
+    color: black;
+}
+.class-level-30-4 {
+    background-color: skyblue;
+    color: black;
+}
+
+.class-level-30-3 {
+    background-color: dodgerblue;
+    color: black;
+}
+
+.class-level-30 {
+    background-color: blue;
     color: white;
 }
 
+.class-level-15-4 {
+    background-color: midnightblue;
+    color: white;
+}
 
 .class-isnotfree {
     background-color: red;
