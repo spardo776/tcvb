@@ -35,11 +35,14 @@ function f_isadmin() { return (go_user && (go_user.profile === "A")); }
 // LISTS OF VALUES 
 //
 
-const go_levellist = [{ name: "nouveau" }, { name: "blanc" }, { name: "violet" }, { name: "rouge" }, { name: "orange" }, { name: "vert" }, { name: "nc" }, { name: "30/4" }, { name: "30/3" }, { name: "30" }, { name: "15/4" }, { name: "libre" }];
+const go_levellist = [{ name: "nouveau" }, { name: "nouv-violet" },{ name: "nouv-rouge" },{ name: "nouv-orange" },
+{ name: "blanc" }, { name: "violet" }, { name: "rouge" }, { name: "orange" }, { name: "vert" },
+{ name: "moyen" }, { name: "nc" }, 
+{ name: "30/5" }, { name: "30/4" }, { name: "30/3" }, { name: "30" }, { name: "15/4" }, { name: "libre" }];
 
 const go_courtlist = [{ name: "1" }, { name: "2" }, { name: "3" }, { name: "jazy1" }, { name: "jazy2" }, { name: "jazy3" }];
 
-const go_sizelist = [{ name: 4 }, { name: 6 }, { name: 7 },{ name: 8 }];
+const go_sizelist = [{ name: 4 }, { name: 6 }, { name: 7 }, { name: 8 }];
 
 const go_daylist = [{ name: "lundi", order: 1 }, { name: "mardi", order: 2 }, { name: "mercredi", order: 3 }, { name: "jeudi", order: 4 }, { name: "vendredi", order: 5 }, { name: "samedi", order: 6 }, { name: "dimanche", order: 7 }];
 
@@ -47,6 +50,7 @@ var go_yearlist = [];
 for (var i = 2000; i < 2016; i++) {
     go_yearlist.push({ name: String(i) });
 }
+go_yearlist.push({ name: "ado" });
 go_yearlist.push({ name: "adulte" });
 go_yearlist.push({ name: "libre" });
 
@@ -930,9 +934,9 @@ const group_import = {
 
             // reset
             lo_comp.group = {};
-            lo_comp.loads =[];
-            Vue.set(lo_comp.group,'size',0);
-            Vue.set(lo_comp.group,'status',false);
+            lo_comp.loads = [];
+            Vue.set(lo_comp.group, 'size', 0);
+            Vue.set(lo_comp.group, 'status', false);
             lo_comp.members.splice(0);
             lo_comp.bad_rows.splice(0);
 
@@ -949,9 +953,9 @@ const group_import = {
             if (la_match) {
                 console.log("match [" + la_match[0] + "]");
                 lo_comp.group.day = la_match[1];
-                lo_comp.group.hour = ( parseInt(la_match[2])< 10 ? "0" + la_match[2] + ":00" : la_match[2] + ":00" ) ;
+                lo_comp.group.hour = (parseInt(la_match[2]) < 10 ? "0" + la_match[2] + ":00" : la_match[2] + ":00");
                 li_year = parseInt(la_match[3]);
-                if (! isNaN(li_year)) {
+                if (!isNaN(li_year)) {
                     lo_comp.group.year = (li_year > 50 ? "adulte" : String(2000 + li_year));
                 } else {
                     lo_comp.group.year = la_match[3];
@@ -1000,7 +1004,7 @@ const group_import = {
                             lo_member.name = la_match[1];
                             lo_member.firstname = la_match[2];
                             li_year = parseInt(la_match[3]);
-                            if (! isNaN(li_year)) {
+                            if (!isNaN(li_year)) {
                                 lo_member.year = (li_year > 50 ? "adulte" : String(2000 + li_year));
                             } else {
                                 lo_member.year = la_match[3];
@@ -1037,7 +1041,7 @@ const group_import = {
                 .then(
                     function (response) {
                         var ls_group_id = response.data[0].id;
-                        lo_comp.loads.push({ status : true, "type" : "group"});
+                        lo_comp.loads.push({ status: true, "type": "group" });
 
                         lo_comp.members.forEach(
                             function (po_member) {
@@ -1047,16 +1051,16 @@ const group_import = {
                                     .then(
                                         function (response) {
                                             po_member.status = true;
-                                            lo_comp.loads.push({ status : true, "type" : "membre"});
+                                            lo_comp.loads.push({ status: true, "type": "membre" });
 
                                         })
                                     .catch(
                                         function (error) {
                                             var ls_error = error.message;
                                             if (error.response) {
-                                                ls_error = ls_error+"/"+error.response.data[0].msg;
+                                                ls_error = ls_error + "/" + error.response.data[0].msg;
                                             }
-                                            lo_comp.loads.push({ status : false, "type" : "membre", "error" : ls_error});
+                                            lo_comp.loads.push({ status: false, "type": "membre", "error": ls_error });
                                         }
                                     )
                             }
@@ -1067,9 +1071,9 @@ const group_import = {
                     function (error) {
                         var ls_error = error.message;
                         if (error.response) {
-                            ls_error = ls_error+"/"+error.response.data[0].msg;
+                            ls_error = ls_error + "/" + error.response.data[0].msg;
                         }
-                        lo_comp.loads.push({ status : false, "type" : "group", "error" : ls_error});
+                        lo_comp.loads.push({ status: false, "type": "group", "error": ls_error });
 
                     }
                 );
