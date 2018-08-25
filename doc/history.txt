@@ -1,3 +1,11 @@
+2018-08-25
+- group-list : filter on court
+- color all levels
+- increase margins btw buttons
+- set timeout on axios calls
+- queries results not lost when navigating (use query params and watch route)
+- store libs locally (io CDN)
+
 2018-08-23
 - data importer
 - datastore : 

@@ -3,6 +3,10 @@
 "use strict";
 
 bootbox.setLocale('fr');
+
+const go_axios = axios.create({
+    timeout: 1000
+});
 //
 // UTILS
 //
@@ -25,19 +29,23 @@ function f_build_filter_re(ps_filter, ps_case) {
         .replace(/[\*\.]/g, '.*'); // * and . wildcard allowed => /.*/
 
     ls_filter_re = '^' + ls_filter_re + '$';
-    console.log(ls_filter_re);
+    //console.log(ls_filter_re);
     return (ls_filter_re);
 }
 
 function f_isadmin() { return (go_user && (go_user.profile === "A")); }
 
+function f_level_class_name(ps_level) {
+    return ('class-level-'+(ps_level ? ps_level.replace('/','-') : 'unknown'));
+}
+
 //
 // LISTS OF VALUES 
 //
 
-const go_levellist = [{ name: "nouveau" }, { name: "nouv-violet" },{ name: "nouv-rouge" },{ name: "nouv-orange" },
+const go_levellist = [{ name: "nouveau" }, { name: "nouv-violet" }, { name: "nouv-rouge" }, { name: "nouv-orange" },
 { name: "blanc" }, { name: "violet" }, { name: "rouge" }, { name: "orange" }, { name: "vert" },
-{ name: "moyen" }, { name: "nc" }, 
+{ name: "moyen" }, { name: "nc" },
 { name: "30/5" }, { name: "30/4" }, { name: "30/3" }, { name: "30" }, { name: "15/4" }, { name: "libre" }];
 
 const go_courtlist = [{ name: "1" }, { name: "2" }, { name: "3" }, { name: "jazy1" }, { name: "jazy2" }, { name: "jazy3" }];
@@ -78,8 +86,8 @@ const main_menu = Vue.component('main-menu',
             `
          <div>
             <ul class="nav nav-pills">
-               <li class="nav-item"><a class="nav-link" v-bind:class="(isactive && (active_tag === 'group')) ? 'active' : ''" href="#/group">groupes</a></li>
-               <li class="nav-item"><a class="nav-link" v-bind:class="(isactive && (active_tag === 'member')) ? 'active' : ''" href="#/member">membres</a></li>
+               <li class="nav-item"><a class="nav-link" v-bind:class="(isactive && (active_tag === 'group')) ? 'active' : ''" href="#/groups">groupes</a></li>
+               <li class="nav-item"><a class="nav-link" v-bind:class="(isactive && (active_tag === 'member')) ? 'active' : ''" href="#/members">membres</a></li>
                <!-- <li class="nav-item"><a class="nav-link" v-bind:class="(isactive && (active_tag === 'import)) ' ? 'active' : ''" href="#/import">import</a></li> -->
             </ul>
          </div>
@@ -95,8 +103,8 @@ const button_bar = Vue.component('button-bar',
         template:
             `
         <span>    
-            <button class="btn btn-secondary oi oi-home mr-2" v-on:click="f_home()"></button>
-            <button class="btn btn-secondary oi oi-chevron-left mr-2" v-on:click="f_back()"></button>
+            <button class="btn btn-secondary oi oi-home mr-3" v-on:click="f_home()"></button>
+            <button class="btn btn-secondary oi oi-chevron-left mr-3" v-on:click="f_back()"></button>
         </span>
         `,
         methods: {
@@ -146,7 +154,7 @@ const member_edit = Vue.component('member-edit',
             </div>
             <div id="go_footer" class="fixed-bottom text-center">
                <button-bar></button-bar>
-               <button type="button" class="btn btn-warning oi oi-check mr-2" v-on:click="f_save()"></button>
+               <button type="button" class="btn btn-warning oi oi-check mr-3" v-on:click="f_save()"></button>
             </div>
          </div>
         `,
@@ -174,7 +182,7 @@ const member_edit = Vue.component('member-edit',
                         lo_comp.title = "modifier membre";
                         var ls_url = "/api/member?id=" + lo_comp.id;
                         //console.log("-url=" + ls_url);
-                        axios.get(ls_url)
+                        go_axios.get(ls_url)
                             .then(
                                 function (response) {
                                     //console.log("-rowcount=" + response.data.length);
@@ -194,7 +202,7 @@ const member_edit = Vue.component('member-edit',
                 lo_comp.api_error.splice(0);
 
                 if (lo_comp.isupdate) {
-                    axios.put(ls_url, lo_comp.member)
+                    go_axios.put(ls_url, lo_comp.member)
                         .then(
                             function (response) {
                                 //console.log("-response.status=" + response.status);
@@ -303,7 +311,7 @@ const group_edit = Vue.component('group-edit',
             </div>
             <div id="go_footer" class="fixed-bottom text-center">
                <button-bar></button-bar>
-               <button type="button" class="btn btn-warning oi oi-check mr-2" v-on:click="f_save()"></button>
+               <button type="button" class="btn btn-warning oi oi-check mr-3" v-on:click="f_save()"></button>
             </div>
          </div>
                      `,
@@ -335,7 +343,7 @@ const group_edit = Vue.component('group-edit',
                         lo_comp.title = "modifier groupe";
                         var ls_url = "/api/group?id=" + lo_comp.id;
                         //console.log("-url=" + ls_url);
-                        axios.get(ls_url)
+                        go_axios.get(ls_url)
                             .then(
                                 function (response) {
                                     //console.log("-rowcount=" + response.data.length);
@@ -358,7 +366,7 @@ const group_edit = Vue.component('group-edit',
                 lo_comp.api_error.splice(0);
 
                 if (lo_comp.isupdate) {
-                    axios.put(ls_url, lo_comp.group)
+                    go_axios.put(ls_url, lo_comp.group)
                         .then(
                             function (response) {
                                 //console.log("-response.status=" + response.status);
@@ -373,7 +381,7 @@ const group_edit = Vue.component('group-edit',
                             }
                         });
                 } else {
-                    axios.post(ls_url, lo_comp.group)
+                    go_axios.post(ls_url, lo_comp.group)
                         .then(
                             function (response) {
                                 //console.log("-response.status=" + response.status);
@@ -413,7 +421,7 @@ const group_detail = Vue.component('group-detail',
             <div id="go_scroll" class="container-fluid">
                   <h5>
                      groupe : {{ group.day }} {{ group.hour }} [{{ group.court }}]  
-                     <span v-bind:class="'class-level-'+group.level">{{ group.level }}</span>
+                     <span v-bind:class="f_level_class_name(group.level)">{{ group.level }}</span>
                      {{ group.year }}
                   </h5>
                <table class="table">
@@ -428,10 +436,12 @@ const group_detail = Vue.component('group-detail',
                   <tbody>
                      <tr v-for="cur_member in group.member" v-bind:key="cur_member.id">
                         <td>{{cur_member.name}} {{cur_member.firstname}}</td>
-                        <td>{{cur_member.level}}</td>
+                        <td>
+                        <span v-bind:class="f_level_class_name(cur_member.level)">{{ cur_member.level }}</span>
+                        </td>
                         <td>{{cur_member.year}}</td>
                         <td>
-                        <button v-if="f_isadmin()" type="button" class="btn btn-danger oi oi-trash mr-2" v-on:click="f_del_member(cur_member)"></button>
+                        <button v-if="f_isadmin()" type="button" class="btn btn-danger oi oi-trash mr-3" v-on:click="f_del_member(cur_member)"></button>
                         </td>
                      </tr>
                      <tr v-if="isempty" >
@@ -467,8 +477,8 @@ const group_detail = Vue.component('group-detail',
             </div>
             <div id="go_footer" class="fixed-bottom text-center">
                <button-bar></button-bar>
-               <button v-if="f_isadmin()" type="button" class="btn btn-info oi oi-pencil mr-2" v-on:click="f_upd_group(group)"></button>
-               <button v-if="(isempty && f_isadmin())" type="button" class="btn btn-danger oi oi-trash mr-2" v-on:click="f_del_group(group)"></button>
+               <button v-if="f_isadmin()" type="button" class="btn btn-info oi oi-pencil mr-3" v-on:click="f_upd_group(group)"></button>
+               <button v-if="(isempty && f_isadmin())" type="button" class="btn btn-danger oi oi-trash mr-3" v-on:click="f_del_group(group)"></button>
             </div>
          </div>
     `,
@@ -496,7 +506,7 @@ const group_detail = Vue.component('group-detail',
                     //console.log('@f_load');
                     var ls_url = "/api/group?id=" + lo_comp.id;
                     //console.log("-url=" + ls_url);
-                    axios.get(ls_url)
+                    go_axios.get(ls_url)
                         .then(
                             function (response) {
                                 //console.log("-rowcount=" + response.data.length);
@@ -522,7 +532,7 @@ const group_detail = Vue.component('group-detail',
                 var ls_url = "/api/member";
                 //console.log("-url=" + ls_url);
                 lo_comp.api_error.splice(0);
-                axios.post(ls_url, lo_comp.new_member)
+                go_axios.post(ls_url, lo_comp.new_member)
                     .then(
                         function (response) {
                             //console.log("-response.status=" + response.status)
@@ -547,7 +557,7 @@ const group_detail = Vue.component('group-detail',
                     function (pb_result) {
                         if (pb_result) {
                             var ls_url = "/api/member/" + po_member.id;
-                            axios.delete(ls_url)
+                            go_axios.delete(ls_url)
                                 .then(
                                     function (response) {
                                         //console.log("-response.status=" + response.status);
@@ -574,7 +584,7 @@ const group_detail = Vue.component('group-detail',
                     function (pb_result) {
                         if (pb_result) {
                             var ls_url = "/api/group/" + po_group.id;
-                            axios.delete(ls_url)
+                            go_axios.delete(ls_url)
                                 .then(
                                     function (response) {
                                         //console.log("-response.status=" + response.status);
@@ -597,7 +607,8 @@ const group_detail = Vue.component('group-detail',
             f_upd_group: function (po_group) {
                 router.push('/group/' + po_group.id + '/edit');
             },
-            f_isadmin: f_isadmin
+            f_isadmin: f_isadmin,
+            f_level_class_name : f_level_class_name
         },
         created:
             function () {
@@ -620,14 +631,14 @@ const group_list = {
       <h5>
          groupes
       </h5>
-   <form class="form-inline" v-on:keyup.enter="f_filter">
-      <div class="input-group mr-sm-2 mb-2">
+   <form class="form-inline" v-on:keyup.enter="f_push_filter">
+      <div class="input-group mr-sm-3 mb-2">
          <label for="go_filter_group" class="sr-only">filtre:</label>
-         <input type="search" id="go_filter_group" class="form-control" v-model="filter" placeholder="année, niveau ou jour">
-         <button type="button" class="btn btn-secondary oi oi-magnifying-glass" v-on:click="f_filter"></button>
+         <input type="search" id="go_filter_group" class="form-control mr-1" v-model="filter" placeholder="année, niveau, jour ou court">
+         <button type="button" class="btn btn-secondary oi oi-magnifying-glass" v-on:click="f_push_filter"></button>
       </div>
-      <div class="custom-control custom-checkbox  mb-2">
-         <input id="go_isfree" class="custom-control-input" type="checkbox" v-model="isfree" v-on:change="f_filter">
+      <div class="custom-control custom-checkbox mb-2">
+         <input id="go_isfree" class="custom-control-input" type="checkbox" v-model="isfree" v-on:change="f_push_filter">
          <label class="custom-control-label" for="go_isfree">
          libre
          </label>
@@ -649,7 +660,7 @@ const group_list = {
                {{ group.day.slice(0,3) }} {{ group.hour }} [{{group.court}}]
             </td>
             <td>
-               <span v-bind:class="'class-level-'+group.level">{{ group.level }}</span>
+               <span v-bind:class="f_level_class_name(group.level)">{{ group.level }}</span>
             </td>
             <td>
                {{ group.year }}
@@ -664,7 +675,7 @@ const group_list = {
 </div>
 <div id="go_footer" class="fixed-bottom text-center">
    <button-bar></button-bar>
-   <button v-if="f_isadmin()"   type="button" class="btn btn-warning oi oi-plus mr-2" v-on:click="f_add_group()"></button>
+   <button v-if="f_isadmin()"   type="button" class="btn btn-warning oi oi-plus mr-3" v-on:click="f_add_group()"></button>
 </div>
 </div>
 
@@ -673,7 +684,7 @@ const group_list = {
     data:
         function () {
             return {
-                filter: '',
+                filter:'',
                 groups: [],
                 isfree: true,
                 noresult: true,
@@ -681,13 +692,20 @@ const group_list = {
             };
         },
     methods: {
-        f_filter: function () {
+        f_push_filter: function () {
             var lo_comp = this;
-            //console.log("@f_filter");
-            var ls_url = "/api/group?";
-            var lb_filtered = false;
+            //console.log("@f_push_filter");
             // filter cleaning
             lo_comp.filter.replace(/[^\d\w\.\*]/g);
+            router.push({ path : '/groups', query : {filter: lo_comp.filter, isfree:lo_comp.isfree}});
+        },
+        f_run_filter: function () {
+            var lo_comp = this;
+            var ls_url = "/api/group?";
+            var lb_filtered = false;
+            
+            lo_comp.filter = ( (lo_comp.$route.query && lo_comp.$route.query.filter)  ? lo_comp.$route.query.filter : '');
+            lo_comp.isfree = ( (lo_comp.$route.query && lo_comp.$route.query.isfree)  ? lo_comp.$route.query.filter : true);
 
             var ls_filter_re = f_build_filter_re(lo_comp.filter, 'lower');
 
@@ -706,6 +724,11 @@ const group_list = {
                 ls_url = ls_url + "level=" + ls_filter_re;
                 lb_filtered = true;
             }
+            if ((!lb_filtered) && go_courtlist.find(function (po_court) { return (po_court.name.match(ls_filter_re)) })) {
+                ls_url = ls_url + "court=" + ls_filter_re;
+                lb_filtered = true;
+            }
+
             if (lo_comp.isfree) {
                 ls_url = ls_url + (lb_filtered ? "&isfree" : "isfree");
             }
@@ -714,7 +737,7 @@ const group_list = {
                 lo_comp.api_error = [{ "msg": "filtre incorrect" }];
             } else {
                 //console.log("-url=" + ls_url);
-                axios.get(ls_url)
+                go_axios.get(ls_url)
                     .then(
                         function (response) {
                             //console.log("-rowcount=" + response.data.length);
@@ -750,13 +773,21 @@ const group_list = {
             //console.log('@f_add_group');
             router.push('/group/0/edit');
         },
-        f_isadmin: f_isadmin
+        f_isadmin: f_isadmin,
+        f_level_class_name : f_level_class_name
 
+    },
+    watch: {
+        '$route': function (po_to, po_from) {
+            var lo_comp = this;
+            //console.log('watch');
+            lo_comp.f_run_filter();
+        }
     },
     created:
         function () {
             //console.log('created');
-            //this.f_filter();
+            this.f_run_filter();
         }
 
 };
@@ -777,11 +808,11 @@ const member_list = {
             <h5>
                 membres
             </h5>
-       <form class="form-inline" v-on:keyup.enter="f_filter">
+       <form class="form-inline" v-on:keyup.enter="f_push_filter">
        <div class="input-group mr-sm-2 mb-2">
           <label for="go_filter_member" class="sr-only">filtre:</label>
-          <input type="search" id="go_filter_member" class="form-control" v-model="filter" placeholder="nom">
-          <button type="button" class="btn btn-secondary oi oi-magnifying-glass" v-on:click="f_filter"></button>
+          <input type="search" id="go_filter_member" class="form-control mr-1" v-model="filter" placeholder="nom">
+          <button type="button" class="btn btn-secondary oi oi-magnifying-glass" v-on:click="f_push_filter"></button>
        </div>
        </form>       
        <table class="table">
@@ -798,7 +829,7 @@ const member_list = {
                    {{ member.name }} {{ member.firstname }}
                 </td>
                 <td>
-                {{ member.level }}
+                <span v-bind:class="f_level_class_name(member.level)">{{ member.level }}</span>
                 </td>
                 <td>
                 {{ member.year }}
@@ -807,7 +838,7 @@ const member_list = {
                 {{ member.group[0].day.slice(0,3) }} {{ member.group[0].hour }} [{{ member.group[0].court }}]
                 </td>
                 <td>
-                <button v-if="f_isadmin()" type="button" class="btn btn-info oi oi-pencil mr-2" v-on:click="f_upd_member(member)"></button>
+                <button v-if="f_isadmin()" type="button" class="btn btn-info oi oi-pencil mr-3" v-on:click="f_upd_member(member)"></button>
                 </td>
              </tr>
           </tbody >
@@ -832,13 +863,18 @@ const member_list = {
             };
         },
     methods: {
-        f_filter: function () {
+        f_push_filter: function () {
             var lo_comp = this;
-            //console.log("@f_filter");
-            var ls_url = "/api/member?";
+            //console.log("@f_push_filter");
             // filter cleaning
             lo_comp.filter.replace(/[^\d\w\.\*]/g);
+            router.push({ path: '/members', query: { 'filter': lo_comp.filter } });
+        },
+        f_run_filter: function () {
+            var lo_comp = this;
+            var ls_url = "/api/member?";
 
+            lo_comp.filter = ( (lo_comp.$route.query && lo_comp.$route.query.filter)  ? lo_comp.$route.query.filter : '');
             // build regexp
             var ls_filter_re = f_build_filter_re(lo_comp.filter, 'upper');
 
@@ -847,7 +883,7 @@ const member_list = {
                 ls_url = ls_url + "name=" + ls_filter_re;
             }
 
-            axios
+            go_axios
                 .get(ls_url).then(
                     function (response) {
                         //console.log("-rowcount=" + response.data.length);
@@ -863,11 +899,22 @@ const member_list = {
         f_upd_member: function (po_member) {
             router.push('/member/' + po_member.id + '/edit');
         },
-        f_isadmin: f_isadmin
+        f_isadmin: f_isadmin,
+        f_level_class_name: f_level_class_name 
+    },
+  
+    watch: {
+        '$route': function (po_to, po_from) {
+            var lo_comp = this;
+            //console.log('watch');
+            lo_comp.f_run_filter();
+        }
     },
     created:
         function () {
+            var lo_comp = this;
             //console.log('created');
+            lo_comp.f_run_filter();
         }
 
 };
@@ -948,7 +995,6 @@ const group_import = {
             );
 
             // parse group line (first row)
-            console.log(la_text[0]);
             var la_match = la_text[0].match(/^(\w+)\s+\w+\s+(\d+)\s*H\s+A\s+\d+\s+H\s+(\w+)\s+([\w\/]+)\s+(\w+)/);  // <day> XX <hour> H A NN H <year> <level>	<court>
             if (la_match) {
                 console.log("match [" + la_match[0] + "]");
@@ -970,7 +1016,6 @@ const group_import = {
                     && (go_courtlist.findIndex(function (po_elmt) { return (po_elmt.name === lo_comp.group.court) }) >= 0)
                 ) {
                     lo_comp.group.status = true;
-                    console.log("group is OK")
                 }
             }
             else {
@@ -1037,7 +1082,7 @@ const group_import = {
         f_load: function () {
             var lo_comp = this;
             lo_comp.loads.splice(0);
-            axios.post("/api/group", lo_comp.group)
+            go_axios.post("/api/group", lo_comp.group)
                 .then(
                     function (response) {
                         var ls_group_id = response.data[0].id;
@@ -1046,7 +1091,7 @@ const group_import = {
                         lo_comp.members.forEach(
                             function (po_member) {
                                 po_member.group_id = ls_group_id;
-                                axios
+                                go_axios
                                     .post("/api/member/", po_member)
                                     .then(
                                         function (response) {
@@ -1085,9 +1130,10 @@ const group_import = {
 const router = new VueRouter({
     routes:
         [
-            { path: '/', component: group_list },
-            { path: '/group', component: group_list },
-            { path: '/member', component: member_list },
+            { path: '/', component: group_list,  props: { filter: "" , isfree:true} },
+            { path: '/groups', component: group_list, props: { filter: "" , isfree:true} },
+            { path: '/groups/:filter', component: group_list, props: true },
+            { path: '/members', component: member_list },
             { path: '/group/:id', component: group_detail, props: true },
             { path: '/group/:id/edit', component: group_edit, props: true },
             { path: '/member/:id/edit', component: member_edit, props: true },
@@ -1100,7 +1146,7 @@ const router = new VueRouter({
 //get user profile
 var go_user;
 
-axios.get('/api/user')
+go_axios.get('/api/user')
     .then(
         function (response) {
             go_user = response.data;

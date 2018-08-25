@@ -1,9 +1,9 @@
+RUNNER="pm2 start"
 
-if [ "$USER"  = "ubuntu" ]
+if [ "$USER"  != "ubuntu" ]
 then
-	RUNNER="pm2 start"
-else
 	RUNNER="nodemon"
+	#OPTIONS="--watch --ignore-watch data"
 	#DEBUG="datastore dict_tcvb"
 	#export DEBUG
 fi
@@ -13,7 +13,7 @@ export DATA_DIR
 
 if [ -d "$DATA_DIR" ]
 then
-	$RUNNER server.js
+	$RUNNER server.js $OPTIONS
 else
 	echo "$DATA_DIR does not exist"
 fi
