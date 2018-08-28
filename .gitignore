@@ -1,4 +1,6 @@
 data/
+backup/
+log/
 node_modules/
 tests/test_commands.out
 tests/test_commands.ref-prev
