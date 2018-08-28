@@ -8,7 +8,7 @@ then
 	#export DEBUG
 fi
 
-DATA_DIR="data/$1"
+DATA_DIR="$HOME/tcvb/data/$1"
 export DATA_DIR
 
 if [ -d "$DATA_DIR" ]

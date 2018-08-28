@@ -1,5 +1,7 @@
 2016-08-28
 - fix isfree filtering
+- backup
+- reorganize directories
 
 2018-08-25
 - group-list : filter on court

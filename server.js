@@ -6,9 +6,9 @@
  **/
 
 
-var go_dict = require("./dict_tcvb");
+var go_dict = require("./lib/dict_tcvb");
 
-var go_ds = require('./datastore');
+var go_ds = require('./lib/datastore');
 
 // WBS get group
 function f_wbs_get_group(req, res) {
