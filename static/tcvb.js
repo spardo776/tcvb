@@ -29,7 +29,6 @@ function f_build_filter_re(ps_filter, ps_case) {
         .replace(/[\*\.]/g, '.*'); // * and . wildcard allowed => /.*/
 
     ls_filter_re = '^' + ls_filter_re + '$';
-    //console.log(ls_filter_re);
     return (ls_filter_re);
 }
 
@@ -176,16 +175,13 @@ const member_edit = Vue.component('member-edit',
                 // member data load
                 function () {
                     var lo_comp = this;
-                    //console.log('@f_load');
                     lo_comp.isupdate = (lo_comp.id !== "0");
                     if (lo_comp.isupdate) {
                         lo_comp.title = "modifier membre";
                         var ls_url = "/api/member?id=" + lo_comp.id;
-                        //console.log("-url=" + ls_url);
                         go_axios.get(ls_url)
                             .then(
                                 function (response) {
-                                    //console.log("-rowcount=" + response.data.length);
                                     lo_comp.noresult = (response.data.length === 0);
                                     lo_comp.member = (lo_comp.noresult ? null : response.data[0]);
                                     lo_comp.api_error = [];
@@ -196,7 +192,6 @@ const member_edit = Vue.component('member-edit',
                     }
                 },
             f_save: function () {
-                //console.log('@f_save');
                 var lo_comp = this;
                 var ls_url = "/api/member";
                 lo_comp.api_error.splice(0);
@@ -205,7 +200,6 @@ const member_edit = Vue.component('member-edit',
                     go_axios.put(ls_url, lo_comp.member)
                         .then(
                             function (response) {
-                                //console.log("-response.status=" + response.status);
                                 router.go(-1);
                             }
                         )
@@ -220,7 +214,6 @@ const member_edit = Vue.component('member-edit',
             }
         },
         created: function () {
-            //console.log('@created');
             this.f_load();
         }
     }
@@ -337,16 +330,13 @@ const group_edit = Vue.component('group-edit',
                 // group data load
                 function () {
                     var lo_comp = this;
-                    //console.log('@f_load');
                     lo_comp.isupdate = (lo_comp.id !== "0");
                     if (lo_comp.isupdate) {
                         lo_comp.title = "modifier groupe";
                         var ls_url = "/api/group?id=" + lo_comp.id;
-                        //console.log("-url=" + ls_url);
                         go_axios.get(ls_url)
                             .then(
                                 function (response) {
-                                    //console.log("-rowcount=" + response.data.length);
                                     lo_comp.noresult = (response.data.length === 0);
                                     lo_comp.group = (lo_comp.noresult ? null : response.data[0]);
                                     lo_comp.api_error = [];
@@ -360,7 +350,6 @@ const group_edit = Vue.component('group-edit',
                     }
                 },
             f_save: function () {
-                //console.log('@f_save');
                 var lo_comp = this;
                 var ls_url = "/api/group";
                 lo_comp.api_error.splice(0);
@@ -369,7 +358,6 @@ const group_edit = Vue.component('group-edit',
                     go_axios.put(ls_url, lo_comp.group)
                         .then(
                             function (response) {
-                                //console.log("-response.status=" + response.status);
                                 router.go(-1);
                             }
                         )
@@ -384,7 +372,6 @@ const group_edit = Vue.component('group-edit',
                     go_axios.post(ls_url, lo_comp.group)
                         .then(
                             function (response) {
-                                //console.log("-response.status=" + response.status);
                                 router.go(-1);
                             }
                         )
@@ -400,7 +387,6 @@ const group_edit = Vue.component('group-edit',
             }
         },
         created: function () {
-            //console.log('@created');
             this.f_load();
         }
     }
@@ -503,13 +489,10 @@ const group_detail = Vue.component('group-detail',
                 // group data load
                 function () {
                     var lo_comp = this;
-                    //console.log('@f_load');
                     var ls_url = "/api/group?id=" + lo_comp.id;
-                    //console.log("-url=" + ls_url);
                     go_axios.get(ls_url)
                         .then(
                             function (response) {
-                                //console.log("-rowcount=" + response.data.length);
                                 lo_comp.noresult = (response.data.length === 0);
                                 if (!lo_comp.noresult) {
                                     // sort members
@@ -527,15 +510,12 @@ const group_detail = Vue.component('group-detail',
             // add a member in group
             f_add_member: function () {
                 var lo_comp = this;
-                //console.log('@f_add_member');
                 lo_comp.new_member.group_id = lo_comp.group.id;
                 var ls_url = "/api/member";
-                //console.log("-url=" + ls_url);
                 lo_comp.api_error.splice(0);
                 go_axios.post(ls_url, lo_comp.new_member)
                     .then(
                         function (response) {
-                            //console.log("-response.status=" + response.status)
                             lo_comp.f_load(); // refresh group data;
                             lo_comp.new_member = {};
                             lo_comp.api_error = [];
@@ -552,7 +532,6 @@ const group_detail = Vue.component('group-detail',
             // delete a member
             f_del_member: function (po_member) {
                 var lo_comp = this;
-                //console.log('@f_del_member');
                 bootbox.confirm("supprimer inscrit " + po_member.firstname + " " + po_member.name + " ?",
                     function (pb_result) {
                         if (pb_result) {
@@ -560,7 +539,6 @@ const group_detail = Vue.component('group-detail',
                             go_axios.delete(ls_url)
                                 .then(
                                     function (response) {
-                                        //console.log("-response.status=" + response.status);
                                         lo_comp.f_load(); // refresh group data
                                         lo_comp.api_error = [];
                                     }
@@ -579,7 +557,6 @@ const group_detail = Vue.component('group-detail',
             // delete a group
             f_del_group: function (po_group) {
                 var lo_comp = this;
-                //console.log('@f_del_group');
                 bootbox.confirm("supprimer groupe " + po_group.day + " " + po_group.hour + " " + "[" + po_group.court + "] ?",
                     function (pb_result) {
                         if (pb_result) {
@@ -587,7 +564,6 @@ const group_detail = Vue.component('group-detail',
                             go_axios.delete(ls_url)
                                 .then(
                                     function (response) {
-                                        //console.log("-response.status=" + response.status);
                                         router.go(-1);; // refresh group data
                                     }
                                 )
@@ -597,7 +573,6 @@ const group_detail = Vue.component('group-detail',
                                     } else {
                                         lo_comp.api_error = [{ "msg": error.message }];
                                     }
-                                    //console.log("-error=" + error.message);
                                 });
                         }
                     });
@@ -612,7 +587,6 @@ const group_detail = Vue.component('group-detail',
         },
         created:
             function () {
-                //console.log('@created');
                 this.f_load();
             }
     });
@@ -694,7 +668,6 @@ const group_list = {
     methods: {
         f_push_filter: function () {
             var lo_comp = this;
-            //console.log("@f_push_filter");
             // filter cleaning
             lo_comp.filter.replace(/[^\d\w\.\*]/g);
             router.push({ path : '/groups', query : {filter: lo_comp.filter, isfree:lo_comp.isfree}});
@@ -703,13 +676,11 @@ const group_list = {
             var lo_comp = this;
             var ls_url = "/api/group?";
             var lb_filtered = false;
-            
-            lo_comp.filter = ( (lo_comp.$route.query && lo_comp.$route.query.filter)  ? lo_comp.$route.query.filter : '');
-            lo_comp.isfree = ( (lo_comp.$route.query && lo_comp.$route.query.isfree)  ? lo_comp.$route.query.filter : true);
+            lo_comp.filter = ( (lo_comp.$route.query && lo_comp.$route.query.hasOwnProperty('filter'))  ? lo_comp.$route.query.filter : '');
+            lo_comp.isfree = ( (lo_comp.$route.query && lo_comp.$route.query.hasOwnProperty('isfree'))  ?  (String(lo_comp.$route.query.isfree) === "true")  : true);
 
             var ls_filter_re = f_build_filter_re(lo_comp.filter, 'lower');
 
-            //console.log(ls_filter_re);
             lb_filtered = (ls_filter_re === "^$"); // no filtering
 
             if ((!lb_filtered) && go_yearlist.find(function (po_year) { return (String(po_year.name).match(ls_filter_re)) })) {
@@ -728,7 +699,6 @@ const group_list = {
                 ls_url = ls_url + "court=" + ls_filter_re;
                 lb_filtered = true;
             }
-
             if (lo_comp.isfree) {
                 ls_url = ls_url + (lb_filtered ? "&isfree" : "isfree");
             }
@@ -736,11 +706,9 @@ const group_list = {
                 //invalid filter - reset
                 lo_comp.api_error = [{ "msg": "filtre incorrect" }];
             } else {
-                //console.log("-url=" + ls_url);
                 go_axios.get(ls_url)
                     .then(
                         function (response) {
-                            //console.log("-rowcount=" + response.data.length);
                             lo_comp.noresult = (response.data.length === 0);
 
                             response.data.sort(function (a, b) {
@@ -766,11 +734,9 @@ const group_list = {
 
         },
         f_open_group: function (ps_group_id) {
-            //console.log('@f_open group ' + ps_group_id);
             router.push('/group/' + ps_group_id);
         },
         f_add_group: function () {
-            //console.log('@f_add_group');
             router.push('/group/0/edit');
         },
         f_isadmin: f_isadmin,
@@ -780,13 +746,11 @@ const group_list = {
     watch: {
         '$route': function (po_to, po_from) {
             var lo_comp = this;
-            //console.log('watch');
             lo_comp.f_run_filter();
         }
     },
     created:
         function () {
-            //console.log('created');
             this.f_run_filter();
         }
 
@@ -865,7 +829,6 @@ const member_list = {
     methods: {
         f_push_filter: function () {
             var lo_comp = this;
-            //console.log("@f_push_filter");
             // filter cleaning
             lo_comp.filter.replace(/[^\d\w\.\*]/g);
             router.push({ path: '/members', query: { 'filter': lo_comp.filter } });
@@ -886,7 +849,6 @@ const member_list = {
             go_axios
                 .get(ls_url).then(
                     function (response) {
-                        //console.log("-rowcount=" + response.data.length);
                         lo_comp.noresult = (response.data.length === 0);
                         lo_comp.members = response.data;
                         lo_comp.api_error = [];
@@ -906,14 +868,12 @@ const member_list = {
     watch: {
         '$route': function (po_to, po_from) {
             var lo_comp = this;
-            //console.log('watch');
             lo_comp.f_run_filter();
         }
     },
     created:
         function () {
             var lo_comp = this;
-            //console.log('created');
             lo_comp.f_run_filter();
         }
 
@@ -997,7 +957,6 @@ const group_import = {
             // parse group line (first row)
             var la_match = la_text[0].match(/^(\w+)\s+\w+\s+(\d+)\s*H\s+A\s+\d+\s+H\s+(\w+)\s+([\w\/]+)\s+(\w+)/);  // <day> XX <hour> H A NN H <year> <level>	<court>
             if (la_match) {
-                console.log("match [" + la_match[0] + "]");
                 lo_comp.group.day = la_match[1];
                 lo_comp.group.hour = (parseInt(la_match[2]) < 10 ? "0" + la_match[2] + ":00" : la_match[2] + ":00");
                 li_year = parseInt(la_match[3]);
@@ -1032,7 +991,6 @@ const group_import = {
                         ls_level;
                     // skip first row
                     if (pi_index) {
-                        console.log(ps_line);
 
                         // compute size : use max member row number
                         var la_match = ps_line.match(/^\d+/);
