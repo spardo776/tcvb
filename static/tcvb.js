@@ -782,8 +782,7 @@ const member_list = {
        <table class="table">
           <thead>
              <th>nom prénom</th>
-             <th>niveau</th>
-             <th>année</th>
+             <th>niveau année</th>
              <th>groupe</th>
              <th></th>
           </thead>
@@ -793,10 +792,7 @@ const member_list = {
                    {{ member.name }} {{ member.firstname }}
                 </td>
                 <td>
-                <span v-bind:class="f_level_class_name(member.level)">{{ member.level }}</span>
-                </td>
-                <td>
-                {{ member.year }}
+                <span v-bind:class="f_level_class_name(member.level)">{{ member.level }}</span> {{ member.year }}
                 </td>
                 <td>
                 {{ member.group[0].day.slice(0,3) }} {{ member.group[0].hour }} [{{ member.group[0].court }}]
@@ -850,6 +846,7 @@ const member_list = {
                 .get(ls_url).then(
                     function (response) {
                         lo_comp.noresult = (response.data.length === 0);
+                        response.data.sort(function (a, b) { return a.name.localeCompare(b.name) });
                         lo_comp.members = response.data;
                         lo_comp.api_error = [];
                     })

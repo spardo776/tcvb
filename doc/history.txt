@@ -1,4 +1,7 @@
-2016-08-28
+2016-08-30
+- member-list : sort + merge level and year columns
+
+2018-08-28
 - fix isfree filtering
 - backup
 - reorganize directories
