@@ -126,7 +126,7 @@ const member_edit = Vue.component('member-edit',
                <main-menu active_tag="member"></main-menu>
             </div>
             <div id="go_scroll" class="container-fluid">
-                  <h6>
+                  <h6 class="p-3">
                      {{title}}
                   </h6>
                <form class="form-inline" v-on:keyup.enter="f_save()">
@@ -232,7 +232,7 @@ const group_edit = Vue.component('group-edit',
                <main-menu active_tag="group"></main-menu>
             </div>
             <div id="go_scroll" class="container-fluid">
-                  <h6>
+                  <h6 class="p-3">
                      {{title}}
                   </h6>
                <form v-on:keyup.enter="f_save()">
@@ -405,7 +405,7 @@ const group_detail = Vue.component('group-detail',
                <main-menu active_tag="group"></main-menu>
             </div>
             <div id="go_scroll" class="container-fluid">
-                  <h6>
+                  <h6 class="p-3">
                      groupe > {{ group.day }} {{ group.hour }} [{{ group.court }}]  
                      <span v-bind:class="f_level_class_name(group.level)">{{ group.level }}</span>
                      {{ group.year }}
@@ -464,7 +464,7 @@ const group_detail = Vue.component('group-detail',
                </table>
         --->
                <div v-if="group.isfree">
-                     <h6>inscrire:</h6>
+                     <h6 class="p-3">inscrire:</h6>
                      <form class="form-inline align-items-center" v-on:keyup.enter="f_add_member()">
                         <label for="go_name" class="sr-only">nom</label>
                         <input class="form-control mr-sm-2 mb-2" v-model="new_member.name" placeholder="nom"></td>
@@ -630,7 +630,7 @@ const group_list = {
    <main-menu active_tag="group"></main-menu>
 </div>
 <div id="go_scroll" class="container-fluid">
-      <h6>
+      <h6 class="p-3">
          groupes
       </h6>
    <form class="form-inline" v-on:keyup.enter="f_push_filter">
@@ -817,7 +817,7 @@ const member_list = {
         <main-menu active_tag="member"></main-menu>
     </div>
     <div id="go_scroll" class="container-fluid">
-            <h6>
+            <h6 class="p-3">
                 membres
             </h6>
        <form class="form-inline" v-on:keyup.enter="f_push_filter">
@@ -833,7 +833,7 @@ const member_list = {
 
        <div class="row border-bottom" v-for="member in members" v-bind:key="member.id">
 
-       <div class="col-md-3 col-sm-5 col-5 p-2 font-weight-bold">
+       <div class="col-md-3 col-sm-5 col-8 p-2 font-weight-bold">
        {{ member.name }} 
        </div>
 
@@ -841,19 +841,19 @@ const member_list = {
        {{ member.firstname }}
        </div>
 
-       <div class="col-md-2 col-sm-3 col-3 p-2">
+       <div class="col-md-2 col-sm-3 col-8 p-2">
        <span v-bind:class="f_level_class_name(member.level)">{{ member.level }}</span>
        </div>
 
-       <div class="col-md-1 col-sm-5 col-5 p-2">
+       <div class="col-md-1 col-sm-5 col-4 p-2">
        {{ member.year }}
        </div>
 
-       <div class="col-md-3 col-sm-4 col-4 p-2">
+       <div class="col-md-3 col-sm-4 col-8 p-2">
        {{ member.group[0].day.slice(0,3) }} {{ member.group[0].hour }} [{{ member.group[0].court }}]
        </div>
 
-       <div class="col-md-1 col-sm-3 col-3 p-2">
+       <div class="col-md-1 col-sm-3 col-4 p-2">
        <button v-if="f_isadmin()" type="button" class="btn btn-info oi oi-pencil mr-3" v-on:click="f_upd_member(member)"></button>
        </div>
 
