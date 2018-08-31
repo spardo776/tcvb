@@ -406,7 +406,7 @@ const group_detail = Vue.component('group-detail',
             </div>
             <div id="go_scroll" class="container-fluid">
                   <h6 class="p-3">
-                     groupe > {{ group.day }} {{ group.hour }} [{{ group.court }}]  
+                     {{ group.day }} {{ group.hour }} [{{ group.court }}]  
                      <span v-bind:class="f_level_class_name(group.level)">{{ group.level }}</span>
                      {{ group.year }}
                   </h6>
