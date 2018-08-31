@@ -35,7 +35,7 @@ function f_build_filter_re(ps_filter, ps_case) {
 function f_isadmin() { return (go_user && (go_user.profile === "A")); }
 
 function f_level_class_name(ps_level) {
-    return ('class-level-'+(ps_level ? ps_level.replace('/','-') : 'unknown'));
+    return ('class-level-'+(ps_level ? ps_level.replace('/','-') : 'unknown')+ ' p-1');
 }
 
 //
@@ -126,9 +126,9 @@ const member_edit = Vue.component('member-edit',
                <main-menu active_tag="member"></main-menu>
             </div>
             <div id="go_scroll" class="container-fluid">
-                  <h5>
+                  <h6>
                      {{title}}
-                  </h5>
+                  </h6>
                <form class="form-inline" v-on:keyup.enter="f_save()">
                <label for="go_name" class="sr-only">nom</label>
                <input class="form-control mr-sm-2 mb-2" v-model="member.name" placeholder="nom" disabled></td>
@@ -232,9 +232,9 @@ const group_edit = Vue.component('group-edit',
                <main-menu active_tag="group"></main-menu>
             </div>
             <div id="go_scroll" class="container-fluid">
-                  <h5>
+                  <h6>
                      {{title}}
-                  </h5>
+                  </h6>
                <form v-on:keyup.enter="f_save()">
                   <div class="form">
                      <div class="form-group row">
@@ -405,11 +405,38 @@ const group_detail = Vue.component('group-detail',
                <main-menu active_tag="group"></main-menu>
             </div>
             <div id="go_scroll" class="container-fluid">
-                  <h5>
-                     groupe : {{ group.day }} {{ group.hour }} [{{ group.court }}]  
+                  <h6>
+                     groupe > {{ group.day }} {{ group.hour }} [{{ group.court }}]  
                      <span v-bind:class="f_level_class_name(group.level)">{{ group.level }}</span>
                      {{ group.year }}
-                  </h5>
+                  </h6>
+                  <div class="m-3">
+                  <div class="row border-bottom" v-for="cur_member in group.member" v-bind:key="cur_member.id">
+
+                  <div class="col-md-4 col-sm-8 col-8 p-2 font-weight-bold">
+                  {{ cur_member.name }} {{ cur_member.firstname }}
+                  </div>
+           
+           
+                  <div class="col-md-2 col-sm-4 col-4 p-2">
+                  <span v-bind:class="f_level_class_name(cur_member.level)">{{ cur_member.level }}</span>
+                  </div>
+           
+                  <div class="col-md-2 col-sm-8 col-8 p-2">
+                  {{ cur_member.year }}
+                  </div>
+
+                  
+                  <div class="col-md-2 col-sm-4 col-4 p-2">
+                  <button v-if="f_isadmin()" type="button" class="btn btn-danger oi oi-trash mr-3" v-on:click="f_del_member(cur_member)"></button>
+                  </div>
+           
+                  </div>
+                  </div>
+           
+
+
+        <!--
                <table class="table">
                   <thead>
                      <tr>
@@ -435,8 +462,9 @@ const group_detail = Vue.component('group-detail',
                      </tr>
                   </tbody>
                </table>
+        --->
                <div v-if="group.isfree">
-                     <h5>inscrire:</h5>
+                     <h6>inscrire:</h6>
                      <form class="form-inline align-items-center" v-on:keyup.enter="f_add_member()">
                         <label for="go_name" class="sr-only">nom</label>
                         <input class="form-control mr-sm-2 mb-2" v-model="new_member.name" placeholder="nom"></td>
@@ -602,9 +630,9 @@ const group_list = {
    <main-menu active_tag="group"></main-menu>
 </div>
 <div id="go_scroll" class="container-fluid">
-      <h5>
+      <h6>
          groupes
-      </h5>
+      </h6>
    <form class="form-inline" v-on:keyup.enter="f_push_filter">
       <div class="input-group mr-sm-3 mb-2">
          <label for="go_filter_group" class="sr-only">filtre:</label>
@@ -621,6 +649,26 @@ const group_list = {
    <div v-if="api_error.length" class="alert alert-danger">
     <div v-for="cur_api_error in api_error">{{cur_api_error.msg}}</div>
    </div>
+   <div class="row border-bottom" v-for="group in groups" v-bind:key="group.id" v-on:click="f_open_group(group.id)">
+
+   <div class="col-md-3 col-sm-6 col-6 p-3 font-weight-bold">
+    {{ group.day.slice(0,3) }} {{ group.hour }} [{{group.court}}]
+   </div>
+     
+   <div class="col-md-3 col-sm-6 col-6 p-3">
+    <span v-bind:class="f_level_class_name(group.level)">{{ group.level }}</span>
+   </div>
+
+   <div class="col-md-3 col-sm-6 col-6 p-3">
+    {{ group.year }}
+   </div>
+
+   <div class="col-md-3 col-sm-6 col-6 p-3">
+    <span v-bind:class="{'class-isnotfree' : !group.isfree, 'class-isfree' : group.isfree}">{{ ( group.member ? group.member.length : 0 ) }}/{{ group.size }}</span>
+   </div>
+
+   </div>
+   <!--
    <table class="table">
       <thead>
          <th>groupe</th>
@@ -645,7 +693,7 @@ const group_list = {
          </tr>
       </tbody>
    </table>
-   
+   -->
 </div>
 <div id="go_footer" class="fixed-bottom text-center">
    <button-bar></button-bar>
@@ -769,9 +817,9 @@ const member_list = {
         <main-menu active_tag="member"></main-menu>
     </div>
     <div id="go_scroll" class="container-fluid">
-            <h5>
+            <h6>
                 membres
-            </h5>
+            </h6>
        <form class="form-inline" v-on:keyup.enter="f_push_filter">
        <div class="input-group mr-sm-2 mb-2">
           <label for="go_filter_member" class="sr-only">filtre:</label>
@@ -779,6 +827,39 @@ const member_list = {
           <button type="button" class="btn btn-secondary oi oi-magnifying-glass" v-on:click="f_push_filter"></button>
        </div>
        </form>       
+       <div v-if="api_error.length" class="alert alert-danger">
+         <div v-for="cur_api_error in api_error">{{cur_api_error.msg}}</div>
+       </div>
+
+       <div class="row border-bottom" v-for="member in members" v-bind:key="member.id">
+
+       <div class="col-md-3 col-sm-5 col-5 p-2 font-weight-bold">
+       {{ member.name }} 
+       </div>
+
+       <div class="col-md-2 col-sm-4 col-4 p-2 font-weight-bold">
+       {{ member.firstname }}
+       </div>
+
+       <div class="col-md-2 col-sm-3 col-5 p-2">
+       <span v-bind:class="f_level_class_name(member.level)">{{ member.level }}</span>
+       </div>
+
+       <div class="col-md-1 col-sm-5 col-5 p-2">
+       {{ member.year }}
+       </div>
+
+       <div class="col-md-3 col-sm-4 col-4 p-2">
+       {{ member.group[0].day.slice(0,3) }} {{ member.group[0].hour }} [{{ member.group[0].court }}]
+       </div>
+
+       <div class="col-md-1 col-sm-3 col-3 p-2">
+       <button v-if="f_isadmin()" type="button" class="btn btn-info oi oi-pencil mr-3" v-on:click="f_upd_member(member)"></button>
+       </div>
+
+       </div>
+
+       <!-- REPLACED BY RESPONSIVE LAYOUT
        <table class="table">
           <thead>
              <th>nom prénom</th>
@@ -803,9 +884,7 @@ const member_list = {
              </tr>
           </tbody >
        </table>
-       <div v-if="api_error.length" class="alert alert-danger">
-         <div v-for="cur_api_error in api_error">{{cur_api_error.msg}}</div>
-       </div>
+       -->
     </div>
     <div id="go_footer" class="fixed-bottom text-center">
     <button-bar></button-bar>
@@ -925,7 +1004,7 @@ const group_import = {
                 // 6
                 group: {},
                 members: [],
-                bad_rows: [],
+                bad_rows: [],   
                 isloadable: false,
                 loads: []
             };

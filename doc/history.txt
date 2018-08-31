@@ -1,3 +1,6 @@
+2016-08-31
+- reponsive lists
+
 2016-08-30
 - member-list : sort + merge level and year columns
 
