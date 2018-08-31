@@ -841,7 +841,7 @@ const member_list = {
        {{ member.firstname }}
        </div>
 
-       <div class="col-md-2 col-sm-3 col-5 p-2">
+       <div class="col-md-2 col-sm-3 col-3 p-2">
        <span v-bind:class="f_level_class_name(member.level)">{{ member.level }}</span>
        </div>
 
