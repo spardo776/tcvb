@@ -131,9 +131,9 @@ const member_edit = Vue.component('member-edit',
                   </h6>
                <form class="form-inline" v-on:keyup.enter="f_save()">
                <label for="go_name" class="sr-only">nom</label>
-               <input class="form-control mr-sm-2 mb-2" v-model="member.name" placeholder="nom" disabled></td>
+               <input class="form-control mr-sm-2 mb-2" v-model="member.name" placeholder="nom"></td>
                <label for="go_firstname" class="sr-only">prénom</label> 
-               <input class="form-control mr-sm-2 mb-2" v-model="member.firstname" placeholder="prénom" disabled></td>
+               <input class="form-control mr-sm-2 mb-2" v-model="member.firstname" placeholder="prénom"></td>
                <label for="go_level" class="mr-sm-2 mb-2">niveau</label> 
                <select id ="go_level" class="form-control mr-sm-2 mb-2" v-model="member.level" placeholder="niveau">
                   <option v-for="cur_levellist in levellist">

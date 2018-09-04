@@ -1,7 +1,12 @@
-2016-08-31
+2018-09-04
+- timeout 5000 ms on axios calls
+- add year in member pk
+- name + firstname editable
+
+2018-08-31
 - reponsive lists
 
-2016-08-30
+2018-08-30
 - member-list : sort + merge level and year columns
 
 2018-08-28
