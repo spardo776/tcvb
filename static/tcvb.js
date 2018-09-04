@@ -5,7 +5,7 @@
 bootbox.setLocale('fr');
 
 const go_axios = axios.create({
-    timeout: 1000
+    timeout: 5000
 });
 //
 // UTILS
