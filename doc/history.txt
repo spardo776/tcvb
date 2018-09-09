@@ -1,3 +1,6 @@
+2018-09-09
+- group detail: add a member edit button   
+
 2018-09-04
 - timeout 5000 ms on axios calls
 - add year in member pk

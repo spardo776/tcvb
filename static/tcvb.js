@@ -38,6 +38,10 @@ function f_level_class_name(ps_level) {
     return ('class-level-'+(ps_level ? ps_level.replace('/','-') : 'unknown')+ ' p-1');
 }
 
+function f_upd_member(po_member) {
+    router.push('/member/' + po_member.id + '/edit');
+}
+
 //
 // LISTS OF VALUES 
 //
@@ -87,11 +91,12 @@ const main_menu = Vue.component('main-menu',
             <ul class="nav nav-pills">
                <li class="nav-item"><a class="nav-link" v-bind:class="(isactive && (active_tag === 'group')) ? 'active' : ''" href="#/groups">groupes</a></li>
                <li class="nav-item"><a class="nav-link" v-bind:class="(isactive && (active_tag === 'member')) ? 'active' : ''" href="#/members">membres</a></li>
+               <li class="nav-item"><a class="nav-link" v-bind:class="(isactive && (active_tag === 'export')) ? 'active' : ''" href="#/export">export</a></li>
                <!-- <li class="nav-item"><a class="nav-link" v-bind:class="(isactive && (active_tag === 'import)) ' ? 'active' : ''" href="#/import">import</a></li> -->
             </ul>
          </div>
             `,
-        data: function () { return ({ isactive: false }) },
+        data: function () { return ({ isactive: true }) },
         props: ["active_tag"]
 
     }
@@ -426,46 +431,20 @@ const group_detail = Vue.component('group-detail',
                   {{ cur_member.year }}
                   </div>
 
+                  <div class="col-md-1 col-sm-2 col-2 p-2">
+                  <button v-if="f_isadmin()" type="button" class="btn btn-info oi oi-pencil mr-3" v-on:click="f_upd_member(cur_member)"></button>
+                  </div>
+           
                   
-                  <div class="col-md-2 col-sm-4 col-4 p-2">
+                  <div class="col-md-1 col-sm-2 col-2 p-2">
                   <button v-if="f_isadmin()" type="button" class="btn btn-danger oi oi-trash mr-3" v-on:click="f_del_member(cur_member)"></button>
                   </div>
            
                   </div>
                   </div>
-           
-
-
-        <!--
-               <table class="table">
-                  <thead>
-                     <tr>
-                        <th>nom prénom</th>
-                        <th>niveau</th>
-                        <th>année</th>
-                        <th></th>
-                     </tr>
-                  </thead>
-                  <tbody>
-                     <tr v-for="cur_member in group.member" v-bind:key="cur_member.id">
-                        <td>{{cur_member.name}} {{cur_member.firstname}}</td>
-                        <td>
-                        <span v-bind:class="f_level_class_name(cur_member.level)">{{ cur_member.level }}</span>
-                        </td>
-                        <td>{{cur_member.year}}</td>
-                        <td>
-                        <button v-if="f_isadmin()" type="button" class="btn btn-danger oi oi-trash mr-3" v-on:click="f_del_member(cur_member)"></button>
-                        </td>
-                     </tr>
-                     <tr v-if="isempty" >
-                        <td colspan=4 class="text-center"><span style="font-style:italic">aucun inscrit</span></td>
-                     </tr>
-                  </tbody>
-               </table>
-        --->
                <div v-if="group.isfree">
                      <h6 class="p-3">inscrire:</h6>
-                     <form class="form-inline align-items-center" v-on:keyup.enter="f_add_member()">
+                     <form class="form-inline" v-on:keyup.enter="f_add_member()">
                         <label for="go_name" class="sr-only">nom</label>
                         <input class="form-control mr-sm-2 mb-2" v-model="new_member.name" placeholder="nom"></td>
                         <label for="go_firstname" class="sr-only">prénom</label> 
@@ -611,7 +590,8 @@ const group_detail = Vue.component('group-detail',
                 router.push('/group/' + po_group.id + '/edit');
             },
             f_isadmin: f_isadmin,
-            f_level_class_name : f_level_class_name
+            f_level_class_name : f_level_class_name,
+            f_upd_member : f_upd_member
         },
         created:
             function () {
@@ -859,32 +839,6 @@ const member_list = {
 
        </div>
 
-       <!-- REPLACED BY RESPONSIVE LAYOUT
-       <table class="table">
-          <thead>
-             <th>nom prénom</th>
-             <th>niveau année</th>
-             <th>groupe</th>
-             <th></th>
-          </thead>
-          <tbody>
-             <tr v-for="member in members" v-bind:key="member.id">
-                <td>
-                   {{ member.name }} {{ member.firstname }}
-                </td>
-                <td>
-                <span v-bind:class="f_level_class_name(member.level)">{{ member.level }}</span> {{ member.year }}
-                </td>
-                <td>
-                {{ member.group[0].day.slice(0,3) }} {{ member.group[0].hour }} [{{ member.group[0].court }}]
-                </td>
-                <td>
-                <button v-if="f_isadmin()" type="button" class="btn btn-info oi oi-pencil mr-3" v-on:click="f_upd_member(member)"></button>
-                </td>
-             </tr>
-          </tbody >
-       </table>
-       -->
     </div>
     <div id="go_footer" class="fixed-bottom text-center">
     <button-bar></button-bar>
@@ -934,9 +888,7 @@ const member_list = {
                 });
         },
         // update a member
-        f_upd_member: function (po_member) {
-            router.push('/member/' + po_member.id + '/edit');
-        },
+        f_upd_member: f_upd_member,
         f_isadmin: f_isadmin,
         f_level_class_name: f_level_class_name 
     },
@@ -954,6 +906,49 @@ const member_list = {
         }
 
 };
+
+const group_export = {
+    template:
+    `
+    <div>
+    <div id="go_header" class="fixed-top">
+           <main-menu active_tag="export"></main-menu>
+           
+    </div>
+    <div id="go_scroll" class="container-fluid">  
+        <h6 class="p-3">
+           export
+        </h6>     
+        <form>
+        <div class="form-group">
+            <textarea class="form-control" id="go_text_out" rows="10" v-model="text_out">
+            </textarea>
+        </div>
+    </div>
+    <div id="go_footer" class="fixed-bottom text-center">
+        <button-bar></button-bar>
+    </div>
+    </div>
+    `,
+    data:
+    function () {
+        return {
+            text_out: ''
+            };
+    },
+    methods: {
+        f_export: function () {
+            var lo_comp = this;
+
+        }
+    },
+    created : 
+    function () {
+        this.f_export();
+    }
+};
+
+
 
 const group_import = {
     template:
@@ -990,6 +985,7 @@ const group_import = {
     </div>
  </div>
         `,
+      
     data:
         function () {
             return {
@@ -1171,6 +1167,7 @@ const router = new VueRouter({
             { path: '/group/:id', component: group_detail, props: true },
             { path: '/group/:id/edit', component: group_edit, props: true },
             { path: '/member/:id/edit', component: member_edit, props: true },
+            { path: '/export', component: group_export },
             { path: '/import', component: group_import }
         ]
 
