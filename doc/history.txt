@@ -1,3 +1,6 @@
+2018-09-21
+- export
+- backup : compress and purge
 2018-09-09
 - group detail: add a member edit button   
 
