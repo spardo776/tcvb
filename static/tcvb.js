@@ -35,7 +35,7 @@ function f_build_filter_re(ps_filter, ps_case) {
 function f_isadmin() { return (go_user && (go_user.profile === "A")); }
 
 function f_level_class_name(ps_level) {
-    return ('class-level-'+(ps_level ? ps_level.replace('/','-') : 'unknown')+ ' p-1');
+    return ('class-level-' + (ps_level ? ps_level.replace('/', '-') : 'unknown') + ' p-1');
 }
 
 function f_upd_member(po_member) {
@@ -590,8 +590,8 @@ const group_detail = Vue.component('group-detail',
                 router.push('/group/' + po_group.id + '/edit');
             },
             f_isadmin: f_isadmin,
-            f_level_class_name : f_level_class_name,
-            f_upd_member : f_upd_member
+            f_level_class_name: f_level_class_name,
+            f_upd_member: f_upd_member
         },
         created:
             function () {
@@ -686,7 +686,7 @@ const group_list = {
     data:
         function () {
             return {
-                filter:'',
+                filter: '',
                 groups: [],
                 isfree: true,
                 noresult: true,
@@ -698,14 +698,14 @@ const group_list = {
             var lo_comp = this;
             // filter cleaning
             lo_comp.filter.replace(/[^\d\w\.\*]/g);
-            router.push({ path : '/groups', query : {filter: lo_comp.filter, isfree:lo_comp.isfree}});
+            router.push({ path: '/groups', query: { filter: lo_comp.filter, isfree: lo_comp.isfree } });
         },
         f_run_filter: function () {
             var lo_comp = this;
             var ls_url = "/api/group?";
             var lb_filtered = false;
-            lo_comp.filter = ( (lo_comp.$route.query && lo_comp.$route.query.hasOwnProperty('filter'))  ? lo_comp.$route.query.filter : '');
-            lo_comp.isfree = ( (lo_comp.$route.query && lo_comp.$route.query.hasOwnProperty('isfree'))  ?  (String(lo_comp.$route.query.isfree) === "true")  : true);
+            lo_comp.filter = ((lo_comp.$route.query && lo_comp.$route.query.hasOwnProperty('filter')) ? lo_comp.$route.query.filter : '');
+            lo_comp.isfree = ((lo_comp.$route.query && lo_comp.$route.query.hasOwnProperty('isfree')) ? (String(lo_comp.$route.query.isfree) === "true") : true);
 
             var ls_filter_re = f_build_filter_re(lo_comp.filter, 'lower');
 
@@ -768,7 +768,7 @@ const group_list = {
             router.push('/group/0/edit');
         },
         f_isadmin: f_isadmin,
-        f_level_class_name : f_level_class_name
+        f_level_class_name: f_level_class_name
 
     },
     watch: {
@@ -866,7 +866,7 @@ const member_list = {
             var lo_comp = this;
             var ls_url = "/api/member?";
 
-            lo_comp.filter = ( (lo_comp.$route.query && lo_comp.$route.query.filter)  ? lo_comp.$route.query.filter : '');
+            lo_comp.filter = ((lo_comp.$route.query && lo_comp.$route.query.filter) ? lo_comp.$route.query.filter : '');
             // build regexp
             var ls_filter_re = f_build_filter_re(lo_comp.filter, 'upper');
 
@@ -890,9 +890,9 @@ const member_list = {
         // update a member
         f_upd_member: f_upd_member,
         f_isadmin: f_isadmin,
-        f_level_class_name: f_level_class_name 
+        f_level_class_name: f_level_class_name
     },
-  
+
     watch: {
         '$route': function (po_to, po_from) {
             var lo_comp = this;
@@ -909,7 +909,7 @@ const member_list = {
 
 const group_export = {
     template:
-    `
+        `
     <div>
     <div id="go_header" class="fixed-top">
            <main-menu active_tag="export"></main-menu>
@@ -920,6 +920,10 @@ const group_export = {
            export
         </h6>     
         <form>
+        <div v-if="api_error.length" class="alert alert-danger">
+            <div v-for="cur_api_error in api_error">{{cur_api_error.msg}}</div>
+        </div>
+			   
         <div class="form-group">
             <textarea class="form-control" id="go_text_out" rows="10" v-model="text_out">
             </textarea>
@@ -931,21 +935,64 @@ const group_export = {
     </div>
     `,
     data:
-    function () {
-        return {
-            text_out: ''
+        function () {
+            return {
+                text_out: '',
+                noresult: true,
+                api_error: []
             };
-    },
+        },
     methods: {
         f_export: function () {
             var lo_comp = this;
+            var ls_url = "/api/group"
+            go_axios.get(ls_url)
+                .then(
+                    function (response) {
+                        lo_comp.noresult = (response.data.length === 0);
 
+                        response.data.sort(function (a, b) {
+                            var lo_lkp_order = {};
+                            go_daylist.forEach(function (po_day) { lo_lkp_order[po_day.name] = po_day.order; });
+                            if (a.day === b.day) {
+                                return (a.hour.localeCompare(b.hour));
+                            } else {
+                                return (lo_lkp_order[a.day] - lo_lkp_order[b.day]);
+                            }
+                        });
+
+                        lo_comp.groups = response.data;
+                        lo_comp.api_error = [];
+                        lo_comp.groups.forEach(lo_comp.lf_format_group);
+                    })
+                .catch(
+                    function (error) {
+                        lo_comp.api_error = [{ "msg": error.message }];
+                    }
+                );
+
+        },
+        lf_format_group : function(po_group) {
+            var lo_comp=this;
+            lo_comp.text_out+=([ po_group.day, po_group.hour, '', po_group.year, po_group.level]).join('\t')+'\n';
+            po_group.member.forEach(lo_comp.lf_format_member);
+            for (var li_index=(po_group.member.length + 1);li_index <= po_group.size; li_index++)
+            {
+                lo_comp.text_out+=li_index+'\n';
+            }
+            lo_comp.text_out+='\n';
+        },
+        lf_format_member : function(po_member,pi_index) {
+            var lo_comp=this;
+            lo_comp.text_out+=([ (pi_index + 1), po_member.name,po_member.firstname, po_member.year, po_member.level]).join('\t')+'\n';
+            console.log(this, po_member);
         }
+
     },
-    created : 
-    function () {
-        this.f_export();
-    }
+    created:
+        function () {
+            this.f_export();
+        }
 };
 
 
@@ -985,7 +1032,7 @@ const group_import = {
     </div>
  </div>
         `,
-      
+
     data:
         function () {
             return {
@@ -1000,7 +1047,7 @@ const group_import = {
                 // 6
                 group: {},
                 members: [],
-                bad_rows: [],   
+                bad_rows: [],
                 isloadable: false,
                 loads: []
             };
@@ -1160,8 +1207,8 @@ const group_import = {
 const router = new VueRouter({
     routes:
         [
-            { path: '/', component: group_list,  props: { filter: "" , isfree:true} },
-            { path: '/groups', component: group_list, props: { filter: "" , isfree:true} },
+            { path: '/', component: group_list, props: { filter: "", isfree: true } },
+            { path: '/groups', component: group_list, props: { filter: "", isfree: true } },
             { path: '/groups/:filter', component: group_list, props: true },
             { path: '/members', component: member_list },
             { path: '/group/:id', component: group_detail, props: true },
