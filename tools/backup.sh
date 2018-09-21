@@ -8,6 +8,6 @@ cd `dirname $0`/..
 
 tar cvf $tarfile data > $logfile 2>&1
 
-gzip $tarfile
+gzip $tarfile >> $logfile 2>&1
 
-find ./backup -name \*.tar.gz -mtime +21 
+find ./backup -name \*.tar.gz -mtime +30 -exec rm {} \; >> $logfile 2>&1
