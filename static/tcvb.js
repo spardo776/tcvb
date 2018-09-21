@@ -974,7 +974,7 @@ const group_export = {
         },
         lf_format_group : function(po_group) {
             var lo_comp=this;
-            lo_comp.text_out+=([ po_group.day, po_group.hour, '', po_group.year, po_group.level]).join('\t')+'\n';
+            lo_comp.text_out+=([ po_group.day, po_group.hour, po_group.court, po_group.year, po_group.level]).join('\t')+'\n';
             po_group.member.forEach(lo_comp.lf_format_member);
             for (var li_index=(po_group.member.length + 1);li_index <= po_group.size; li_index++)
             {
