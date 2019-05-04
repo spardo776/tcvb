@@ -1,3 +1,7 @@
+2019-05-04
+- npm update: fix morgan vulnerability => 1.9.1
+- sudo npm -i d nodemon => 1.19
+
 2018-09-21
 - export
 - backup : compress and purge
